@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=@name@
+GenericName=Game Boy Emulator
+Comment=Friendly Game Boy Emulator
+Categories=Game;
+Exec=@binary@
+Icon=@icon@
+Terminal=false
+Type=Application
+Keywords=Game;Emulator;ROM;

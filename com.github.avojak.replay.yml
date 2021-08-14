@@ -1,0 +1,21 @@
+app-id: com.github.avojak.replay
+
+runtime: io.elementary.Platform
+runtime-version: '6'
+sdk: io.elementary.Sdk
+
+command: com.github.avojak.replay
+
+finish-args:
+  - '--share=ipc'
+  - '--share=network'
+  - '--socket=fallback-x11'
+  - '--socket=wayland'
+  - '--system-talk-name=org.freedesktop.Accounts'
+
+modules:
+  - name: replay
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: .
