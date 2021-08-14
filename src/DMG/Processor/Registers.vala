@@ -195,4 +195,19 @@ public class Replay.DMG.Processor.Registers : GLib.Object {
         }
     }
 
+    public bool get_flag (Replay.DMG.Processor.Flags flag) {
+        switch (flag) {
+            case Z:
+                return flag_register.is_z ();
+            case N:
+                return flag_register.is_n ();
+            case H:
+                return flag_register.is_h ();
+            case C:
+                return flag_register.is_c ();
+            default:
+                assert_not_reached ();
+        }
+    }
+
 }
