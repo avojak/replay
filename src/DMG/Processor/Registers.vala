@@ -21,6 +21,30 @@
 
 public class Replay.DMG.Processor.Registers : GLib.Object {
 
+    public enum Register {
+        A, B, C, D, E, H, L, AF, BC, DE, HL;
+
+        public bool is_16_bit_register () {
+            switch (this) {
+                case A:
+                case B:
+                case C:
+                case D:
+                case E:
+                case H:
+                case L:
+                    return false;
+                case AF:
+                case BC:
+                case DE:
+                case HL:
+                    return true;
+                default:
+                    assert_not_reached ();
+            }
+        }
+    }
+
     private int a;
     private int b;
     private int c;
@@ -31,7 +55,7 @@ public class Replay.DMG.Processor.Registers : GLib.Object {
     private int sp; // stack pointer
     private int pc; // program counter
 
-    private FlagRegister flag_register = new FlagRegister ();
+    private Replay.DMG.Processor.FlagRegister flag_register = new Replay.DMG.Processor.FlagRegister ();
 
     public int get_a () {
         return a;
@@ -157,7 +181,77 @@ public class Replay.DMG.Processor.Registers : GLib.Object {
         sp = (sp - 1) & 0xFFFF;
     }
 
-    public void set_flag (Replay.DMG.Processor.Flags flag) {
+    public void set_register_value (Replay.DMG.Processor.Registers.Register register, int value) {
+        switch (register) {
+            case A:
+                set_a (value);
+                break;
+            case B:
+                set_b (value);
+                break;
+            case C:
+                set_c (value);
+                break;
+            case D:
+                set_d (value);
+                break;
+            case E:
+                set_e (value);
+                break;
+            case H:
+                set_h (value);
+                break;
+            case L:
+                set_l (value);
+                break;
+            case AF:
+                set_af (value);
+                break;
+            case BC:
+                set_bc (value);
+                break;
+            case DE:
+                set_de (value);
+                break;
+            case HL:
+                set_hl (value);
+                break;
+            default:
+                assert_not_reached ();
+        }
+    }
+
+    // XXX: This is a terrible, horrible, no good, very bad hack to make the ALU simpler for add2
+    public int get_register_value (Replay.DMG.Processor.Registers.Register register) {
+        switch (register) {
+            case A:
+                return get_a ();
+            case B:
+                return get_b ();
+            case C:
+                return get_c ();
+            case D:
+                return get_d ();
+            case E:
+                return get_e ();
+            case H:
+                return get_h ();
+            case L:
+                return get_l ();
+            case AF:
+                return get_af ();
+            case BC:
+                return get_bc ();
+            case DE:
+                return get_de ();
+            case HL:
+                return get_hl ();
+            default:
+                assert_not_reached ();
+        }
+    }
+
+    public void set_flag (Replay.DMG.Processor.FlagRegister.Flags flag) {
         switch (flag) {
             case Z:
                 flag_register.set_z (true);
@@ -176,7 +270,7 @@ public class Replay.DMG.Processor.Registers : GLib.Object {
         }
     }
 
-    public void clear_flag (Replay.DMG.Processor.Flags flag) {
+    public void clear_flag (Replay.DMG.Processor.FlagRegister.Flags flag) {
         switch (flag) {
             case Z:
                 flag_register.set_z (false);
@@ -195,7 +289,7 @@ public class Replay.DMG.Processor.Registers : GLib.Object {
         }
     }
 
-    public bool get_flag (Replay.DMG.Processor.Flags flag) {
+    public bool get_flag (Replay.DMG.Processor.FlagRegister.Flags flag) {
         switch (flag) {
             case Z:
                 return flag_register.is_z ();

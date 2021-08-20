@@ -40,20 +40,65 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
     // $0100-$014F	Cartridge Header Area
     // $0000-$00FF	Restart and Interrupt Vectors
 
-    char cart[0x8000]; // $0000-$7FFF  Cart RAM
-    char sram[0x2000]; // $A000-$BFFF  External (Cartridge) RAM
-    char io[0x100];    // $FF00-$FF7F  Hardware I/O Registers
-    char vram[0x2000]; // $8000-$9FFF  VRAM
-    char oam[0x100];   // $FE00-$FEFF  Object Attribute Memory (OAM)
-    char wram[0x2000]; // $C000-$FDFF  Internal Work RAM (WRAM)
-    char hram[0x80];   // $FF80-$FFFE  High RAM Area
+    // TODO: These should probably be char arrays since, well, you know, a char is a byte, not an int...
 
-    public void write_byte (int address, int value) {
-        // TODO
+    int cart[0x8000]; // $0000-$7FFF  Cart RAM
+    int vram[0x2000]; // $8000-$9FFF  VRAM
+    int sram[0x2000]; // $A000-$BFFF  External (Cartridge) RAM
+    int wram[0x2000]; // $C000-$FDFF  Internal Work RAM (WRAM)
+    int oam[0x100];   // $FE00-$FEFF  Object Attribute Memory (OAM)
+    int io[0x100];    // $FF00-$FF7F  Hardware I/O Registers
+    int hram[0x80];   // $FF80-$FFFE  High RAM Area
+
+    private Gee.List<Replay.DMG.Memory.AddressSpace> address_spaces;
+
+    construct {
+        address_spaces = new Gee.ArrayList<Replay.DMG.Memory.AddressSpace> ();
+        //  address_spaces.add (new CartRAM ());
     }
 
-    public void read_byte (int address) {
+    public void write_byte (int address, int value) {
+        //  if (address < 0x8000) {
+        //      error ("Cannot write to cart address space!");
+        //  } else if (address >= 0x8000 && address <= 0x9FF) {
+        //      // VRAM
+        //  } else if (address >= 0xA000 && address <= 0xBFFF) {
+        //      // SRAM
+        //  } else if (address >= 0xC000 && address <= 0xFDFF) {
+        //      // WRAM
+        //  } else if (address >= 0xFE00 && address <= 0xFEFF) {
+        //      // OAM
+        //  } else if (address >= 0xFF00 && address <= 0xFF7F) {
+        //      // IO
+        //  } else if (address >= 0xFF80 && address <= 0xFFFE) {
+        //      // HRAM
+        //  } else if (address == 0xFFFF) {
+        //      // Interrupt
+        //  } else {
+        //      error ("Cannot write to memory address %d", address);
+        //  }
+        foreach (var address_space in address_spaces) {
+            if (address_space.accepts (address)) {
+                address_space.write_byte (address, value);
+                return;
+            }
+        }
+        warning ("No address space found for address: %d", address);
+    }
+
+    public int read_byte (int address) {
+        foreach (var address_space in address_spaces) {
+            if (address_space.accepts (address)) {
+                return address_space.read_byte (address);
+            }
+        }
+        warning ("No address space found for address: %d", address);
+        return -1;
+    }
+
+    public int read_word (int address) {
         // TODO
+        return -1;
     }
 
 }

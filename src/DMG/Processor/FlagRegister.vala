@@ -21,6 +21,28 @@
 
 public class Replay.DMG.Processor.FlagRegister : GLib.Object {
 
+    public enum Flags {
+        Z, // Zero
+        N, // Subtraction
+        H, // Half-carry
+        C; // Carry
+    
+        public int get_bit_position () {
+            switch (this) {
+                case Z:
+                    return 7;
+                case N:
+                    return 6;
+                case H:
+                    return 5;
+                case C:
+                    return 4;
+                default:
+                    assert_not_reached ();
+            }
+        }
+    }
+
     // http://www.devrs.com/gb/files/opcodes.html
 
     private int byte;
@@ -34,19 +56,19 @@ public class Replay.DMG.Processor.FlagRegister : GLib.Object {
     }
 
     public void set_z (bool is_z) {
-        update_byte (Replay.DMG.Processor.Flags.Z.get_bit_position (), is_z);
+        update_byte (Flags.Z.get_bit_position (), is_z);
     }
 
     public void set_n (bool is_n) {
-        update_byte (Replay.DMG.Processor.Flags.N.get_bit_position (), is_n);
+        update_byte (Flags.N.get_bit_position (), is_n);
     }
 
     public void set_h (bool is_h) {
-        update_byte (Replay.DMG.Processor.Flags.H.get_bit_position (), is_h);
+        update_byte (Flags.H.get_bit_position (), is_h);
     }
 
     public void set_c (bool is_c) {
-        update_byte (Replay.DMG.Processor.Flags.C.get_bit_position (), is_c);
+        update_byte (Flags.C.get_bit_position (), is_c);
     }
 
     private void update_byte (int position, bool value) {
@@ -54,19 +76,19 @@ public class Replay.DMG.Processor.FlagRegister : GLib.Object {
     }
 
     public bool is_z () {
-        return Replay.Utils.BitUtils.get_bit (byte, Replay.DMG.Processor.Flags.Z.get_bit_position ());
+        return Replay.Utils.BitUtils.get_bit (byte, Flags.Z.get_bit_position ());
     }
 
     public bool is_n () {
-        return Replay.Utils.BitUtils.get_bit (byte, Replay.DMG.Processor.Flags.N.get_bit_position ());
+        return Replay.Utils.BitUtils.get_bit (byte, Flags.N.get_bit_position ());
     }
 
     public bool is_h () {
-        return Replay.Utils.BitUtils.get_bit (byte, Replay.DMG.Processor.Flags.H.get_bit_position ());
+        return Replay.Utils.BitUtils.get_bit (byte, Flags.H.get_bit_position ());
     }
 
     public bool is_c () {
-        return Replay.Utils.BitUtils.get_bit (byte, Replay.DMG.Processor.Flags.C.get_bit_position ());
+        return Replay.Utils.BitUtils.get_bit (byte, Flags.C.get_bit_position ());
     }
 
 }

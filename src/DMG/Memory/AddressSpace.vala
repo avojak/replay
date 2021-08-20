@@ -19,26 +19,22 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
- public enum Replay.DMG.Processor.Flags {
+public abstract class Replay.DMG.Memory.AddressSpace : GLib.Object {
 
-    Z, // Zero
-    N, // Subtraction
-    H, // Half-carry
-    C; // Carry
+    public int offset { get; construct; }
+    public int length { get; construct; }
 
-    public int get_bit_position () {
-        switch (this) {
-            case Z:
-                return 7;
-            case N:
-                return 6;
-            case H:
-                return 5;
-            case C:
-                return 4;
-            default:
-                assert_not_reached ();
-        }
+    AddressSpace (int offset, int length) {
+        Object (
+            offset: offset,
+            length: length
+        );
     }
+
+    public abstract bool accepts (int address);
+
+    public abstract int read_byte (int address);
+
+    public abstract void write_byte (int address, int value);
 
 }
