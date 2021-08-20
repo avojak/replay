@@ -181,53 +181,53 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0x86] = null; // TODO
         operations[0x87] = new Replay.DMG.Processor.Operation ("ADD A, A", (cpu) => { cpu.add (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
         operations[0x88] = new Replay.DMG.Processor.Operation ("ADC A, B", (cpu) => { cpu.adc (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.B); }, 1, 4);
-        operations[0x89] = null; // TODO
-        operations[0x8A] = null; // TODO
-        operations[0x8B] = null; // TODO
-        operations[0x8C] = null; // TODO
-        operations[0x8D] = null; // TODO
+        operations[0x89] = new Replay.DMG.Processor.Operation ("ADC A, C", (cpu) => { cpu.adc (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.C); }, 1, 4);
+        operations[0x8A] = new Replay.DMG.Processor.Operation ("ADC A, D", (cpu) => { cpu.adc (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.D); }, 1, 4);
+        operations[0x8B] = new Replay.DMG.Processor.Operation ("ADC A, E", (cpu) => { cpu.adc (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.E); }, 1, 4);
+        operations[0x8C] = new Replay.DMG.Processor.Operation ("ADC A, H", (cpu) => { cpu.adc (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.H); }, 1, 4);
+        operations[0x8D] = new Replay.DMG.Processor.Operation ("ADC A, L", (cpu) => { cpu.adc (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.L); }, 1, 4);
         operations[0x8E] = null; // TODO
-        operations[0x8F] = null; // TODO
-        operations[0x90] = null; // TODO
-        operations[0x91] = null; // TODO
-        operations[0x92] = null; // TODO
-        operations[0x93] = null; // TODO
-        operations[0x94] = null; // TODO
-        operations[0x95] = null; // TODO
+        operations[0x8F] = new Replay.DMG.Processor.Operation ("ADC A, A", (cpu) => { cpu.adc (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
+        operations[0x90] = new Replay.DMG.Processor.Operation ("SUB B", (cpu) => { cpu.sub (Replay.DMG.Processor.Registers.Register.B); }, 1, 4);
+        operations[0x91] = new Replay.DMG.Processor.Operation ("SUB C", (cpu) => { cpu.sub (Replay.DMG.Processor.Registers.Register.C); }, 1, 4);
+        operations[0x92] = new Replay.DMG.Processor.Operation ("SUB D", (cpu) => { cpu.sub (Replay.DMG.Processor.Registers.Register.D); }, 1, 4);
+        operations[0x93] = new Replay.DMG.Processor.Operation ("SUB E", (cpu) => { cpu.sub (Replay.DMG.Processor.Registers.Register.E); }, 1, 4);
+        operations[0x94] = new Replay.DMG.Processor.Operation ("SUB H", (cpu) => { cpu.sub (Replay.DMG.Processor.Registers.Register.H); }, 1, 4);
+        operations[0x95] = new Replay.DMG.Processor.Operation ("SUB L", (cpu) => { cpu.sub (Replay.DMG.Processor.Registers.Register.L); }, 1, 4);
         operations[0x96] = null; // TODO
-        operations[0x97] = null; // TODO
-        operations[0x98] = null; // TODO
-        operations[0x99] = null; // TODO
-        operations[0x9A] = null; // TODO
-        operations[0x9B] = null; // TODO
-        operations[0x9C] = null; // TODO
-        operations[0x9D] = null; // TODO
+        operations[0x97] = new Replay.DMG.Processor.Operation ("SUB A", (cpu) => { cpu.sub (Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
+        operations[0x98] = new Replay.DMG.Processor.Operation ("SBC B", (cpu) => { cpu.sbc (Replay.DMG.Processor.Registers.Register.B); }, 1, 4);
+        operations[0x99] = new Replay.DMG.Processor.Operation ("SBC C", (cpu) => { cpu.sbc (Replay.DMG.Processor.Registers.Register.C); }, 1, 4);
+        operations[0x9A] = new Replay.DMG.Processor.Operation ("SBC D", (cpu) => { cpu.sbc (Replay.DMG.Processor.Registers.Register.D); }, 1, 4);
+        operations[0x9B] = new Replay.DMG.Processor.Operation ("SBC E", (cpu) => { cpu.sbc (Replay.DMG.Processor.Registers.Register.E); }, 1, 4);
+        operations[0x9C] = new Replay.DMG.Processor.Operation ("SBC H", (cpu) => { cpu.sbc (Replay.DMG.Processor.Registers.Register.H); }, 1, 4);
+        operations[0x9D] = new Replay.DMG.Processor.Operation ("SBC L", (cpu) => { cpu.sbc (Replay.DMG.Processor.Registers.Register.L); }, 1, 4);
         operations[0x9E] = null; // TODO
-        operations[0x9F] = null; // TODO
-        operations[0xA0] = null; // TODO
-        operations[0xA1] = null; // TODO
-        operations[0xA2] = null; // TODO
-        operations[0xA3] = null; // TODO
-        operations[0xA4] = null; // TODO
-        operations[0xA5] = null; // TODO
+        operations[0x9F] = new Replay.DMG.Processor.Operation ("SBC A", (cpu) => { cpu.sbc (Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
+        operations[0xA0] = new Replay.DMG.Processor.Operation ("AND B", (cpu) => { cpu.and (Replay.DMG.Processor.Registers.Register.B); }, 1, 4);
+        operations[0xA1] = new Replay.DMG.Processor.Operation ("AND C", (cpu) => { cpu.and (Replay.DMG.Processor.Registers.Register.C); }, 1, 4);
+        operations[0xA2] = new Replay.DMG.Processor.Operation ("AND D", (cpu) => { cpu.and (Replay.DMG.Processor.Registers.Register.D); }, 1, 4);
+        operations[0xA3] = new Replay.DMG.Processor.Operation ("AND E", (cpu) => { cpu.and (Replay.DMG.Processor.Registers.Register.E); }, 1, 4);
+        operations[0xA4] = new Replay.DMG.Processor.Operation ("AND H", (cpu) => { cpu.and (Replay.DMG.Processor.Registers.Register.H); }, 1, 4);
+        operations[0xA5] = new Replay.DMG.Processor.Operation ("AND L", (cpu) => { cpu.and (Replay.DMG.Processor.Registers.Register.L); }, 1, 4);
         operations[0xA6] = null; // TODO
-        operations[0xA7] = null; // TODO
-        operations[0xA8] = null; // TODO
-        operations[0xA9] = null; // TODO
-        operations[0xAA] = null; // TODO
-        operations[0xAB] = null; // TODO
-        operations[0xAC] = null; // TODO
-        operations[0xAD] = null; // TODO
+        operations[0xA7] = new Replay.DMG.Processor.Operation ("AND A", (cpu) => { cpu.and (Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
+        operations[0xA8] = new Replay.DMG.Processor.Operation ("XOR B", (cpu) => { cpu.xor (Replay.DMG.Processor.Registers.Register.B); }, 1, 4);
+        operations[0xA9] = new Replay.DMG.Processor.Operation ("XOR C", (cpu) => { cpu.xor (Replay.DMG.Processor.Registers.Register.C); }, 1, 4);
+        operations[0xAA] = new Replay.DMG.Processor.Operation ("XOR D", (cpu) => { cpu.xor (Replay.DMG.Processor.Registers.Register.D); }, 1, 4);
+        operations[0xAB] = new Replay.DMG.Processor.Operation ("XOR E", (cpu) => { cpu.xor (Replay.DMG.Processor.Registers.Register.E); }, 1, 4);
+        operations[0xAC] = new Replay.DMG.Processor.Operation ("XOR H", (cpu) => { cpu.xor (Replay.DMG.Processor.Registers.Register.H); }, 1, 4);
+        operations[0xAD] = new Replay.DMG.Processor.Operation ("XOR L", (cpu) => { cpu.xor (Replay.DMG.Processor.Registers.Register.L); }, 1, 4);
         operations[0xAE] = null; // TODO
-        operations[0xAF] = null; // TODO
-        operations[0xB0] = null; // TODO
-        operations[0xB1] = null; // TODO
-        operations[0xB2] = null; // TODO
-        operations[0xB3] = null; // TODO
-        operations[0xB4] = null; // TODO
-        operations[0xB5] = null; // TODO
+        operations[0xAF] = new Replay.DMG.Processor.Operation ("XOR A", (cpu) => { cpu.xor (Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
+        operations[0xB0] = new Replay.DMG.Processor.Operation ("OR B", (cpu) => { cpu.or (Replay.DMG.Processor.Registers.Register.B); }, 1, 4);
+        operations[0xB1] = new Replay.DMG.Processor.Operation ("OR C", (cpu) => { cpu.or (Replay.DMG.Processor.Registers.Register.C); }, 1, 4);
+        operations[0xB2] = new Replay.DMG.Processor.Operation ("OR D", (cpu) => { cpu.or (Replay.DMG.Processor.Registers.Register.D); }, 1, 4);
+        operations[0xB3] = new Replay.DMG.Processor.Operation ("OR E", (cpu) => { cpu.or (Replay.DMG.Processor.Registers.Register.E); }, 1, 4);
+        operations[0xB4] = new Replay.DMG.Processor.Operation ("OR H", (cpu) => { cpu.or (Replay.DMG.Processor.Registers.Register.H); }, 1, 4);
+        operations[0xB5] = new Replay.DMG.Processor.Operation ("OR L", (cpu) => { cpu.or (Replay.DMG.Processor.Registers.Register.L); }, 1, 4);
         operations[0xB6] = null; // TODO
-        operations[0xB7] = null; // TODO
+        operations[0xB7] = new Replay.DMG.Processor.Operation ("OR A", (cpu) => { cpu.or (Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
         operations[0xB8] = null; // TODO
         operations[0xB9] = null; // TODO
         operations[0xBA] = null; // TODO
@@ -307,6 +307,15 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         alu = new Replay.DMG.Processor.ALU (registers);
     }
 
+    public void initialize_registers () {
+        registers.set_af (0x01B0);
+        registers.set_bc (0x0013);
+        registers.set_de (0x00D8);
+        registers.set_hl (0x014D);
+        registers.set_sp (0xFFFE);
+        registers.set_pc (0x0100);
+    }
+
     public int d8 () {
         // TODO: Account for cycles?
         return mmu.read_byte (registers.get_pc () + 1);
@@ -378,24 +387,24 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         }
     }
 
-    public int sub () {
-        return -1;
+    public void sub (Replay.DMG.Processor.Registers.Register register) {
+        alu.sub (registers.get_register_value (register));
     }
 
-    public int sbc () {
-        return -1;
+    public void sbc (Replay.DMG.Processor.Registers.Register register) {
+        alu.sbc (registers.get_register_value (register));
     }
 
-    public int and () {
-        return -1;
+    public void and (Replay.DMG.Processor.Registers.Register register) {
+        alu.and (registers.get_register_value (register));
     }
 
-    public int or () {
-        return -1;
+    public void or (Replay.DMG.Processor.Registers.Register register) {
+        alu.or (registers.get_register_value (register));
     }
 
-    public int xor () {
-        return -1;
+    public void xor (Replay.DMG.Processor.Registers.Register register) {
+        alu.xor (registers.get_register_value (register));
     }
 
     public int cp () {

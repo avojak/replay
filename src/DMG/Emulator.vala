@@ -33,10 +33,12 @@ public class Replay.DMG.Emulator : GLib.Object {
     construct {
         mmu = new Replay.DMG.Memory.MMU ();
         cpu = new Replay.DMG.Processor.CPU (mmu);
+
+        initialize ();
     }
 
-    private void initialize_registers () {
-        
+    private void initialize () {
+        cpu.initialize_registers ();
     }
 
     public void start () {
