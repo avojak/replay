@@ -1,4 +1,17 @@
-# Replay
+![CI](https://github.com/avojak/replay/workflows/CI/badge.svg)
+![Lint](https://github.com/avojak/replay/workflows/Lint/badge.svg)
+![GitHub](https://img.shields.io/github/license/avojak/replay.svg?color=blue)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/avojak/replay?sort=semver)
+
+<p align="center">
+  <img src="data/assets/replay.svg" alt="Icon" />
+</p>
+<h1 align="center">Replay</h1>
+<!-- <p align="center">
+  <a href="https://appcenter.elementary.io/com.github.avojak.replay"><img src="https://appcenter.elementary.io/badge.svg" alt="Get it on AppCenter" /></a>
+</p> -->
+
+## Replay the Classics!
 
 Replay is a native Linux Game Boy emulator built in Vala and GTK for [elementary OS](https://elementary.io).
 
