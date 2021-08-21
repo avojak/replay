@@ -43,6 +43,8 @@ public class Replay.DMG.Processor.FlagRegister : GLib.Object {
         }
     }
 
+    private const int MASK = 0xF0;
+
     // http://www.devrs.com/gb/files/opcodes.html
 
     private int byte;
@@ -52,7 +54,7 @@ public class Replay.DMG.Processor.FlagRegister : GLib.Object {
     }
 
     public void set_byte (int value) {
-        byte = value;
+        byte = mask (value);
     }
 
     public void set_z (bool is_z) {
@@ -72,7 +74,7 @@ public class Replay.DMG.Processor.FlagRegister : GLib.Object {
     }
 
     private void update_byte (int position, bool value) {
-        byte = Replay.Utils.BitUtils.update_bit (byte, position, value);
+        byte = mask (Replay.Utils.BitUtils.update_bit (byte, position, value));
     }
 
     public bool is_z () {
@@ -89,6 +91,14 @@ public class Replay.DMG.Processor.FlagRegister : GLib.Object {
 
     public bool is_c () {
         return Replay.Utils.BitUtils.get_bit (byte, Flags.C.get_bit_position ());
+    }
+
+    private int mask (int byte) {
+        int value = byte & MASK; // Ensure the lower nibble is always 0
+        if (value != byte) {
+            warning ("Blocked attempt to write non-zero value to lower nibble of flag register");
+        }
+        return value;
     }
 
 }

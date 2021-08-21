@@ -237,11 +237,11 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0xBE] = null; // TODO
         operations[0xBF] = new Replay.DMG.Processor.Operation ("CP A", (cpu) => { cpu.cp (Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
         operations[0xC0] = null; // TODO
-        operations[0xC1] = null; // TODO
+        operations[0xC1] = new Replay.DMG.Processor.Operation ("POP BC", (cpu) => { cpu.pop (Replay.DMG.Processor.Registers.Register.BC); }, 1, 12);
         operations[0xC2] = null; // TODO
         operations[0xC3] = null; // TODO
         operations[0xC4] = null; // TODO
-        operations[0xC5] = null; // TODO
+        operations[0xC5] = new Replay.DMG.Processor.Operation ("PUSH BC", (cpu) => { cpu.push (Replay.DMG.Processor.Registers.Register.BC); }, 1, 16);
         operations[0xC6] = null; // TODO
         operations[0xC7] = null; // TODO
         operations[0xC8] = null; // TODO
@@ -253,11 +253,11 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0xCE] = null; // TODO
         operations[0xCF] = null; // TODO
         operations[0xD0] = null; // TODO
-        operations[0xD1] = null; // TODO
+        operations[0xD1] = new Replay.DMG.Processor.Operation ("POP DE", (cpu) => { cpu.pop (Replay.DMG.Processor.Registers.Register.DE); }, 1, 12);
         operations[0xD2] = null; // TODO
         operations[0xD3] = new Replay.DMG.Processor.Operation ("XXX", (cpu) => { cpu.invalid_operation (); }, 0, 0);
         operations[0xD4] = null; // TODO
-        operations[0xD5] = null; // TODO
+        operations[0xD5] = new Replay.DMG.Processor.Operation ("PUSH DE", (cpu) => { cpu.push (Replay.DMG.Processor.Registers.Register.DE); }, 1, 16);
         operations[0xD6] = null; // TODO
         operations[0xD7] = null; // TODO
         operations[0xD8] = null; // TODO
@@ -269,11 +269,11 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0xDE] = null; // TODO
         operations[0xDF] = null; // TODO
         operations[0xE0] = null; // TODO
-        operations[0xE1] = null; // TODO
+        operations[0xE1] = new Replay.DMG.Processor.Operation ("POP HL", (cpu) => { cpu.pop (Replay.DMG.Processor.Registers.Register.HL); }, 1, 12);
         operations[0xE2] = null; // TODO
         operations[0xE3] = new Replay.DMG.Processor.Operation ("XXX", (cpu) => { cpu.invalid_operation (); }, 0, 0);
         operations[0xE4] = new Replay.DMG.Processor.Operation ("XXX", (cpu) => { cpu.invalid_operation (); }, 0, 0);
-        operations[0xE5] = null; // TODO
+        operations[0xE5] = new Replay.DMG.Processor.Operation ("PUSH HL", (cpu) => { cpu.push (Replay.DMG.Processor.Registers.Register.HL); }, 1, 16);
         operations[0xE6] = null; // TODO
         operations[0xE7] = null; // TODO
         operations[0xE8] = null; // TODO
@@ -285,11 +285,11 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0xEE] = null; // TODO
         operations[0xEF] = null; // TODO
         operations[0xF0] = null; // TODO
-        operations[0xF1] = null; // TODO
+        operations[0xF1] = new Replay.DMG.Processor.Operation ("POP AF", (cpu) => { cpu.pop (Replay.DMG.Processor.Registers.Register.AF); }, 1, 12);
         operations[0xF2] = null; // TODO
         operations[0xF3] = null; // TODO
         operations[0xF4] = new Replay.DMG.Processor.Operation ("XXX", (cpu) => { cpu.invalid_operation (); }, 0, 0);
-        operations[0xF5] = null; // TODO
+        operations[0xF5] = new Replay.DMG.Processor.Operation ("PUSH AF", (cpu) => { cpu.push (Replay.DMG.Processor.Registers.Register.AF); }, 1, 16);
         operations[0xF6] = null; // TODO
         operations[0xF7] = null; // TODO
         operations[0xF8] = null; // TODO
@@ -368,12 +368,36 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
 
     }
 
-    public int push () {
-        return -1;
+    public void push (Replay.DMG.Processor.Registers.Register register) {
+        if (!register.is_16_bit_register ()) {
+            error ("Must be a 16 bit register");
+        }
+        int sp = registers.get_sp ();
+        int value = registers.get_register_value (register);
+        sp--;
+        // TODO: Account for cycles?
+        int upper_byte = (value & 0xF0) >> 8;
+        mmu.write_byte (sp, upper_byte);
+        sp--;
+        // TODO: Account for cycles?s
+        int lower_byte = value & 0x0F;
+        mmu.write_byte (sp, lower_byte);
+        registers.set_sp (sp);
     }
 
-    public int pop () {
-        return -1;
+    public void pop (Replay.DMG.Processor.Registers.Register register) {
+        if (!register.is_16_bit_register ()) {
+            error ("Must be a 16 bit register");
+        }
+        int sp = registers.get_sp ();
+        // TODO: Account for cycles?
+        int lower_byte = mmu.read_byte (sp);
+        sp++;
+        // TODO: Account for cycles?
+        int upper_byte = mmu.read_byte (sp) << 8;
+        sp++;
+        registers.set_sp (sp);
+        registers.set_register_value (register, lower_byte | upper_byte);
     }
 
     public void add (Replay.DMG.Processor.Registers.Register dest, Replay.DMG.Processor.Registers.Register src) {
