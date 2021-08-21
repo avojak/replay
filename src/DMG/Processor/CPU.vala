@@ -71,7 +71,7 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0x18] = null; // TODO
         operations[0x19] = new Replay.DMG.Processor.Operation ("ADD HL, DE", (cpu) => { cpu.add (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.DE); }, 1, 8);
         operations[0x1A] = new Replay.DMG.Processor.Operation ("LD A, (DE)", (cpu) => { cpu.ld_memory_to_register (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.DE); }, 1, 8);
-        operations[0x1B] = null; // TODO
+        operations[0x1B] = new Replay.DMG.Processor.Operation ("DEC DE", (cpu) => { cpu.dec (Replay.DMG.Processor.Registers.Register.DE); }, 1, 8);
         operations[0x1C] = new Replay.DMG.Processor.Operation ("INC E", (cpu) => { cpu.inc (Replay.DMG.Processor.Registers.Register.E); }, 1, 4);
         operations[0x1D] = new Replay.DMG.Processor.Operation ("DEC E", (cpu) => { cpu.dec (Replay.DMG.Processor.Registers.Register.E); }, 1, 4);
         operations[0x1E] = null; // TODO
@@ -87,7 +87,7 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0x28] = null; // TODO
         operations[0x29] = new Replay.DMG.Processor.Operation ("ADD HL, HL", (cpu) => { cpu.add (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.HL); }, 1, 8);
         operations[0x2A] = null; // TODO
-        operations[0x2B] = null; // TODO
+        operations[0x2B] = new Replay.DMG.Processor.Operation ("DEC HL", (cpu) => { cpu.dec (Replay.DMG.Processor.Registers.Register.HL); }, 1, 8);
         operations[0x2C] = new Replay.DMG.Processor.Operation ("INC L", (cpu) => { cpu.inc (Replay.DMG.Processor.Registers.Register.L); }, 1, 4);
         operations[0x2D] = new Replay.DMG.Processor.Operation ("DEC L", (cpu) => { cpu.dec (Replay.DMG.Processor.Registers.Register.L); }, 1, 4);
         operations[0x2E] = null; // TODO
@@ -95,7 +95,7 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0x30] = null; // TODO
         operations[0x31] = null; // TODO
         operations[0x32] = null; // TODO
-        operations[0x33] = null; // TODO
+        operations[0x33] = new Replay.DMG.Processor.Operation ("INC SP", (cpu) => { cpu.inc (Replay.DMG.Processor.Registers.Register.SP); }, 1, 8);
         operations[0x34] = null; // TODO
         operations[0x35] = null; // TODO
         operations[0x36] = null; // TODO
@@ -103,7 +103,7 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0x38] = null; // TODO
         operations[0x39] = null; // TODO
         operations[0x3A] = null; // TODO
-        operations[0x3B] = null; // TODO
+        operations[0x3B] = new Replay.DMG.Processor.Operation ("DEC SP", (cpu) => { cpu.dec (Replay.DMG.Processor.Registers.Register.SP); }, 1, 8);
         operations[0x3C] = new Replay.DMG.Processor.Operation ("INC A", (cpu) => { cpu.inc (Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
         operations[0x3D] = new Replay.DMG.Processor.Operation ("DEC A", (cpu) => { cpu.dec (Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
         operations[0x3E] = null; // TODO
@@ -242,7 +242,7 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0xC3] = null; // TODO
         operations[0xC4] = null; // TODO
         operations[0xC5] = new Replay.DMG.Processor.Operation ("PUSH BC", (cpu) => { cpu.push (Replay.DMG.Processor.Registers.Register.BC); }, 1, 16);
-        operations[0xC6] = null; // TODO
+        operations[0xC6] = new Replay.DMG.Processor.Operation ("ADD A, d8", (cpu) => { cpu.add_immediate_to_register (Replay.DMG.Processor.Registers.Register.A, cpu.d8 ()); }, 2, 8);
         operations[0xC7] = null; // TODO
         operations[0xC8] = null; // TODO
         operations[0xC9] = null; // TODO
@@ -250,7 +250,7 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0xCB] = null; // TODO
         operations[0xCC] = null; // TODO
         operations[0xCD] = null; // TODO
-        operations[0xCE] = null; // TODO
+        operations[0xCE] = new Replay.DMG.Processor.Operation ("ADC A, d8", (cpu) => { cpu.adc_immediate_to_register (Replay.DMG.Processor.Registers.Register.A, cpu.d8 ()); }, 2, 8);
         operations[0xCF] = null; // TODO
         operations[0xD0] = null; // TODO
         operations[0xD1] = new Replay.DMG.Processor.Operation ("POP DE", (cpu) => { cpu.pop (Replay.DMG.Processor.Registers.Register.DE); }, 1, 12);
@@ -408,12 +408,20 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         }
     }
 
+    public void add_immediate_to_register (Replay.DMG.Processor.Registers.Register register, int value) {
+        alu.add (value);
+    }
+
     public void adc (Replay.DMG.Processor.Registers.Register dest, Replay.DMG.Processor.Registers.Register src) {
         if (src.is_16_bit_register ()) {
             alu.adc (mmu.read_byte (registers.get_register_value (src)));
         } else {
             alu.adc (registers.get_register_value (src));
         }
+    }
+
+    public void adc_immediate_to_register (Replay.DMG.Processor.Registers.Register register, int value) {
+        alu.adc (value);
     }
 
     public void sub (Replay.DMG.Processor.Registers.Register register) {
@@ -441,11 +449,23 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
     }
 
     public void inc (Replay.DMG.Processor.Registers.Register register) {
-        registers.set_register_value (register, alu.inc (registers.get_register_value (register)));
+        if (register == Replay.DMG.Processor.Registers.Register.SP) {
+            registers.increment_sp ();
+        } else if (register == Replay.DMG.Processor.Registers.Register.PC) {
+            registers.increment_pc ();
+        } else {
+            registers.set_register_value (register, alu.inc (registers.get_register_value (register)));
+        }   
     }
 
     public void dec (Replay.DMG.Processor.Registers.Register register) {
-        registers.set_register_value (register, alu.dec (registers.get_register_value (register)));
+        if (register == Replay.DMG.Processor.Registers.Register.SP) {
+            registers.decrement_sp ();
+        } else if (register == Replay.DMG.Processor.Registers.Register.PC) {
+            registers.decrement_pc ();
+        } else {
+            registers.set_register_value (register, alu.dec (registers.get_register_value (register)));
+        }
     }
 
     public int swap () {

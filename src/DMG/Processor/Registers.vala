@@ -22,7 +22,7 @@
 public class Replay.DMG.Processor.Registers : GLib.Object {
 
     public enum Register {
-        A, B, C, D, E, H, L, AF, BC, DE, HL;
+        A, B, C, D, E, H, L, AF, BC, DE, HL, SP, PC;
 
         public bool is_16_bit_register () {
             switch (this) {
@@ -179,6 +179,10 @@ public class Replay.DMG.Processor.Registers : GLib.Object {
 
     public void decrement_sp () {
         sp = (sp - 1) & 0xFFFF;
+    }
+
+    public void decrement_pc () {
+        pc = (pc - 1) & 0xFFFF;
     }
 
     public void set_register_value (Replay.DMG.Processor.Registers.Register register, int value) {
