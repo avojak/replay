@@ -16,6 +16,7 @@ whalewatcher_files = files(
     join_paths('Widgets', 'HeaderBar.vala'),
     join_paths('Utils', 'BitUtils.vala'),
     join_paths('DMG', 'Emulator.vala'),
+    join_paths('DMG', 'Graphics', 'GPU.vala'),
     join_paths('DMG', 'Memory', 'AddressSpace.vala'),
     join_paths('DMG', 'Memory', 'BootRom.vala'),
     join_paths('DMG', 'Memory', 'MMU.vala'),

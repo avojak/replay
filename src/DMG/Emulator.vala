@@ -39,6 +39,7 @@ public class Replay.DMG.Emulator : GLib.Object {
 
     private void initialize () {
         cpu.initialize_registers ();
+        mmu.initialize_io_registers ();
     }
 
     public void start () {
@@ -59,6 +60,10 @@ public class Replay.DMG.Emulator : GLib.Object {
             }
         }
         return 0;
+    }
+
+    private void tick () {
+        cpu.tick ();
     }
 
     public void stop () {
