@@ -93,7 +93,7 @@ public class Replay.MainWindow : Hdy.Window {
             return;
         }
         dmg = new Replay.DMG.Emulator ();
-        dmg.start ();
+        //  dmg.start ();
     }
 
     public void on_stop_button_clicked () {

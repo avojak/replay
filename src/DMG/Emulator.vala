@@ -27,8 +27,8 @@ public class Replay.DMG.Emulator : GLib.Object {
     private Thread<int>? emulator_thread;
     private Cancellable? cancellable;
 
-    private Replay.DMG.Processor.CPU cpu;
     private Replay.DMG.Memory.MMU mmu;
+    private Replay.DMG.Processor.CPU cpu;
 
     construct {
         mmu = new Replay.DMG.Memory.MMU ();
@@ -47,8 +47,8 @@ public class Replay.DMG.Emulator : GLib.Object {
             warning (@"$COMMON_NAME emulator is already running");
             return;
         }
-        emulator_thread = new Thread<int> (@"$HARDWARE_NAME emulator", do_run);
         cancellable = new Cancellable ();
+        emulator_thread = new Thread<int> (@"$HARDWARE_NAME emulator", do_run);
     }
 
     private int do_run () {
@@ -63,7 +63,7 @@ public class Replay.DMG.Emulator : GLib.Object {
     }
 
     private void tick () {
-        cpu.tick ();
+        cpu.execute_instruction ();
     }
 
     public void stop () {

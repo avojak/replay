@@ -42,13 +42,13 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
 
     // TODO: These should probably be char arrays since, well, you know, a char is a byte, not an int...
 
-    int cart[0x8000]; // $0000-$7FFF  Cart RAM
-    int vram[0x2000]; // $8000-$9FFF  VRAM
-    int sram[0x2000]; // $A000-$BFFF  External (Cartridge) RAM
-    int wram[0x2000]; // $C000-$FDFF  Internal Work RAM (WRAM)
-    int oam[0x100];   // $FE00-$FEFF  Object Attribute Memory (OAM)
-    int io[0x100];    // $FF00-$FF7F  Hardware I/O Registers
-    int hram[0x80];   // $FF80-$FFFE  High RAM Area
+    int[] cart = new int[0x8000]; // $0000-$7FFF  Cart RAM
+    int[] vram = new int[0x2000]; // $8000-$9FFF  VRAM
+    int[] sram = new int[0x2000]; // $A000-$BFFF  External (Cartridge) RAM
+    int[] wram = new int[0x2000]; // $C000-$FDFF  Internal Work RAM (WRAM)
+    int[] oam = new int[0x100];   // $FE00-$FEFF  Object Attribute Memory (OAM)
+    int[] io = new int[0x100];    // $FF00-$FF7F  Hardware I/O Registers
+    int[] hram = new int[0x80];   // $FF80-$FFFE  High RAM Area
 
     private Gee.List<Replay.DMG.Memory.AddressSpace> address_spaces;
 
@@ -58,6 +58,7 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
     }
 
     public void initialize_io_registers () {
+        debug ("Initializing MMU registers...");
         // Hardware I/O
         write_byte (0xFF05, 0x00);
         write_byte (0xFF06, 0x00);

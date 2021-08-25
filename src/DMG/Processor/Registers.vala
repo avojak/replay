@@ -33,6 +33,8 @@ public class Replay.DMG.Processor.Registers : GLib.Object {
                 case E:
                 case H:
                 case L:
+                case SP:
+                case PC:
                     return false;
                 case AF:
                 case BC:

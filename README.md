@@ -72,3 +72,11 @@ Generate translations for the languages listed in the `po/LINGUAS` files:
 ```
 $ ninja -C build com.github.avojak.replay-update-po
 ```
+
+---
+
+## Copyright Notice
+
+Replay is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Nintendo&reg;, or any of its subsidiaries or its affiliates. Game Boy&trade; is a registered trademark of Nintendo Corporation.
+
+All other product names mentioned herein, with or without the registered trademark symbol &reg; or trademark symbol &trade; are generally trademarks and/or registered trademarks of their respective owners.

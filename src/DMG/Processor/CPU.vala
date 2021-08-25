@@ -308,12 +308,21 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
     }
 
     public void initialize_registers () {
+        debug ("Initializing CPU registers...");
         registers.set_af (0x01B0);
         registers.set_bc (0x0013);
         registers.set_de (0x00D8);
         registers.set_hl (0x014D);
         registers.set_sp (0xFFFE);
         registers.set_pc (0x0100);
+    }
+
+    public int get_pc () {
+        return registers.get_pc ();
+    }
+
+    public void set_pc (int pc) {
+        registers.set_pc (pc);
     }
 
     public int d8 () {
@@ -326,8 +335,10 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         return mmu.read_word (registers.get_pc () + 1);
     }
 
-    public void tick () {
-        // TODO
+    public void execute_instruction () {
+        int opcode = mmu.read_byte (registers.get_pc ());
+        Replay.DMG.Processor.Operation operation = operations[opcode];
+        operation.execute (this);
     }
 
     public void nop () {

@@ -27,7 +27,7 @@ public class Replay.DMG.Processor.Operation : GLib.Object {
     //
     public int ticks { get; construct; }
 
-    private Lambda exec;
+    private unowned Lambda exec;
 
     public Operation (string description, Lambda exec, int length, int ticks) {
         Object (
@@ -40,6 +40,7 @@ public class Replay.DMG.Processor.Operation : GLib.Object {
 
     public int execute (Replay.DMG.Processor.CPU cpu) {
         int result = exec (cpu);
+        cpu.set_pc (cpu.get_pc () + length);
         return result;
     }
 
