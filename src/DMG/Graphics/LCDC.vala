@@ -19,12 +19,25 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public interface Replay.DMG.Memory.AddressSpace : GLib.Object {
+public class Replay.DMG.Graphics.LCDC : GLib.Object, Replay.DMG.Memory.AddressSpace {
 
-    public abstract bool accepts (int address);
+    private const int ADDRESS = 0xFF40;
 
-    public abstract int read_byte (int address);
+    private int data;
 
-    public abstract void write_byte (int address, int value);
+    public LCDC () {
+    }
+
+    public bool accepts (int address) {
+        return address == ADDRESS;
+    }
+
+    public int read_byte (int address) {
+        return data;
+    }
+
+    public void write_byte (int address, int value) {
+        data = value;
+    }
 
 }

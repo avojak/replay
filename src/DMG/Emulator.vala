@@ -40,6 +40,7 @@ public class Replay.DMG.Emulator : GLib.Object {
     private void initialize () {
         cpu.initialize_registers ();
         mmu.initialize_io_registers ();
+        mmu.load_boot_rom ();
     }
 
     public void start () {
@@ -58,6 +59,7 @@ public class Replay.DMG.Emulator : GLib.Object {
             if (cancellable.is_cancelled ()) {
                 break;
             }
+            tick ();
         }
         return 0;
     }

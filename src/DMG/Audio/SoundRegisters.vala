@@ -19,12 +19,27 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public interface Replay.DMG.Memory.AddressSpace : GLib.Object {
+public class Replay.DMG.Audio.SoundRegisters : GLib.Object, Replay.DMG.Memory.AddressSpace {
 
-    public abstract bool accepts (int address);
+    private int[] space;
 
-    public abstract int read_byte (int address);
+    public SoundRegisters () {
+    }
 
-    public abstract void write_byte (int address, int value);
+    public bool accepts (int address) {
+        bool sound_mode_1 = address >= 0xFF10 && address <= 0xFF14;
+        bool sound_mode_2 = address >= 0xFF15 && address <= 0xFF19;
+        bool sound_mode_3 = address >= 0xFF1a && address <= 0xFF1E;
+        bool sound_mode_4 = address >= 0xFF1F && address <= 0xFF23;
+        return sound_mode_1 || sound_mode_2 || sound_mode_3 || sound_mode_4;
+    }
+
+    public int read_byte (int address) {
+        return -1;
+    }
+
+    public void write_byte (int address, int value) {
+
+    }
 
 }

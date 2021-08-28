@@ -19,12 +19,7 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public interface Replay.DMG.Memory.AddressSpace : GLib.Object {
+public class Replay.DMG.Audio.APU : GLib.Object {
 
-    public abstract bool accepts (int address);
-
-    public abstract int read_byte (int address);
-
-    public abstract void write_byte (int address, int value);
 
 }

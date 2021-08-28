@@ -23,6 +23,8 @@ public class Replay.MainWindow : Hdy.Window {
 
     public unowned Replay.Application app { get; construct; }
 
+    private Replay.Widgets.Dialogs.DebugDialog? debug_dialog = null;
+
     private Replay.MainLayout main_layout;
 
     private Replay.DMG.Emulator? dmg;
@@ -59,6 +61,7 @@ public class Replay.MainWindow : Hdy.Window {
 
         main_layout.start_button_clicked.connect (on_start_button_clicked);
         main_layout.stop_button_clicked.connect (on_stop_button_clicked);
+        main_layout.debug_button_clicked.connect (on_debug_button_clicked);
 
         show_app ();
     }
@@ -93,7 +96,7 @@ public class Replay.MainWindow : Hdy.Window {
             return;
         }
         dmg = new Replay.DMG.Emulator ();
-        //  dmg.start ();
+        dmg.start ();
     }
 
     public void on_stop_button_clicked () {
@@ -102,6 +105,17 @@ public class Replay.MainWindow : Hdy.Window {
         }
         dmg.stop ();
         dmg = null;
+    }
+
+    public void on_debug_button_clicked () {
+        if (debug_dialog == null) {
+            debug_dialog = new Replay.Widgets.Dialogs.DebugDialog (this);
+            debug_dialog.show_all ();
+            debug_dialog.destroy.connect (() => {
+                debug_dialog = null;
+            });
+        }
+        debug_dialog.present ();
     }
 
 }

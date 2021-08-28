@@ -43,18 +43,30 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
     // TODO: These should probably be char arrays since, well, you know, a char is a byte, not an int...
 
     int[] cart = new int[0x8000]; // $0000-$7FFF  Cart RAM
-    int[] vram = new int[0x2000]; // $8000-$9FFF  VRAM
+    //  int[] vram = new int[0x2000]; // $8000-$9FFF  VRAM
     int[] sram = new int[0x2000]; // $A000-$BFFF  External (Cartridge) RAM
-    int[] wram = new int[0x2000]; // $C000-$FDFF  Internal Work RAM (WRAM)
-    int[] oam = new int[0x100];   // $FE00-$FEFF  Object Attribute Memory (OAM)
+    //  int[] wram = new int[0x2000]; // $C000-$FDFF  Internal Work RAM (WRAM)
+    //  int[] oam = new int[0x100];   // $FE00-$FEFF  Object Attribute Memory (OAM)
     int[] io = new int[0x100];    // $FF00-$FF7F  Hardware I/O Registers
-    int[] hram = new int[0x80];   // $FF80-$FFFE  High RAM Area
+    //  int[] hram = new int[0x80];   // $FF80-$FFFE  High RAM Area
 
     private Gee.List<Replay.DMG.Memory.AddressSpace> address_spaces;
 
     construct {
         address_spaces = new Gee.ArrayList<Replay.DMG.Memory.AddressSpace> ();
-        //  address_spaces.add (new CartRAM ());
+        address_spaces.add (new Replay.DMG.Memory.RAM (0x8000, 0x2000)); // 0x8000-0x9FFF (Video RAM (VRAM))
+        address_spaces.add (new Replay.DMG.Memory.RAM (0xC000, 0x1000)); // 0xC000-0xCFFF (Internal RAM - Bank 0)
+        address_spaces.add (new Replay.DMG.Memory.RAM (0xD000, 0x1000)); // 0xD000-0xDFFF (Internal RAM - Bank 1)
+        address_spaces.add (new Replay.DMG.Memory.RAM (0xFE00, 0x00A0)); // 0xFE00-0xFEA0 (Object Attribute Memory (OAM))
+        address_spaces.add (new Replay.DMG.IO.Joypad ());                // 0xFF00
+        address_spaces.add (new Replay.DMG.IO.SerialPort ());            // 0xFF01-0xFF02 (Serial transfer data and control)
+        address_spaces.add (new Replay.DMG.Memory.Timer ());             // 0xFF04-0xFF07 (Timer and divider registers)
+        address_spaces.add (new Replay.DMG.Audio.SoundRegisters ());
+        address_spaces.add (new Replay.DMG.Memory.RAM (0xFF24, 0x0003));  // 0xFF24-0xFF26 (Sound RAM) // TODO: Should be part of SoundRegisters or APU
+        address_spaces.add (new Replay.DMG.Graphics.LCDC ());            // 0xFF40 (LCD Control Register (LCDC))
+        address_spaces.add (new Replay.DMG.Graphics.GraphicsRegisters ());
+        // TODO: Interrupt manager 0xFF0F, 0xFFFF
+        address_spaces.add (new Replay.DMG.Memory.RAM (0xFF80, 0x007F)); // 0xFF80-0xFFFE (High RAM (HRAM))
     }
 
     public void initialize_io_registers () {
@@ -95,6 +107,14 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
         write_byte (0xFFFF, 0x00);
     }
 
+    public void load_boot_rom () {
+        
+    }
+
+    public void load_rom () {
+
+    }
+
     public void write_byte (int address, int value) {
         //  if (address < 0x8000) {
         //      error ("Cannot write to cart address space!");
@@ -121,7 +141,7 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
                 return;
             }
         }
-        warning ("No address space found for address: %d", address);
+        warning ("No address space found for address: %02x", address);
     }
 
     public int read_byte (int address) {
@@ -130,7 +150,7 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
                 return address_space.read_byte (address);
             }
         }
-        warning ("No address space found for address: %d", address);
+        warning ("No address space found for address: %02x", address);
         return -1;
     }
 

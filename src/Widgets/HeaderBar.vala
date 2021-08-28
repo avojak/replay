@@ -30,6 +30,16 @@ public class Replay.Widgets.HeaderBar : Hdy.HeaderBar {
     }
 
     construct {
+        var debug_button = new Gtk.Button ();
+        debug_button.image = new Gtk.Image.from_icon_name ("applications-development-symbolic", Gtk.IconSize.BUTTON);
+        debug_button.tooltip_text = "Debug";
+        debug_button.relief = Gtk.ReliefStyle.NONE;
+        debug_button.valign = Gtk.Align.CENTER;
+
+        debug_button.clicked.connect (() => {
+            debug_button_clicked ();
+        });
+
         var mode_switch = new Granite.ModeSwitch.from_icon_name ("display-brightness-symbolic", "weather-clear-night-symbolic");
         mode_switch.primary_icon_tooltip_text = _("Light background");
         mode_switch.secondary_icon_tooltip_text = _("Dark background");
@@ -37,8 +47,12 @@ public class Replay.Widgets.HeaderBar : Hdy.HeaderBar {
         mode_switch.halign = Gtk.Align.CENTER;
         mode_switch.bind_property ("active", Gtk.Settings.get_default (), "gtk_application_prefer_dark_theme");
         Replay.Application.settings.bind ("prefer-dark-style", mode_switch, "active", GLib.SettingsBindFlags.DEFAULT);
-
+        
         pack_end (mode_switch);
+        pack_end (new Gtk.Separator (Gtk.Orientation.VERTICAL));
+        pack_end (debug_button);
     }
+
+    public signal void debug_button_clicked ();
 
 }

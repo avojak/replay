@@ -19,12 +19,30 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public interface Replay.DMG.Memory.AddressSpace : GLib.Object {
+public class Replay.DMG.Memory.Cartridge : GLib.Object, Replay.DMG.Memory.AddressSpace {
 
-    public abstract bool accepts (int address);
+    public int offset { get; construct; }
+    public int length { get; construct; }
+    private int[] space;
 
-    public abstract int read_byte (int address);
+    Cartridge () {
+        Object (
+            offset: offset,
+            length: length
+        );
+        space = new int[length];
+    }
 
-    public abstract void write_byte (int address, int value);
+    public bool accepts (int address) {
+        return false;
+    }
+
+    public int read_byte (int address) {
+        return -1;
+    }
+
+    public void write_byte (int address, int value) {
+
+    }
 
 }

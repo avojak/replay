@@ -35,6 +35,9 @@ public class Replay.MainLayout : Gtk.Grid {
     construct {
         header_bar = new Replay.Widgets.HeaderBar ();
         header_bar.get_style_context ().add_class ("default-decoration");
+        header_bar.debug_button_clicked.connect (() => {
+            debug_button_clicked ();
+        });
 
         var start_button = new Gtk.Button.with_label ("Start");
         start_button.clicked.connect (() => {
@@ -59,5 +62,7 @@ public class Replay.MainLayout : Gtk.Grid {
 
     public signal void start_button_clicked ();
     public signal void stop_button_clicked ();
+
+    public signal void debug_button_clicked ();
 
 }
