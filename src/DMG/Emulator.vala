@@ -29,10 +29,13 @@ public class Replay.DMG.Emulator : GLib.Object {
 
     private Replay.DMG.Memory.MMU mmu;
     private Replay.DMG.Processor.CPU cpu;
+    private Replay.DMG.Graphics.PPU ppu;
+    private Replay.DMG.Graphics.Display display;
 
     construct {
         mmu = new Replay.DMG.Memory.MMU ();
         cpu = new Replay.DMG.Processor.CPU (mmu);
+        ppu = new Replay.DMG.Graphics.PPU ();
 
         initialize ();
     }
@@ -73,5 +76,26 @@ public class Replay.DMG.Emulator : GLib.Object {
         cancellable.cancel ();
         emulator_thread = null;
     }
+
+    public void show (Replay.MainWindow main_window) {
+        if (display == null) {
+            display = new Replay.DMG.Graphics.Display (main_window);
+            display.show_all ();
+            display.destroy.connect (() => {
+                display = null;
+                stop ();
+                closed ();
+            });
+        }
+        display.present ();
+    }
+
+    public void hide () {
+        if (display != null) {
+            display.close ();
+        }
+    }
+
+    public signal void closed ();
 
 }

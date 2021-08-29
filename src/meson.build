@@ -17,6 +17,7 @@ whalewatcher_files = files(
     join_paths('Widgets', 'Dialogs', 'DebugDialog.vala'),
     join_paths('Utils', 'BitUtils.vala'),
     join_paths('DMG', 'Emulator.vala'),
+    join_paths('DMG', 'Graphics', 'Display.vala'),
     join_paths('DMG', 'Graphics', 'GraphicsRegisters.vala'),
     join_paths('DMG', 'Graphics', 'LCDC.vala'),
     join_paths('DMG', 'Graphics', 'PPU.vala'),
@@ -28,13 +29,15 @@ whalewatcher_files = files(
     join_paths('DMG', 'Memory', 'BootRom.vala'),
     join_paths('DMG', 'Memory', 'MMU.vala'),
     join_paths('DMG', 'Memory', 'RAM.vala'),
+    join_paths('DMG', 'Memory', 'ROM.vala'),
     join_paths('DMG', 'Memory', 'Timer.vala'),
     join_paths('DMG', 'Memory', 'Cartridge', 'Cartridge.vala'),
     join_paths('DMG', 'Processor', 'ALU.vala'),
     join_paths('DMG', 'Processor', 'CPU.vala'),
     join_paths('DMG', 'Processor', 'Operation.vala'),
     join_paths('DMG', 'Processor', 'FlagRegister.vala'),
-    join_paths('DMG', 'Processor', 'Registers.vala')
+    join_paths('DMG', 'Processor', 'Registers.vala'),
+    join_paths('DMG', 'Processor', 'InterruptManager.vala')
 )
 
 # Create a new executable, list the files we want to compile, list the dependencies we need, and install

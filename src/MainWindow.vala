@@ -96,6 +96,10 @@ public class Replay.MainWindow : Hdy.Window {
             return;
         }
         dmg = new Replay.DMG.Emulator ();
+        dmg.closed.connect (() => {
+            dmg = null;
+        });
+        dmg.show (this);
         dmg.start ();
     }
 
@@ -104,6 +108,7 @@ public class Replay.MainWindow : Hdy.Window {
             return;
         }
         dmg.stop ();
+        dmg.hide ();
         dmg = null;
     }
 

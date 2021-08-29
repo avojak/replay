@@ -42,18 +42,20 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
 
     // TODO: These should probably be char arrays since, well, you know, a char is a byte, not an int...
 
-    int[] cart = new int[0x8000]; // $0000-$7FFF  Cart RAM
+    //  int[] cart = new int[0x8000]; // $0000-$7FFF  Cart RAM
     //  int[] vram = new int[0x2000]; // $8000-$9FFF  VRAM
-    int[] sram = new int[0x2000]; // $A000-$BFFF  External (Cartridge) RAM
+    //  int[] sram = new int[0x2000]; // $A000-$BFFF  External (Cartridge) RAM
     //  int[] wram = new int[0x2000]; // $C000-$FDFF  Internal Work RAM (WRAM)
     //  int[] oam = new int[0x100];   // $FE00-$FEFF  Object Attribute Memory (OAM)
-    int[] io = new int[0x100];    // $FF00-$FF7F  Hardware I/O Registers
+    //  int[] io = new int[0x100];    // $FF00-$FF7F  Hardware I/O Registers
     //  int[] hram = new int[0x80];   // $FF80-$FFFE  High RAM Area
 
     private Gee.List<Replay.DMG.Memory.AddressSpace> address_spaces;
 
     construct {
         address_spaces = new Gee.ArrayList<Replay.DMG.Memory.AddressSpace> ();
+        address_spaces.add (new Replay.DMG.Memory.BootRom ());
+        // TODO: Add cartridge
         address_spaces.add (new Replay.DMG.Memory.RAM (0x8000, 0x2000)); // 0x8000-0x9FFF (Video RAM (VRAM))
         address_spaces.add (new Replay.DMG.Memory.RAM (0xC000, 0x1000)); // 0xC000-0xCFFF (Internal RAM - Bank 0)
         address_spaces.add (new Replay.DMG.Memory.RAM (0xD000, 0x1000)); // 0xD000-0xDFFF (Internal RAM - Bank 1)
@@ -65,8 +67,8 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
         address_spaces.add (new Replay.DMG.Memory.RAM (0xFF24, 0x0003));  // 0xFF24-0xFF26 (Sound RAM) // TODO: Should be part of SoundRegisters or APU
         address_spaces.add (new Replay.DMG.Graphics.LCDC ());            // 0xFF40 (LCD Control Register (LCDC))
         address_spaces.add (new Replay.DMG.Graphics.GraphicsRegisters ());
-        // TODO: Interrupt manager 0xFF0F, 0xFFFF
         address_spaces.add (new Replay.DMG.Memory.RAM (0xFF80, 0x007F)); // 0xFF80-0xFFFE (High RAM (HRAM))
+        address_spaces.add (new Replay.DMG.Processor.InterruptManager ()); // 0xFF0F, 0xFFFF Interrupt manager
     }
 
     public void initialize_io_registers () {
@@ -157,6 +159,21 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
     public int read_word (int address) {
         // TODO
         return -1;
+    }
+
+    public void write_word (int address, int value) {
+        foreach (var address_space in address_spaces) {
+            if (address_space.accepts (address)) {
+                address_space.write_byte (address, value >> 8);
+                return;
+            }
+        }
+        foreach (var address_space in address_spaces) {
+            if (address_space.accepts (address + 1)) {
+                address_space.write_byte (address + 1, (value & 0xFF) >> 8);
+                return;
+            }
+        }
     }
 
 }

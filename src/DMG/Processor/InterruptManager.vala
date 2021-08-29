@@ -19,31 +19,24 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.DMG.Graphics.PPU : GLib.Object {
+public class Replay.DMG.Processor.InterruptManager : GLib.Object, Replay.DMG.Memory.AddressSpace {
 
-    public Mode mode { get; set; }
+    private const int INTERRUPT_ENABLE_ADDRESS = 0xFFFF;
+    private const int INTERRUPT_FLAG_ADDRESS = 0xFF0F;
 
-    public enum Mode {
-        HBLANK, VBLANK, OAM_SEARCH, PIXEL_TRANSFER;
+    public InterruptManager () {
     }
 
-    construct {
-        mode = Mode.OAM_SEARCH;
+    public bool accepts (int address) {
+        return address == INTERRUPT_ENABLE_ADDRESS || address == INTERRUPT_FLAG_ADDRESS;
     }
 
-    public void tick () {
-        switch (mode) {
-            case HBLANK:
-                break;
-            case VBLANK:
-                break;
-            case OAM_SEARCH:
-                break;
-            case PIXEL_TRANSFER:
-                break;
-            default:
-                assert_not_reached ();
-        }
+    public int read_byte (int address) {
+        return -1;
+    }
+
+    public void write_byte (int address, int value) {
+
     }
 
 }
