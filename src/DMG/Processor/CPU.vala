@@ -20,7 +20,7 @@
  */
 
 public class Replay.DMG.Processor.CPU : GLib.Object {
-    
+
     /**
      * ALU = Arithmetic Logic Unit
      * 
@@ -308,7 +308,7 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
     }
 
     public void initialize_registers () {
-        debug ("Initializing CPU registers...");
+        debug ("Initializing CPU registers…");
         registers.set_af (0x01B0);
         registers.set_bc (0x0013);
         registers.set_de (0x00D8);
@@ -479,7 +479,7 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
             registers.increment_pc ();
         } else {
             registers.set_register_value (register, alu.inc (registers.get_register_value (register)));
-        }   
+        }
     }
 
     // Increment the contents of memory at the address specified by the register

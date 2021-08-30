@@ -56,7 +56,7 @@ public class Replay.DMG.Emulator : GLib.Object {
     }
 
     private int do_run () {
-        debug (@"Starting $COMMON_NAME emulator...");
+        debug (@"Starting $COMMON_NAME emulator…");
         while (true) {
             // TODO: Do the stuff
             if (cancellable.is_cancelled ()) {
@@ -72,7 +72,7 @@ public class Replay.DMG.Emulator : GLib.Object {
     }
 
     public void stop () {
-        debug (@"Stopping $COMMON_NAME emulator...");
+        debug (@"Stopping $COMMON_NAME emulator…");
         cancellable.cancel ();
         emulator_thread = null;
     }

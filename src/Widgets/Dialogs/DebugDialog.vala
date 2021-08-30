@@ -61,7 +61,7 @@ public class Replay.Widgets.Dialogs.DebugDialog : Granite.Dialog {
         var flag_c_value = new Gtk.Label ("0");
 
         var interrupts_header_label = new Granite.HeaderLabel ("Interrupts");
-        
+
         form_grid.attach (registers_header_label, 0, 0, 4, 1);
         form_grid.attach (register_af_label, 0, 1, 1, 1);
         form_grid.attach (register_af_value, 0, 2, 1, 1);

@@ -83,7 +83,7 @@ public class Replay.DMG.Graphics.Display : Hdy.Window {
         stroke_shapes (ctx, 0, 6 * SIZE);
 
         ctx.set_line_join (Cairo.LineJoin.MITER);
-        stroke_shapes(ctx, 0, 9 * SIZE);
+        stroke_shapes (ctx, 0, 9 * SIZE);
 
         fill_shapes (ctx, 0, 12 * SIZE);
 
@@ -128,7 +128,7 @@ public class Replay.DMG.Graphics.Display : Hdy.Window {
         inf (ctx);
         draw_method ();
 
-        ctx.restore();
+        ctx.restore ();
     }
 
     private void triangle (Cairo.Context ctx) {

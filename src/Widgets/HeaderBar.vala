@@ -47,7 +47,7 @@ public class Replay.Widgets.HeaderBar : Hdy.HeaderBar {
         mode_switch.halign = Gtk.Align.CENTER;
         mode_switch.bind_property ("active", Gtk.Settings.get_default (), "gtk_application_prefer_dark_theme");
         Replay.Application.settings.bind ("prefer-dark-style", mode_switch, "active", GLib.SettingsBindFlags.DEFAULT);
-        
+
         pack_end (mode_switch);
         pack_end (new Gtk.Separator (Gtk.Orientation.VERTICAL));
         pack_end (debug_button);

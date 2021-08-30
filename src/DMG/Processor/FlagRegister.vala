@@ -26,7 +26,7 @@ public class Replay.DMG.Processor.FlagRegister : GLib.Object {
         N, // Subtraction
         H, // Half-carry
         C; // Carry
-    
+
         public int get_bit_position () {
             switch (this) {
                 case Z:

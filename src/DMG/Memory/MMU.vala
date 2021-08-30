@@ -23,24 +23,24 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
 
     // http://gameboy.mongenel.com/dmg/asmmemmap.html
     // GameBoy Memory Areas
-    // $FFFF	    Interrupt Enable Flag
-    // $FF80-$FFFE	Zero Page - 127 bytes
-    // $FF00-$FF7F	Hardware I/O Registers
-    // $FEA0-$FEFF	Unusable Memory
-    // $FE00-$FE9F	OAM - Object Attribute Memory
-    // $E000-$FDFF	Echo RAM - Reserved, Do Not Use
-    // $D000-$DFFF	Internal RAM - Bank 1-7 (switchable - CGB only)
-    // $C000-$CFFF	Internal RAM - Bank 0 (fixed)
-    // $A000-$BFFF	Cartridge RAM (If Available)
-    // $9C00-$9FFF	BG Map Data 2
-    // $9800-$9BFF	BG Map Data 1
-    // $8000-$97FF	Character RAM
-    // $4000-$7FFF	Cartridge ROM - Switchable Banks 1-xx
-    // $0150-$3FFF	Cartridge ROM - Bank 0 (fixed)
-    // $0100-$014F	Cartridge Header Area
-    // $0000-$00FF	Restart and Interrupt Vectors
+    // $FFFF        Interrupt Enable Flag
+    // $FF80-$FFFE  Zero Page - 127 bytes
+    // $FF00-$FF7F  Hardware I/O Registers
+    // $FEA0-$FEFF  Unusable Memory
+    // $FE00-$FE9F  OAM - Object Attribute Memory
+    // $E000-$FDFF  Echo RAM - Reserved, Do Not Use
+    // $D000-$DFFF  Internal RAM - Bank 1-7 (switchable - CGB only)
+    // $C000-$CFFF  Internal RAM - Bank 0 (fixed)
+    // $A000-$BFFF  Cartridge RAM (If Available)
+    // $9C00-$9FFF  BG Map Data 2
+    // $9800-$9BFF  BG Map Data 1
+    // $8000-$97FF  Character RAM
+    // $4000-$7FFF  Cartridge ROM - Switchable Banks 1-xx
+    // $0150-$3FFF  Cartridge ROM - Bank 0 (fixed)
+    // $0100-$014F  Cartridge Header Area
+    // $0000-$00FF  Restart and Interrupt Vectors
 
-    // TODO: These should probably be char arrays since, well, you know, a char is a byte, not an int...
+    // TODO: These should probably be char arrays since, well, you know, a char is a byte, not an int…
 
     //  int[] cart = new int[0x8000]; // $0000-$7FFF  Cart RAM
     //  int[] vram = new int[0x2000]; // $8000-$9FFF  VRAM
@@ -72,7 +72,7 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
     }
 
     public void initialize_io_registers () {
-        debug ("Initializing MMU registers...");
+        debug ("Initializing MMU registers…");
         // Hardware I/O
         write_byte (0xFF05, 0x00);
         write_byte (0xFF06, 0x00);
@@ -110,7 +110,7 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
     }
 
     public void load_boot_rom () {
-        
+
     }
 
     public void load_rom () {
