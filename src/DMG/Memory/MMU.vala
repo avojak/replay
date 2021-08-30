@@ -157,23 +157,13 @@ public class Replay.DMG.Memory.MMU : GLib.Object {
     }
 
     public int read_word (int address) {
-        // TODO
-        return -1;
+        return (read_byte (address + 1) << 8) + read_byte (address);
     }
 
     public void write_word (int address, int value) {
-        foreach (var address_space in address_spaces) {
-            if (address_space.accepts (address)) {
-                address_space.write_byte (address, value >> 8);
-                return;
-            }
-        }
-        foreach (var address_space in address_spaces) {
-            if (address_space.accepts (address + 1)) {
-                address_space.write_byte (address + 1, (value & 0xFF) >> 8);
-                return;
-            }
-        }
+        value &= 0xFFFF;
+        write_byte (address, value & 0x00FF);
+        write_byte (address + 1, value >> 8);
     }
 
 }

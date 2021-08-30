@@ -222,6 +222,12 @@ public class Replay.DMG.Processor.Registers : GLib.Object {
             case HL:
                 set_hl (value);
                 break;
+            case SP:
+                set_sp (value);
+                break;
+            case PC:
+                set_pc (value);
+                break;
             default:
                 assert_not_reached ();
         }
@@ -252,6 +258,10 @@ public class Replay.DMG.Processor.Registers : GLib.Object {
                 return get_de ();
             case HL:
                 return get_hl ();
+            case SP:
+                return get_sp ();
+            case PC:
+                return get_pc ();
             default:
                 assert_not_reached ();
         }

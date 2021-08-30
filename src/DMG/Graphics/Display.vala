@@ -25,7 +25,7 @@ public class Replay.DMG.Graphics.Display : Hdy.Window {
 
     private const int WIDTH = 160;
     private const int HEIGHT = 144;
-    private const int SCALING = 3;
+    private const int BASE_SCALING = 2; // Base scaling factor to have a reasonble default display size 
 
     private const int SIZE = 30; // TODO: Temprorary
 
@@ -44,8 +44,8 @@ public class Replay.DMG.Graphics.Display : Hdy.Window {
 
     construct {
         drawing_area = new Gtk.DrawingArea ();
-        drawing_area.width_request = WIDTH * SCALING;
-        drawing_area.height_request = HEIGHT * SCALING;
+        drawing_area.width_request = WIDTH * BASE_SCALING;
+        drawing_area.height_request = HEIGHT * BASE_SCALING;
         drawing_area.draw.connect (on_draw);
 
         var header_bar = new Hdy.HeaderBar () {

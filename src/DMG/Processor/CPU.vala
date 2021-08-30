@@ -96,18 +96,18 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0x31] = new Replay.DMG.Processor.Operation ("LD SP, d16", (cpu) => { cpu.ld_immediate_to_register (Replay.DMG.Processor.Registers.Register.SP, cpu.d16 ()); }, 3, 12);
         operations[0x32] = new Replay.DMG.Processor.Operation ("LD (HL-), A", (cpu) => { cpu.dec (Replay.DMG.Processor.Registers.Register.HL); cpu.ld_register_to_memory (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.A); }, 1, 8);
         operations[0x33] = new Replay.DMG.Processor.Operation ("INC SP", (cpu) => { cpu.inc (Replay.DMG.Processor.Registers.Register.SP); }, 1, 8);
-        operations[0x34] = null; // TODO
-        operations[0x35] = null; // TODO
-        operations[0x36] = null; // TODO
+        operations[0x34] = new Replay.DMG.Processor.Operation ("INC (HL)", (cpu) => { cpu.inc_memory (Replay.DMG.Processor.Registers.Register.HL); }, 1, 12);
+        operations[0x35] = new Replay.DMG.Processor.Operation ("DEC (HL)", (cpu) => { cpu.dec_memory (Replay.DMG.Processor.Registers.Register.HL); }, 1, 12);
+        operations[0x36] = new Replay.DMG.Processor.Operation ("LD (HL), d8", (cpu) => { cpu.ld_memory_to_location (Replay.DMG.Processor.Registers.Register.HL, cpu.d8 ()); }, 2, 12);
         operations[0x37] = null; // TODO
         operations[0x38] = null; // TODO
-        operations[0x39] = null; // TODO
+        operations[0x39] = new Replay.DMG.Processor.Operation ("ADD HL, SP", (cpu) => { cpu.add (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.SP); }, 1, 8);
         operations[0x3A] = new Replay.DMG.Processor.Operation ("LD A, (HL-)", (cpu) => { cpu.dec (Replay.DMG.Processor.Registers.Register.HL); cpu.ld_register_to_memory (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.HL); }, 1, 8);
         operations[0x3B] = new Replay.DMG.Processor.Operation ("DEC SP", (cpu) => { cpu.dec (Replay.DMG.Processor.Registers.Register.SP); }, 1, 8);
         operations[0x3C] = new Replay.DMG.Processor.Operation ("INC A", (cpu) => { cpu.inc (Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
         operations[0x3D] = new Replay.DMG.Processor.Operation ("DEC A", (cpu) => { cpu.dec (Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
-        operations[0x3E] = null; // TODO
-        operations[0x3F] = null; // TODO
+        operations[0x3E] = new Replay.DMG.Processor.Operation ("LD A, d8", (cpu) => { cpu.ld_immediate_to_register (Replay.DMG.Processor.Registers.Register.A, cpu.d8 ()); }, 2, 8);
+        operations[0x3F] = new Replay.DMG.Processor.Operation ("CCF", (cpu) => { cpu.ccf (); }, 1, 4);
         operations[0x40] = new Replay.DMG.Processor.Operation ("LD B, B", (cpu) => { cpu.ld_register_to_register (Replay.DMG.Processor.Registers.Register.B, Replay.DMG.Processor.Registers.Register.B); }, 1, 4);
         operations[0x41] = new Replay.DMG.Processor.Operation ("LD B, C", (cpu) => { cpu.ld_register_to_register (Replay.DMG.Processor.Registers.Register.B, Replay.DMG.Processor.Registers.Register.C); }, 1, 4);
         operations[0x42] = new Replay.DMG.Processor.Operation ("LD B, D", (cpu) => { cpu.ld_register_to_register (Replay.DMG.Processor.Registers.Register.B, Replay.DMG.Processor.Registers.Register.D); }, 1, 4);
@@ -156,14 +156,14 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0x6D] = new Replay.DMG.Processor.Operation ("LD L, L", (cpu) => { cpu.ld_register_to_register (Replay.DMG.Processor.Registers.Register.L, Replay.DMG.Processor.Registers.Register.L); }, 1, 4);
         operations[0x6E] = new Replay.DMG.Processor.Operation ("LD L, (HL)", (cpu) => { cpu.ld_memory_to_register (Replay.DMG.Processor.Registers.Register.L, Replay.DMG.Processor.Registers.Register.HL); }, 1, 8);
         operations[0x6F] = new Replay.DMG.Processor.Operation ("LD L, A", (cpu) => { cpu.ld_register_to_register (Replay.DMG.Processor.Registers.Register.L, Replay.DMG.Processor.Registers.Register.A); }, 1, 4);
-        operations[0x70] = null; // TODO
-        operations[0x71] = null; // TODO
-        operations[0x72] = null; // TODO
-        operations[0x73] = null; // TODO
-        operations[0x74] = null; // TODO
-        operations[0x75] = null; // TODO
+        operations[0x70] = new Replay.DMG.Processor.Operation ("LD (HL), B", (cpu) => { cpu.ld_register_to_memory (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.B); }, 1, 8);
+        operations[0x71] = new Replay.DMG.Processor.Operation ("LD (HL), C", (cpu) => { cpu.ld_register_to_memory (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.C); }, 1, 8);
+        operations[0x72] = new Replay.DMG.Processor.Operation ("LD (HL), D", (cpu) => { cpu.ld_register_to_memory (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.D); }, 1, 8);
+        operations[0x73] = new Replay.DMG.Processor.Operation ("LD (HL), E", (cpu) => { cpu.ld_register_to_memory (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.E); }, 1, 8);
+        operations[0x74] = new Replay.DMG.Processor.Operation ("LD (HL), H", (cpu) => { cpu.ld_register_to_memory (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.H); }, 1, 8);
+        operations[0x75] = new Replay.DMG.Processor.Operation ("LD (HL), L", (cpu) => { cpu.ld_register_to_memory (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.L); }, 1, 8);
         operations[0x76] = new Replay.DMG.Processor.Operation ("HALT", (cpu) => { cpu.halt (); }, 1, 4);
-        operations[0x77] = null; // TODO
+        operations[0x77] = new Replay.DMG.Processor.Operation ("LD (HL), A", (cpu) => { cpu.ld_register_to_memory (Replay.DMG.Processor.Registers.Register.HL, Replay.DMG.Processor.Registers.Register.A); }, 1, 8);
         operations[0x78] = new Replay.DMG.Processor.Operation ("LD A, B", (cpu) => { cpu.ld_register_to_register (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.B); }, 1, 4);
         operations[0x79] = new Replay.DMG.Processor.Operation ("LD A, C", (cpu) => { cpu.ld_register_to_register (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.C); }, 1, 4);
         operations[0x7A] = new Replay.DMG.Processor.Operation ("LD A, D", (cpu) => { cpu.ld_register_to_register (Replay.DMG.Processor.Registers.Register.A, Replay.DMG.Processor.Registers.Register.D); }, 1, 4);
@@ -381,11 +381,15 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
 
     // Load the contents of the source register into the destination register
     public void ld_register_to_register (Replay.DMG.Processor.Registers.Register dest, Replay.DMG.Processor.Registers.Register src) {
-
+        registers.set_register_value (dest, registers.get_register_value (src));
     }
 
     public void ld_register_to_immediate_16 (Replay.DMG.Processor.Registers.Register src) {
         mmu.write_word (registers.get_pc () + 1, registers.get_register_value (src));
+    }
+
+    public void ld_memory_to_location (Replay.DMG.Processor.Registers.Register dest, int value) {
+        mmu.write_byte (registers.get_register_value (dest), value);
     }
 
     public void push (Replay.DMG.Processor.Registers.Register register) {
@@ -478,6 +482,12 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         }   
     }
 
+    // Increment the contents of memory at the address specified by the register
+    public void inc_memory (Replay.DMG.Processor.Registers.Register register) {
+        int address = registers.get_register_value (register);
+        mmu.write_byte (address, mmu.read_byte (address) + 1);
+    }
+
     public void dec (Replay.DMG.Processor.Registers.Register register) {
         if (register == Replay.DMG.Processor.Registers.Register.SP) {
             registers.decrement_sp ();
@@ -486,6 +496,12 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         } else {
             registers.set_register_value (register, alu.dec (registers.get_register_value (register)));
         }
+    }
+
+    // Decrements the contents of memory at the address specified by the register
+    public void dec_memory (Replay.DMG.Processor.Registers.Register register) {
+        int address = registers.get_register_value (register);
+        mmu.write_byte (address, mmu.read_byte (address) - 1);
     }
 
     public int swap () {
@@ -500,8 +516,13 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         return -1;
     }
 
-    public int ccf () {
-        return -1;
+    public void ccf () {
+        var flag = Replay.DMG.Processor.FlagRegister.Flags.C;
+        if (registers.get_flag (flag)) {
+            registers.clear_flag (flag);
+        } else {
+            registers.set_flag (flag);
+        }
     }
 
     public int scf () {
@@ -635,67 +656,5 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
     public int reti () {
         return -1;
     }
-
-    //  // 0x00
-    //  private void nop () {
-    //      // Do nothing
-    //  }
-
-    //  // 0x01
-    //  private void ld_bc_nn (int operand) {
-    //      registers.set_bc (operand);
-    //  }
-
-    //  // 0x02
-    //  private void ld_bcp_a () {
-    //      mmu.write_byte (registers.get_bc (), registers.get_a ());
-    //  }
-
-    //  // 0x03
-    //  private void inc_bc () {
-    //      registers.set_bc (registers.get_bc () + 1);
-    //  }
-
-    //  // 0x04
-    //  private void inc_b () {
-    //      registers.set_b (alu.inc (registers.get_b ()));
-    //  }
-
-    //  // 0x05
-    //  private void dec_b () {
-    //      registers.set_b (alu.dec (registers.get_b ()));
-    //  }
-
-    //  // 0x06
-    //  private void ld_b_n (int operand) {
-    //      registers.set_b (operand);
-    //  }
-
-    //  // 0x07
-    //  private void rlca () {
-    //      int carry = (registers.get_a () & 0x80) >> 7;
-    //      if (carry != 0) {
-    //          registers.set_flag (Replay.DMG.Processor.FlagRegister.Flags.C);
-    //      } else {
-    //          registers.clear_flag (Replay.DMG.Processor.FlagRegister.Flags.C);
-    //      }
-    //      registers.set_a (registers.get_a () << 1);
-    //      registers.set_a (registers.get_a () + carry);
-
-    //      registers.clear_flag (Replay.DMG.Processor.FlagRegister.Flags.N);
-    //      registers.clear_flag (Replay.DMG.Processor.FlagRegister.Flags.Z);
-    //      registers.clear_flag (Replay.DMG.Processor.FlagRegister.Flags.H);
-    //  }
-
-    //  // 0x08
-    //  private void ld_nnp_sp (int operand) {
-    //      mmu.write_byte (operand, registers.get_sp () & 0x00FF);
-    //      mmu.write_byte (operand, (registers.get_sp () & 0xFF00) >> 8);
-    //  }
-
-    //  // 0x09
-    //  private void add_hl_bc () {
-    //      alu.add2 (Replay.DMG.Processor.Registers.Register.HL, registers.get_bc ());
-    //  }
 
 }
