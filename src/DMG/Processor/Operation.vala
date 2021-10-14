@@ -23,26 +23,31 @@ public class Replay.DMG.Processor.Operation : GLib.Object {
 
     public string description { get; construct; }
     // The length of the operation (in bytes)
-    public int length { get; construct; }
+    //  public int length { get; construct; }
     //
-    public int ticks { get; construct; }
+    //  public int ticks { get; construct; }
 
-    private unowned Lambda exec;
+    protected unowned Lambda exec;
 
-    public Operation (string description, Lambda exec, int length, int ticks) {
+    public Operation (string description, Lambda exec /*, int length, int ticks*/) {
         Object (
-            description: description,
-            ticks: ticks,
-            length: length
+            description: description
+            //  ticks: ticks,
+            //  length: length
         );
         this.exec = exec;
     }
 
     public int execute (Replay.DMG.Processor.CPU cpu) {
         int result = exec (cpu);
-        cpu.set_pc (cpu.get_pc () + length);
+        //  handle_flags (cpu);
+        //  cpu.set_pc (cpu.get_pc () + length);
         return result;
     }
+
+    //  protected void handle_flags (Replay.DMG.Processor.CPU cpu) {
+    //      // TODO: Implement
+    //  }
 
     public delegate int Lambda (Replay.DMG.Processor.CPU cpu);
 

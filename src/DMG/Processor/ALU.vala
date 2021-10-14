@@ -39,10 +39,10 @@ public class Replay.DMG.Processor.ALU : GLib.Object {
             registers.clear_flag (Replay.DMG.Processor.FlagRegister.Flags.H);
         }
         value++;
-        if (value != 0) {
-            registers.clear_flag (Replay.DMG.Processor.FlagRegister.Flags.Z);
-        } else {
+        if (value == 0) {
             registers.set_flag (Replay.DMG.Processor.FlagRegister.Flags.Z);
+        } else {
+            registers.clear_flag (Replay.DMG.Processor.FlagRegister.Flags.Z);
         }
         registers.clear_flag (Replay.DMG.Processor.FlagRegister.Flags.N);
         return value;

@@ -34,6 +34,7 @@ whalewatcher_files = files(
     join_paths('DMG', 'Memory', 'Cartridge', 'Cartridge.vala'),
     join_paths('DMG', 'Processor', 'ALU.vala'),
     join_paths('DMG', 'Processor', 'CPU.vala'),
+    join_paths('DMG', 'Processor', 'Jump.vala'),
     join_paths('DMG', 'Processor', 'Operation.vala'),
     join_paths('DMG', 'Processor', 'FlagRegister.vala'),
     join_paths('DMG', 'Processor', 'Registers.vala'),
