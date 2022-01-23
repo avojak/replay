@@ -6,15 +6,8 @@ gnome = import('gnome')
 
 vala_args = ['--pkg', 'posix']
 
-# Check for dev profile
-if get_option('profile') == 'default'
-    application_id = meson.project_name()
-    application_name = 'Replay'
-else
-    application_id = '@0@-dev'.format(meson.project_name())
-    application_name = 'Replay (Development)'
-    vala_args += ['-D', 'IS_DEVEL']
-endif
+application_id = meson.project_name()
+application_name = 'Replay'
 
 # Set our translation domain
 add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()), language: 'c')

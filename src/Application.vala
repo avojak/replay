@@ -33,12 +33,6 @@ public class Replay.Application : Gtk.Application {
     }
 
     static construct {
-        //  Granite.Services.Logger.initialize (Constants.APP_ID);
-        //  if (is_dev_mode ()) {
-        //      Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG;
-        //  } else {
-        //      Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.WARN;
-        //  }
         info ("%s version: %s", Constants.APP_ID, Constants.VERSION);
         info ("Kernel version: %s", Posix.utsname ().release);
     }
@@ -50,10 +44,6 @@ public class Replay.Application : Gtk.Application {
         startup.connect ((handler) => {
             Hdy.init ();
         });
-    }
-
-    public static bool is_dev_mode () {
-        return Constants.APP_ID.has_suffix ("-dev");
     }
 
     public override void window_added (Gtk.Window window) {
@@ -73,6 +63,14 @@ public class Replay.Application : Gtk.Application {
     }
 
     protected override void activate () {
+        // Respect the system style preference
+        var granite_settings = Granite.Settings.get_default ();
+        var gtk_settings = Gtk.Settings.get_default ();
+        gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
+        granite_settings.notify["prefers-color-scheme"].connect (() => {
+            gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
+        });
+        
         this.add_new_window ();
     }
 

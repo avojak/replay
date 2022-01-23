@@ -1,7 +1,7 @@
 app-id: com.github.avojak.replay
 
 runtime: io.elementary.Platform
-runtime-version: '6'
+runtime-version: '6.1'
 sdk: io.elementary.Sdk
 
 command: com.github.avojak.replay
@@ -11,7 +11,6 @@ finish-args:
   - '--share=network'
   - '--socket=fallback-x11'
   - '--socket=wayland'
-  - '--system-talk-name=org.freedesktop.Accounts'
 
 modules:
   - name: replay
