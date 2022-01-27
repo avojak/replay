@@ -19,31 +19,34 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.DMG.Emulator : Replay.Emulator, GLib.Object {
+public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
 
-    public const string HARDWARE_NAME = "DMG";
-    public const string COMMON_NAME = "Game Boy";
+    public const string HARDWARE_NAME = "CHIP-8";
+    public const string COMMON_NAME = "CHIP-8";
 
     private Thread<int>? emulator_thread;
     private Cancellable? cancellable;
 
-    private Replay.DMG.Memory.MMU mmu;
-    private Replay.DMG.Processor.CPU cpu;
-    private Replay.DMG.Graphics.PPU ppu;
-    private Replay.DMG.Graphics.Display display;
+    private Replay.CHIP8.Memory.MMU mmu;
+    private Replay.CHIP8.Processor.CPU cpu;
+    //  private Replay.CHIP8.Graphics.PPU ppu;
+    private Replay.CHIP8.Graphics.Display display;
 
     construct {
-        mmu = new Replay.DMG.Memory.MMU ();
-        cpu = new Replay.DMG.Processor.CPU (mmu);
-        ppu = new Replay.DMG.Graphics.PPU ();
+        mmu = new Replay.CHIP8.Memory.MMU ();
+        cpu = new Replay.CHIP8.Processor.CPU (mmu);
+        cpu.draw_pixel.connect ((x, y, pixel) => {
+            display.set_pixel (x, y, pixel);
+        });
+        //  ppu = new Replay.CHIP8.Graphics.PPU ();
 
         initialize ();
     }
 
     private void initialize () {
-        cpu.initialize_registers ();
-        mmu.initialize_io_registers ();
-        mmu.load_boot_rom ();
+        //  cpu.initialize_registers ();
+        //  mmu.initialize_io_registers ();
+        //  mmu.load_boot_rom ();
     }
 
     public void start () {
@@ -68,7 +71,7 @@ public class Replay.DMG.Emulator : Replay.Emulator, GLib.Object {
     }
 
     private void tick () {
-        cpu.execute_instruction ();
+        cpu.tick ();
     }
 
     public void stop () {
@@ -79,7 +82,7 @@ public class Replay.DMG.Emulator : Replay.Emulator, GLib.Object {
 
     public void show (Replay.MainWindow main_window) {
         if (display == null) {
-            display = new Replay.DMG.Graphics.Display (main_window);
+            display = new Replay.CHIP8.Graphics.Display (main_window);
             display.show_all ();
             display.destroy.connect (() => {
                 display = null;

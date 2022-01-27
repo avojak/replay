@@ -11,11 +11,17 @@ config_header = configure_file(
 
 whalewatcher_files = files(
     join_paths('Application.vala'),
+    join_paths('Emulator.vala'),
     join_paths('MainWindow.vala'),
     join_paths('MainLayout.vala'),
     join_paths('Widgets', 'HeaderBar.vala'),
     join_paths('Widgets', 'Dialogs', 'DebugDialog.vala'),
     join_paths('Utils', 'BitUtils.vala'),
+    join_paths('CHIP8', 'Interpreter.vala'),
+    join_paths('CHIP8', 'Graphics', 'Display.vala'),
+    join_paths('CHIP8', 'Memory', 'MMU.vala'),
+    join_paths('CHIP8', 'Processor', 'CPU.vala'),
+    join_paths('CHIP8', 'Processor', 'Registers.vala'),
     join_paths('DMG', 'Emulator.vala'),
     join_paths('DMG', 'Graphics', 'Display.vala'),
     join_paths('DMG', 'Graphics', 'GraphicsRegisters.vala'),

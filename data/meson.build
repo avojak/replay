@@ -14,6 +14,12 @@ foreach i : icon_sizes
     )
 endforeach
 
+# Install the ROM files
+install_data (
+    join_paths('roms', 'chip8', 'IBM Logo.ch8'),
+    install_dir: join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
+)
+
 # Install the settings schema
 schema_path = '/com/github/avojak/apptemplate/'
 if get_option('profile') == 'dev'

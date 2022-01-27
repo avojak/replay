@@ -27,7 +27,7 @@ public class Replay.MainWindow : Hdy.Window {
 
     private Replay.MainLayout main_layout;
 
-    private Replay.DMG.Emulator? dmg;
+    private Replay.Emulator? emulator;
 
     public MainWindow (Replay.Application application) {
         Object (
@@ -50,8 +50,8 @@ public class Replay.MainWindow : Hdy.Window {
             // Do stuff before closing the application
 
             // Stop running emulator
-            if (dmg != null) {
-                dmg.stop ();
+            if (emulator != null) {
+                emulator.stop ();
             }
 
             GLib.Process.exit (0);
@@ -92,24 +92,25 @@ public class Replay.MainWindow : Hdy.Window {
 
     public void on_start_button_clicked () {
         // TODO: Add named view for the emulator
-        if (dmg != null) {
+        if (emulator != null) {
             return;
         }
-        dmg = new Replay.DMG.Emulator ();
-        dmg.closed.connect (() => {
-            dmg = null;
+        //  emulator = new Replay.DMG.Emulator ();
+        emulator = new Replay.CHIP8.Interpreter ();
+        emulator.closed.connect (() => {
+            emulator = null;
         });
-        dmg.show (this);
-        dmg.start ();
+        emulator.show (this);
+        emulator.start ();
     }
 
     public void on_stop_button_clicked () {
-        if (dmg == null) {
+        if (emulator == null) {
             return;
         }
-        dmg.stop ();
-        dmg.hide ();
-        dmg = null;
+        emulator.stop ();
+        emulator.hide ();
+        emulator = null;
     }
 
     public void on_debug_button_clicked () {

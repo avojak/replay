@@ -309,7 +309,7 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0x05] = new Replay.DMG.Processor.Operation ("DEC B", (cpu) => { cpu.dec_b (); });
         operations[0x06] = new Replay.DMG.Processor.Operation ("LD B, d8", (cpu) => { cpu.ld_b (); });
         operations[0x07] = new Replay.DMG.Processor.Operation ("RLCA", (cpu) => { cpu.rlca (); });
-        operations[0x08] = null; // TODO
+        operations[0x08] = new Replay.DMG.Processor.Operation ("LD (a16) SP", (cpu) => { cpu.ld_a16_loc_sp (); });
         operations[0x09] = new Replay.DMG.Processor.Operation ("ADD HL, BC", (cpu) => { cpu.add_hl_bc (); });
         operations[0x0A] = null; // TODO
         operations[0x0B] = null; // TODO
@@ -453,14 +453,14 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0x95] = new Replay.DMG.Processor.Operation ("SUB L", (cpu) => { cpu.sub_l (); });
         operations[0x96] = new Replay.DMG.Processor.Operation ("SUB (HL)", (cpu) => { cpu.sub_hl_loc (); });
         operations[0x97] = new Replay.DMG.Processor.Operation ("SUB A", (cpu) => { cpu.sub_a (); });
-        operations[0x98] = null; // TODO
-        operations[0x99] = null; // TODO
-        operations[0x9A] = null; // TODO
-        operations[0x9B] = null; // TODO
-        operations[0x9C] = null; // TODO
-        operations[0x9D] = null; // TODO
-        operations[0x9E] = null; // TODO
-        operations[0x9F] = null; // TODO
+        operations[0x98] = new Replay.DMG.Processor.Operation ("SBC A, B", (cpu) => { cpu.sbc_a_b (); });
+        operations[0x99] = new Replay.DMG.Processor.Operation ("SBC A, C", (cpu) => { cpu.sbc_a_c (); });
+        operations[0x9A] = new Replay.DMG.Processor.Operation ("SBC A, D", (cpu) => { cpu.sbc_a_d (); });
+        operations[0x9B] = new Replay.DMG.Processor.Operation ("SBC A, E", (cpu) => { cpu.sbc_a_e (); });
+        operations[0x9C] = new Replay.DMG.Processor.Operation ("SBC A, H", (cpu) => { cpu.sbc_a_h (); });
+        operations[0x9D] = new Replay.DMG.Processor.Operation ("SBC A, L", (cpu) => { cpu.sbc_a_l (); });
+        operations[0x9E] = null; // TODO new Replay.DMG.Processor.Operation ("SBC A, (HL)", (cpu) => { cpu.sbc_a_hl_loc (); });
+        operations[0x9F] = new Replay.DMG.Processor.Operation ("SBC A, A", (cpu) => { cpu.sbc_a_a (); });
         operations[0xA0] = new Replay.DMG.Processor.Operation ("AND B", (cpu) => { cpu.and_b (); });
         operations[0xA1] = new Replay.DMG.Processor.Operation ("AND C", (cpu) => { cpu.and_c (); });
         operations[0xA2] = new Replay.DMG.Processor.Operation ("AND D", (cpu) => { cpu.and_d (); });
@@ -483,16 +483,16 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
         operations[0xB3] = new Replay.DMG.Processor.Operation ("OR E", (cpu) => { cpu.or_e (); });
         operations[0xB4] = new Replay.DMG.Processor.Operation ("OR H", (cpu) => { cpu.or_h (); });
         operations[0xB5] = new Replay.DMG.Processor.Operation ("OR L", (cpu) => { cpu.or_l (); });
-        operations[0xB6] = null; // TODO
+        operations[0xB6] = new Replay.DMG.Processor.Operation ("OR (HL)", (cpu) => { cpu.or_hl_loc (); });
         operations[0xB7] = new Replay.DMG.Processor.Operation ("OR A", (cpu) => { cpu.or_a (); });
-        operations[0xB8] = null; // TODO
-        operations[0xB9] = null; // TODO
-        operations[0xBA] = null; // TODO
-        operations[0xBB] = null; // TODO
-        operations[0xBC] = null; // TODO
-        operations[0xBD] = null; // TODO
-        operations[0xBE] = null; // TODO
-        operations[0xBF] = null; // TODO
+        operations[0xB8] = new Replay.DMG.Processor.Operation ("CP B", (cpu) => { cpu.cp_b (); });
+        operations[0xB9] = new Replay.DMG.Processor.Operation ("CP C", (cpu) => { cpu.cp_c (); });
+        operations[0xBA] = new Replay.DMG.Processor.Operation ("CP D", (cpu) => { cpu.cp_d (); });
+        operations[0xBB] = new Replay.DMG.Processor.Operation ("CP E", (cpu) => { cpu.cp_e (); });
+        operations[0xBC] = new Replay.DMG.Processor.Operation ("CP H", (cpu) => { cpu.cp_h (); });
+        operations[0xBD] = new Replay.DMG.Processor.Operation ("CP L", (cpu) => { cpu.cp_l (); });
+        operations[0xBE] = new Replay.DMG.Processor.Operation ("CP (HL)", (cpu) => { cpu.cp_hl_loc (); });
+        operations[0xBF] = new Replay.DMG.Processor.Operation ("CP A", (cpu) => { cpu.cp_a (); });
         operations[0xC0] = null; // TODO
         operations[0xC1] = null; // TODO
         operations[0xC2] = null; // TODO
@@ -734,6 +734,9 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
     public void or_e () { or_register (Replay.DMG.Processor.Registers.Register.E); }
     public void or_h () { or_register (Replay.DMG.Processor.Registers.Register.H); }
     public void or_l () { or_register (Replay.DMG.Processor.Registers.Register.L); }
+    public void or_hl_loc () {
+        alu.or (mmu.read_byte (registers.get_register_value (Replay.DMG.Processor.Registers.Register.HL)));
+    }
     public void or_d8 () {
         alu.or (d8 ());
         // increase_cycle (2);
@@ -874,6 +877,24 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
     public void sub_hl_loc () { sub (mmu.read_byte (registers.get_register_value (Replay.DMG.Processor.Registers.Register.HL))); }
     public void sub_d8 () { sub (d8 ()); }
 
+    public void cp_a () { alu.cp (registers.get_register_value (Replay.DMG.Processor.Registers.Register.A)); }
+    public void cp_b () { alu.cp (registers.get_register_value (Replay.DMG.Processor.Registers.Register.B)); }
+    public void cp_c () { alu.cp (registers.get_register_value (Replay.DMG.Processor.Registers.Register.C)); }
+    public void cp_d () { alu.cp (registers.get_register_value (Replay.DMG.Processor.Registers.Register.D)); }
+    public void cp_e () { alu.cp (registers.get_register_value (Replay.DMG.Processor.Registers.Register.E)); }
+    public void cp_h () { alu.cp (registers.get_register_value (Replay.DMG.Processor.Registers.Register.H)); }
+    public void cp_l () { alu.cp (registers.get_register_value (Replay.DMG.Processor.Registers.Register.L)); }
+    public void cp_hl_loc () { alu.cp (mmu.read_byte (registers.get_register_value (Replay.DMG.Processor.Registers.Register.HL))); }
+
+    public void sbc_a_a () { sbc (Replay.DMG.Processor.Registers.Register.A); }
+    public void sbc_a_b () { sbc (Replay.DMG.Processor.Registers.Register.B); }
+    public void sbc_a_c () { sbc (Replay.DMG.Processor.Registers.Register.C); }
+    public void sbc_a_d () { sbc (Replay.DMG.Processor.Registers.Register.D); }
+    public void sbc_a_e () { sbc (Replay.DMG.Processor.Registers.Register.E); }
+    public void sbc_a_h () { sbc (Replay.DMG.Processor.Registers.Register.H); }
+    public void sbc_a_l () { sbc (Replay.DMG.Processor.Registers.Register.L); }
+    //  public void sbc_a_hl_loc () { sbc (mmu.read_byte (registers.get_register_value (Replay.DMG.Processor.Registers.Register.HL))); }
+
     public void rst_0 () { restart (0x00); }
     public void rst_1 () { restart (0x08); }
     public void rst_2 () { restart (0x10); }
@@ -882,6 +903,10 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
     public void rst_5 () { restart (0x28); }
     public void rst_6 () { restart (0x30); }
     public void rst_7 () { restart (0x38); }
+
+    public void ld_a16_loc_sp () {
+        mmu.write_word (registers.get_pc () + 1, registers.get_register_value (Replay.DMG.Processor.Registers.Register.SP));
+    }
 
     // ---- Private methods ---
 
@@ -972,6 +997,10 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
     private void sub (int value) {
         alu.sub (value);
         // increase_cycle ();
+    }
+
+    public void sbc (Replay.DMG.Processor.Registers.Register register) {
+        alu.sbc (registers.get_register_value (register));
     }
 
     private void restart (int address) {
@@ -1127,9 +1156,9 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
     //      alu.sub (registers.get_register_value (register));
     //  }
 
-    public void sbc (Replay.DMG.Processor.Registers.Register register) {
-        alu.sbc (registers.get_register_value (register));
-    }
+    //  public void sbc (Replay.DMG.Processor.Registers.Register register) {
+    //      alu.sbc (registers.get_register_value (register));
+    //  }
 
     public void and (Replay.DMG.Processor.Registers.Register register) {
         alu.and (registers.get_register_value (register));
@@ -1143,9 +1172,9 @@ public class Replay.DMG.Processor.CPU : GLib.Object {
     //      alu.xor (registers.get_register_value (register));
     //  }
 
-    public void cp (Replay.DMG.Processor.Registers.Register register) {
-        alu.cp (registers.get_register_value (register));
-    }
+    //  public void cp (Replay.DMG.Processor.Registers.Register register) {
+    //      alu.cp (registers.get_register_value (register));
+    //  }
 
     public void inc (Replay.DMG.Processor.Registers.Register register) {
         if (register == Replay.DMG.Processor.Registers.Register.SP) {
