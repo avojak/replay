@@ -24,21 +24,22 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
     public const string HARDWARE_NAME = "CHIP-8";
     public const string COMMON_NAME = "CHIP-8";
 
+    private const int BUFFER_SIZE = 512;
+
     private Thread<int>? emulator_thread;
     private Cancellable? cancellable;
 
     private Replay.CHIP8.Memory.MMU mmu;
     private Replay.CHIP8.Processor.CPU cpu;
-    //  private Replay.CHIP8.Graphics.PPU ppu;
-    private Replay.CHIP8.Graphics.Display display;
+    private Replay.CHIP8.Graphics.PPU ppu;
+    private Replay.CHIP8.Graphics.Widgets.Display display;
+
+    private Replay.CHIP8.Debug.Dialog debugger;
 
     construct {
         mmu = new Replay.CHIP8.Memory.MMU ();
-        cpu = new Replay.CHIP8.Processor.CPU (mmu);
-        cpu.draw_pixel.connect ((x, y, pixel) => {
-            display.set_pixel (x, y, pixel);
-        });
-        //  ppu = new Replay.CHIP8.Graphics.PPU ();
+        ppu = new Replay.CHIP8.Graphics.PPU (mmu);
+        cpu = new Replay.CHIP8.Processor.CPU (mmu, ppu);
 
         initialize ();
     }
@@ -49,17 +50,38 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
         //  mmu.load_boot_rom ();
     }
 
+    public void load_rom (GLib.File file) {
+        if (!file.query_exists ()) {
+            warning ("File not found: %s", file.get_path ());
+            return;
+        }
+        try {
+            ssize_t bytes_read = 0; // Total bytes read
+            ssize_t buffer_bytes = 0; // Bytes read into the buffer
+            uint8[] buffer = new uint8[BUFFER_SIZE];
+            GLib.FileInputStream input_stream = file.read ();
+            while ((buffer_bytes = input_stream.read (buffer, cancellable)) != 0) {
+                for (int i = 0; i < buffer_bytes; i++) {
+                    mmu.set_byte (Replay.CHIP8.Memory.MMU.ROM_OFFSET + (int) bytes_read + i, buffer[i]);
+                }
+                bytes_read += buffer_bytes;
+            }
+        } catch (GLib.Error e) {
+            warning ("Error loading ROM file (%s): %s", file.get_path (), e.message);
+        }
+    }
+
     public void start () {
         if (emulator_thread != null) {
-            warning (@"$COMMON_NAME emulator is already running");
+            warning (@"$COMMON_NAME interpreter is already running");
             return;
         }
         cancellable = new Cancellable ();
-        emulator_thread = new Thread<int> (@"$HARDWARE_NAME emulator", do_run);
+        emulator_thread = new Thread<int> (@"$HARDWARE_NAME interpreter", do_run);
     }
 
     private int do_run () {
-        debug (@"Starting $COMMON_NAME emulator…");
+        debug (@"Starting $COMMON_NAME interpreter…");
         while (true) {
             // TODO: Do the stuff
             if (cancellable.is_cancelled ()) {
@@ -71,24 +93,29 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
     }
 
     private void tick () {
+        //  debugger.update ();
         cpu.tick ();
     }
 
     public void stop () {
-        debug (@"Stopping $COMMON_NAME emulator…");
+        debug (@"Stopping $COMMON_NAME interpreter…");
         cancellable.cancel ();
         emulator_thread = null;
     }
 
     public void show (Replay.MainWindow main_window) {
         if (display == null) {
-            display = new Replay.CHIP8.Graphics.Display (main_window);
+            display = new Replay.CHIP8.Graphics.Widgets.Display (main_window, ppu);
             display.show_all ();
             display.destroy.connect (() => {
                 display = null;
+                debugger = null;
                 stop ();
                 closed ();
             });
+            //  debugger = new Replay.CHIP8.Debug.Dialog (display);
+            //  debugger.show_all ();
+            //  debugger.present ();
         }
         display.present ();
     }

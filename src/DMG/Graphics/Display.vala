@@ -25,7 +25,7 @@ public class Replay.DMG.Graphics.Display : Hdy.Window {
 
     private const int WIDTH = 160;
     private const int HEIGHT = 144;
-    private const int BASE_SCALING = 2; // Base scaling factor to have a reasonble default display size 
+    private const int BASE_SCALING = 2; // Base scaling factor to have a reasonable default display size 
 
     private const int SIZE = 30; // TODO: Temprorary
 

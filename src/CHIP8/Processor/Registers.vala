@@ -21,27 +21,27 @@
 
  public class Replay.CHIP8.Processor.Registers : GLib.Object {
 
-    public char v[16];
+    public uint8 v[16];
 
-    private short _i;
-    public short i {
+    private uint16 _i;
+    public uint16 i {
         get { return _i; }
         set {
             if (value > 0xFFF) {
-                warning ("Invalid index register value: %d (Acceptable values are 0x000-0xFFF)", value);
+                critical ("Invalid index register value: %d (Acceptable values are 0x000-0xFFF)", value);
                 return;
             }
             this._i = value;
         }
     }
 
-    private short _pc;
-    public short pc {
+    private uint16 _pc;
+    public uint16 pc {
         get { return _pc; }
         set {
             if (value > 0xFFF) {
-                warning ("Invalid program counter value: %d (Acceptable values are 0x000-0xFFF)", value);
-                return;
+                critical ("Invalid program counter value: %d (Acceptable values are 0x000-0xFFF)", value);
+                GLib.Process.exit (0);
             }
             this._pc = value;
         }
@@ -52,7 +52,7 @@
             v[cpu_register] = 0x00;
         }
         i = 0x0000;
-        pc = 0x0000;
+        pc = 0x200;
     }
 
 }

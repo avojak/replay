@@ -46,6 +46,10 @@ public class Replay.DMG.Emulator : Replay.Emulator, GLib.Object {
         mmu.load_boot_rom ();
     }
 
+    public void load_rom (GLib.File file) {
+        // TODO
+    }
+
     public void start () {
         if (emulator_thread != null) {
             warning (@"$COMMON_NAME emulator is already running");

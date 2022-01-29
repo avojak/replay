@@ -2,6 +2,7 @@ conf_data = configuration_data()
 conf_data.set('APP_ID', application_id)
 conf_data.set('APP_NAME', application_name)
 conf_data.set('VERSION', meson.project_version())
+conf_data.set('PKG_DATA_DIR', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name()))
 
 config_header = configure_file(
     input: 'config.vala.in',
@@ -18,7 +19,10 @@ whalewatcher_files = files(
     join_paths('Widgets', 'Dialogs', 'DebugDialog.vala'),
     join_paths('Utils', 'BitUtils.vala'),
     join_paths('CHIP8', 'Interpreter.vala'),
-    join_paths('CHIP8', 'Graphics', 'Display.vala'),
+    join_paths('CHIP8', 'Debug', 'Dialog.vala'),
+    join_paths('CHIP8', 'Graphics', 'Widgets', 'Display.vala'),
+    join_paths('CHIP8', 'Graphics', 'Widgets', 'HeaderBar.vala'),
+    join_paths('CHIP8', 'Graphics', 'PPU.vala'),
     join_paths('CHIP8', 'Memory', 'MMU.vala'),
     join_paths('CHIP8', 'Processor', 'CPU.vala'),
     join_paths('CHIP8', 'Processor', 'Registers.vala'),

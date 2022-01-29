@@ -21,7 +21,10 @@
 
 public class Replay.CHIP8.Memory.MMU : GLib.Object {
 
-    public const char FONT_SPRITES[90] = {
+	//  public const int FONT_OFFSET = 0x50;
+	public const int ROM_OFFSET = 0x200;
+
+    private const uint8 FONT_SPRITES[80] = {
 		0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
 		0x20, 0x60, 0x20, 0x20, 0x70, // 1
 		0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -40,20 +43,24 @@ public class Replay.CHIP8.Memory.MMU : GLib.Object {
 		0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
-    private char data[4096];
+    private uint8 data[4096];
 
     construct {
+		// Clear data
+        for (int i = 0; i < data.length; i++) {
+            data[i] = 0;
+        }
         // Load font sprites into memory
         for (int i = 0; i < FONT_SPRITES.length; i++) {
             data[i] = FONT_SPRITES[i];
         }
     }
 
-    public char get_byte (int address) {
+    public uint8 get_byte (int address) {
         return data[address];
     }
 
-    public void set_byte (int address, char value) {
+    public void set_byte (int address, uint8 value) {
         data[address] = value;
     }
 

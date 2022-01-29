@@ -21,6 +21,7 @@
 
 public interface Replay.Emulator : GLib.Object {
 
+    public abstract void load_rom (GLib.File file);
     public abstract void start ();
     public abstract void stop ();
     public abstract void show (Replay.MainWindow main_window);

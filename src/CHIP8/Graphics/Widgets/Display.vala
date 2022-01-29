@@ -19,49 +19,41 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.CHIP8.Graphics.Display : Hdy.Window {
+public class Replay.CHIP8.Graphics.Widgets.Display : Hdy.Window {
 
     public unowned Replay.MainWindow main_window { get; construct; }
+    public unowned Replay.CHIP8.Graphics.PPU ppu { get; construct; }
+    
+    private const int BASE_SCALING = 8; // Base scaling factor to have a reasonable default display size 
 
-    private const int WIDTH = 64;
-    private const int HEIGHT = 32;
-    private const int BASE_SCALING = 2; // Base scaling factor to have a reasonble default display size 
-
-    private const int SIZE = 30; // TODO: Temprorary
-
-    private char[,] data;
     private Gtk.DrawingArea drawing_area;
 
-    public Display (Replay.MainWindow main_window) {
+    public Display (Replay.MainWindow main_window, Replay.CHIP8.Graphics.PPU ppu) {
         Object (
             deletable: false,
             resizable: false,
             title: Replay.CHIP8.Interpreter.COMMON_NAME,
             //  transient_for: main_window,
             modal: false,
-            main_window: main_window
+            main_window: main_window,
+            ppu: ppu
         );
     }
 
     construct {
-        data = new char[HEIGHT, WIDTH];
-        for (int row = 0; row < data.length[0]; row++) {
-            for (int col = 0; col < data.length[1]; col++) {
-                data[row, col] = 0x00;
-            }
-        }
-
         drawing_area = new Gtk.DrawingArea ();
-        drawing_area.width_request = WIDTH * BASE_SCALING;
-        drawing_area.height_request = HEIGHT * BASE_SCALING;
+        drawing_area.width_request = Replay.CHIP8.Graphics.PPU.WIDTH * BASE_SCALING;
+        drawing_area.height_request = Replay.CHIP8.Graphics.PPU.HEIGHT * BASE_SCALING;
         drawing_area.draw.connect (on_draw);
 
-        var header_bar = new Hdy.HeaderBar () {
-            title = Replay.CHIP8.Interpreter.COMMON_NAME,
-            show_close_button = true,
-            has_subtitle = false
-        };
-        header_bar.get_style_context ().add_class ("default-decoration");
+        var header_bar = new Replay.CHIP8.Graphics.Widgets.HeaderBar ();
+        //  var header_bar = new Hdy.HeaderBar () {
+        //      title = Replay.CHIP8.Interpreter.COMMON_NAME,
+        //      show_close_button = true,
+        //      has_subtitle = false,
+        //      decoration_layout = "close:" // Disable the maximize/restore button
+        //  };
+        //  header_bar.get_style_context ().add_class ("default-decoration");
         // TODO: Add settings dropdown here for updating scaling factor, speed, etc...
 
         var grid = new Gtk.Grid () {
@@ -74,26 +66,14 @@ public class Replay.CHIP8.Graphics.Display : Hdy.Window {
         show_all ();
     }
 
-    public void set_pixel (int x, int y, char pixel) {
-        data[y,x] = pixel & 0x01;
-    }
-
-    public void clear () {
-        for (int row = 0; row < data.length[0]; row++) {
-            for (int col = 0; col < data.length[1]; col++) {
-                data[row, col] = 0x00;
-            }
-        }
-    }
-
     private bool on_draw (Gtk.Widget da, Cairo.Context ctx) {
         ctx.save ();
-        for (int row = 0; row < data.length[0]; row++) {
-            for (int col = 0; col < data.length[1]; col++) {
-                int color = data[row, col]; // * 255
+        for (int row = 0; row < Replay.CHIP8.Graphics.PPU.HEIGHT; row++) {
+            for (int col = 0; col < Replay.CHIP8.Graphics.PPU.WIDTH; col++) {
+                int color = ppu.get_pixel (col, row); // * 255;
                 ctx.set_source_rgb (color, color, color);
                 ctx.new_path ();
-                ctx.move_to (col, row);
+                ctx.move_to (col * BASE_SCALING, row * BASE_SCALING);
                 ctx.rel_line_to (BASE_SCALING, 0);
                 ctx.rel_line_to (0, BASE_SCALING);
                 ctx.rel_line_to (-BASE_SCALING, 0);
