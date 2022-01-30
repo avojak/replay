@@ -56,6 +56,13 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
             return;
         }
         try {
+            GLib.FileInfo info = file.query_info("*", FileQueryInfoFlags.NONE);
+            info.get_size ();
+            // TODO: Validate ROM size against max size
+        } catch (GLib.Error e) {
+            warning ("Error querying ROM file info: %s", e.message);
+        }
+        try {
             ssize_t bytes_read = 0; // Total bytes read
             ssize_t buffer_bytes = 0; // Bytes read into the buffer
             uint8[] buffer = new uint8[BUFFER_SIZE];
@@ -67,7 +74,8 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
                 bytes_read += buffer_bytes;
             }
         } catch (GLib.Error e) {
-            warning ("Error loading ROM file (%s): %s", file.get_path (), e.message);
+            critical ("Error loading ROM file (%s): %s", file.get_path (), e.message);
+            // TODO: Show error
         }
     }
 

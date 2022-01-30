@@ -55,11 +55,11 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
         // Execute the instruction
         if ((now - previous_instruction_update) >= (1 / INSTRUCTION_FREQUENCY * 1000)) {
             instruction = (mmu.get_byte (registers.pc) << 8) | (mmu.get_byte (registers.pc + 1));
-            debug ("$%03X: 0x%04X", registers.pc, instruction);
-            uint8 instruction_type = (0xF000 & instruction) >> 12;
-            if (instruction_type != 0x1 && instruction_type != 0x2 && instruction_type != 0xB) {
+            //  debug ("$%03X: 0x%04X", registers.pc, instruction);
+            //  uint8 instruction_type = (0xF000 & instruction) >> 12;
+            //  if (instruction_type != 0x1 && instruction_type != 0x2 && instruction_type != 0xB) {
                 next_instruction ();
-            }
+            //  }
             execute (instruction);
             previous_instruction_update = now;
         }

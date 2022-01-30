@@ -74,7 +74,7 @@ public class Replay.CHIP8.Graphics.PPU : GLib.Object {
                 // Get the current pixel value
                 uint8 current_pixel_value = data[data_index];
                 // Get the requested new pixel value
-                uint8 sprite_pixel = sprite_row & (0x80 >> col);
+                uint8 sprite_pixel = (sprite_row & (0x80 >> col)) >> (7 - col);
                 // If the pixel is already drawn, and we request it to be drawn again, clear it
                 if (sprite_pixel == 1 && current_pixel_value == 1) {
                     data[data_index] = 0;
@@ -94,6 +94,26 @@ public class Replay.CHIP8.Graphics.PPU : GLib.Object {
                 break;
             }
         }
+
+        // XXX: Debugging
+        //  print ("+");
+        //  for (int i = 0; i < WIDTH; i++) {
+        //      print ("-");
+        //  }
+        //  print ("+\n");
+        //  for (int row = 0; row < HEIGHT; row++) {
+        //      var sb = new StringBuilder ("|");
+        //      for (int col = 0; col < WIDTH; col++) {
+        //          int index = col + (row * WIDTH);
+        //          sb.append (data[index] == 1 ? "X" : " ");
+        //      }
+        //      print (sb.str + "|\n");
+        //  }
+        //  print ("+");
+        //  for (int i = 0; i < WIDTH; i++) {
+        //      print ("-");
+        //  }
+        //  print ("+\n\n");
 
         return are_pixels_unset;
     }

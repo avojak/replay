@@ -57,10 +57,17 @@ public class Replay.CHIP8.Memory.MMU : GLib.Object {
     }
 
     public uint8 get_byte (int address) {
+		if (address < 0 || address >= data.length) {
+			critical ("Invalid memory address: 0x%04X", address);
+		}
         return data[address];
     }
 
     public void set_byte (int address, uint8 value) {
+		if (address < 0 || address >= data.length) {
+			critical ("Invalid memory address: 0x%04X", address);
+			return;
+		}
         data[address] = value;
     }
 
