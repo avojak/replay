@@ -97,7 +97,9 @@ public class Replay.MainWindow : Hdy.Window {
         }
         //  emulator = new Replay.DMG.Emulator ();
         emulator = new Replay.CHIP8.Interpreter ();
-        emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "IBM Logo.ch8"));
+        // TODO: Handle when ROM file not found
+        //  emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "IBM Logo.ch8"));
+        emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "test_opcode.ch8"));
         emulator.closed.connect (() => {
             emulator = null;
         });

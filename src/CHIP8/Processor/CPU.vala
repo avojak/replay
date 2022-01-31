@@ -115,6 +115,38 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
                         7XNN (instruction);
                         break;
                     case 0x8:
+                        switch (get_n (instruction)) {
+                            case 0x0:
+                                8XY0 (instruction);
+                                break;
+                            case 0x1:
+                                8XY1 (instruction);
+                                break;
+                            case 0x2:
+                                8XY2 (instruction);
+                                break;
+                            case 0x3:
+                                8XY3 (instruction);
+                                break;
+                            case 0x4:
+                                8XY4 (instruction);
+                                break;
+                            case 0x5:
+                                8XY5 (instruction);
+                                break;
+                            case 0x6:
+                                8XY6 (instruction);
+                                break;
+                            case 0x7:
+                                8XY7 (instruction);
+                                break;
+                            case 0xE:
+                                8XYE (instruction);
+                                break;
+                            default:
+                                critical ("Unknown instruction: %02x", instruction);
+                                break;
+                        }
                         break;
                     case 0x9:
                         break;
@@ -122,8 +154,10 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
                         ANNN (instruction);
                         break;
                     case 0xB:
+                        BNNN (instruction);
                         break;
                     case 0xC:
+                        CXNN (instruction);
                         break;
                     case 0xD:
                         DXYN (instruction);
@@ -133,7 +167,7 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
                     case 0xF:
                         break;
                     default:
-                        warning ("Unknown instruction: %02x", instruction);
+                        critical ("Unknown instruction: %04x", instruction);
                         break;
                 }
                 break;
@@ -185,24 +219,71 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
         set_vx (instruction, get_vx (instruction) + get_nn (instruction));
     }
 
-    private void 8XY0 () { /* TODO */ }
-    private void 8XY1 () { /* TODO */ }
-    private void 8XY2 () { /* TODO */ }
-    private void 8XY3 () { /* TODO */ }
-    private void 8XY4 () { /* TODO */ }
-    private void 8XY5 () { /* TODO */ }
-    private void 8XY6 () { /* TODO */ }
-    private void 8XY7 () { /* TODO */ }
-    private void 8XYE () { /* TODO */ }
-    private void 9XY0 () { /* TODO */ }
+    // Set Vx = Vy
+    private void 8XY0 (uint16 instruction) {
+        set_vx (instruction, get_vy (instruction));
+    }
+
+    // Set Vx = Vx | Vy
+    private void 8XY1 (uint16 instruction) {
+        set_vx (instruction, get_vx (instruction) | get_vy (instruction));
+    }
+
+    // Set Vx = Vx & Vy
+    private void 8XY2 (uint16 instruction) {
+        set_vx (instruction, get_vx (instruction) & get_vy (instruction));
+    }
+
+    // Set Vx = Vx ^ Vy
+    private void 8XY3 (uint16 instruction) {
+        set_vx (instruction, get_vx (instruction) ^ get_vy (instruction));
+    }
+
+    // Set Vx = Vx + Vy
+    private void 8XY4 (uint16 instruction) {
+        set_vx (instruction, get_vx (instruction) + get_vy (instruction));
+    }
+
+    // Set Vx = Vx - Vy
+    private void 8XY5 (uint16 instruction) {
+        set_vx (instruction, get_vx (instruction) - get_vy (instruction));
+    }
+
+    private void 8XY6 (uint16 instruction) {
+        // TODO: Configurably set Vx = Vy first
+        registers.v[0xF] = (get_vx (instruction) & 1) == 1 ? 1 : 0;
+        set_vx (instruction, get_vx (instruction) >> 1);
+    }
+
+    // Set Vx = Vy - Vx
+    private void 8XY7 (uint16 instruction) {
+        set_vx (instruction, get_vy (instruction) - get_vx (instruction));
+    }
+
+    private void 8XYE (uint16 instruction) {
+        // TODO: Configurably set Vx = Vy first
+        registers.v[0xF] = (get_vx (instruction) & 0x80) == 1 ? 1 : 0;
+        set_vx (instruction, get_vx (instruction) << 1);
+    }
+    
+    private void 9XY0 (uint16 instruction) { /* TODO */ }
 
     // Set I = NNN
     private void ANNN (uint16 instruction) {
         registers.i = get_nnn (instruction);
     }
 
-    private void BNNN () { /* TODO */ }
-    private void CXNN () { /* TODO */ }
+    // Jump to NNN plus the value in V0
+    private void BNNN (uint16 instruction) {
+        // TODO: Configurable "quirk" here
+        registers.pc = get_nnn (instruction) + registers.v[0];
+    }
+
+    // Set Vx = (a random number) & NN
+    private void CXNN (uint16 instruction) {
+        uint8 random = (uint8) GLib.Random.int_range (0, 0xFF);
+        set_vx (instruction, random & get_nn (instruction));
+    }
 
     // Draw (Vx, Vy, N)
     private void DXYN (uint16 instruction) {
