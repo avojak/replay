@@ -58,23 +58,16 @@ public class Replay.CHIP8.Graphics.PPU : GLib.Object {
             int pixel_y = sprite_y + row;
             // Iterate over each column of the sprite
             for (int col = 0; col < SPRITE_WIDTH; col++) {
-                //  uint8 sprite_pixel = sprite_row & (0x80 >> col);
-                //  int data_index = (sprite_y + row) * WIDTH + (sprite_x + col);
-                //  uint8 current_pixel = data[data_index];
-                //  if (sprite_pixel == 1) {
-                //      if (current_pixel == 1) {
-                //          are_pixels_unset = true;
-                //      }
-                //      data[data_index] ^= 1;
-                //  }
                 // Calculate the aboslute pixel position x-coordinate
                 int pixel_x = sprite_x + col;
                 // Calculate the index in the data array for the x,y coordinate pair
                 int data_index = pixel_x + (pixel_y * WIDTH);
                 // Get the current pixel value
                 uint8 current_pixel_value = data[data_index];
-                // Get the requested new pixel value
-                uint8 sprite_pixel = (sprite_row & (0x80 >> col)) >> (7 - col);
+                // Get the requested new pixel value via bitmask
+                uint8 sprite_pixel = (sprite_row & (0x80 >> col));
+                // Bit-shift such that the value is either a 0 or 1
+                sprite_pixel = sprite_pixel >> (7 - col);
                 // If the pixel is already drawn, and we request it to be drawn again, clear it
                 if (sprite_pixel == 1 && current_pixel_value == 1) {
                     data[data_index] = 0;
