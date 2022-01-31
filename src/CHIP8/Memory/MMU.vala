@@ -22,7 +22,10 @@
 public class Replay.CHIP8.Memory.MMU : GLib.Object {
 
 	//  public const int FONT_OFFSET = 0x50;
-	public const int ROM_OFFSET = 0x200;
+	public const uint16 ROM_SIZE = 0x1000; // 4096 bytes
+	public const uint16 ROM_OFFSET = 0x200;
+	public const uint16 MAX_ROM_SIZE = ROM_SIZE - ROM_OFFSET;
+	public const uint8 FONT_SPRITE_SIZE = 5; // Each sprite is 5 bytes
 
     private const uint8 FONT_SPRITES[80] = {
 		0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -43,7 +46,7 @@ public class Replay.CHIP8.Memory.MMU : GLib.Object {
 		0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
-    private uint8 data[4096];
+    private uint8[] data = new uint8[ROM_SIZE];
 
     construct {
 		// Clear data

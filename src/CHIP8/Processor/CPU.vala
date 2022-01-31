@@ -165,6 +165,35 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
                     case 0xE:
                         break;
                     case 0xF:
+                        switch (get_nn (instruction)) {
+                            case 0x07:
+                                FX07 (instruction);
+                                break;
+                            case 0x15:
+                                FX15 (instruction);
+                                break;
+                            case 0x18:
+                                FX18 (instruction);
+                                break;
+                            case 0x1E:
+                                FX1E (instruction);
+                                break;
+                            case 0x29:
+                                FX29 (instruction);
+                                break;
+                            case 0x33:
+                                FX33 (instruction);
+                                break;
+                            case 0x55:
+                                FX55 (instruction);
+                                break;
+                            case 0x65:
+                                FX65 (instruction);
+                                break;
+                            default:
+                                critical ("Unknown instruction: %04x", instruction);
+                                break;
+                        }
                         break;
                     default:
                         critical ("Unknown instruction: %04x", instruction);
@@ -299,26 +328,75 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
 
     private void EX9E () { /* TODO */ }
     private void EXA1 () { /* TODO */ }
-    private void FX07 () { /* TODO */ }
-    private void FX0A () { /* TODO */ }
-    private void FX15 () { /* TODO */ }
-    private void FX18 () { /* TODO */ }
-    private void FX1E () { /* TODO */ }
-    private void FX29 () { /* TODO */ }
-    private void FX33 () { /* TODO */ }
-    private void FX55 () { /* TODO */ }
-    private void FX65 () { /* TODO */ }
+
+    // Set Vx = delay timer
+    private void FX07 (uint16 instruction) {
+        set_vx (instruction, delay_timer);
+    }
+
+    private void FX0A (uint16 instruction) {
+        
+    }
+
+    // Set delay timer = Vx
+    private void FX15 (uint16 instruction) {
+        delay_timer = get_vx (instruction);
+    }
+
+    // Set sound timer = Vx
+    private void FX18 (uint16 instruction) {
+        sound_timer = get_vx (instruction);
+    }
+
+    // Add Vx to register I
+    private void FX1E (uint16 instruction) {
+        // TODO: Check for overflow?
+        registers.i += get_vx (instruction);
+    }
+
+    private void FX29 (uint16 instruction) {
+        registers.i = get_vx (instruction) * Replay.CHIP8.Memory.MMU.FONT_SPRITE_SIZE;
+    }
+
+    private void FX33 (uint16 instruction) {
+        uint8 dec = get_vx (instruction);
+        uint8 hundreds = (uint8) GLib.Math.floor (dec / 100);
+        uint8 tens = (uint8) GLib.Math.floor ((dec - (hundreds * 100)) / 10);
+        uint8 ones = dec - (hundreds * 100) - (tens * 10);
+        mmu.set_byte (registers.i, hundreds);
+        mmu.set_byte (registers.i + 1, tens);
+        mmu.set_byte (registers.i + 2, ones);
+    }
+
+    private void FX55 (uint16 instruction) {
+        for (int i = 0; i <= get_x (instruction); i++) {
+            mmu.set_byte (registers.i + i, registers.v[i]);
+            //  registers.i++;
+        }
+    }
+
+    private void FX65 (uint16 instruction) {
+        for (int i = 0; i <= get_x (instruction); i++) {
+            registers.v[i] = mmu.get_byte (registers.i + i);
+            //  registers.i++;
+        }
+    }
+
 
     private void next_instruction () {
         registers.pc += 2;
     }
 
+    private uint8 get_x (uint16 instruction) {
+        return (instruction & 0x0F00) >> 8;
+    }
+
     private uint8 get_vx (uint16 instruction) {
-        return registers.v[(instruction & 0x0F00) >> 8];
+        return registers.v[get_x (instruction)];
     }
 
     private void set_vx (uint16 instruction, uint8 value) {
-        registers.v[(instruction & 0x0F00) >> 8] = value;
+        registers.v[get_x (instruction)] = value;
     }
 
     private uint8 get_vy (uint16 instruction) {
