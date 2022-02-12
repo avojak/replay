@@ -20,6 +20,10 @@ install_data (
     install_dir: join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
 )
 install_data (
+    join_paths('roms', 'chip8', 'Pong (alt).ch8'),
+    install_dir: join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
+)
+install_data (
     join_paths('roms', 'chip8', 'test_opcode.ch8'),
     install_dir: join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
 )

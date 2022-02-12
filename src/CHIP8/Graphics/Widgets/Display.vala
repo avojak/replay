@@ -61,8 +61,23 @@ public class Replay.CHIP8.Graphics.Widgets.Display : Hdy.Window {
         };
         grid.attach (header_bar, 0, 0);
         grid.attach (drawing_area, 0, 1);
-
         add (grid);
+
+        this.key_press_event.connect ((event_key) => {
+            var keyboard_key = event_key.str.up ()[0];
+            if (Replay.CHIP8.IO.Keypad.KEYPAD_MAPPING.has_key (keyboard_key)) {
+                key_pressed (keyboard_key);
+                return false;
+            }
+        });
+        this.key_release_event.connect ((event_key) => {
+            var keyboard_key = event_key.str.up ()[0];
+            if (Replay.CHIP8.IO.Keypad.KEYPAD_MAPPING.has_key (keyboard_key)) {
+                key_released (keyboard_key);
+                return false;
+            }
+        });
+
         show_all ();
     }
 
@@ -84,5 +99,8 @@ public class Replay.CHIP8.Graphics.Widgets.Display : Hdy.Window {
         ctx.restore ();
         return true;
     }
+
+    public signal void key_pressed (char key);
+    public signal void key_released (char key);
 
 }

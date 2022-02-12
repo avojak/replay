@@ -54,7 +54,7 @@ public class Replay.MainWindow : Hdy.Window {
                 emulator.stop ();
             }
 
-            GLib.Process.exit (0);
+            //  GLib.Process.exit (0);
         });
 
         this.delete_event.connect (before_destroy);
@@ -100,6 +100,7 @@ public class Replay.MainWindow : Hdy.Window {
         // TODO: Handle when ROM file not found
         //  emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "IBM Logo.ch8"));
         emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "test_opcode.ch8"));
+        //  emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "Pong (alt).ch8"));
         emulator.closed.connect (() => {
             emulator = null;
         });

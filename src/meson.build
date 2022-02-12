@@ -23,6 +23,7 @@ whalewatcher_files = files(
     join_paths('CHIP8', 'Graphics', 'Widgets', 'Display.vala'),
     join_paths('CHIP8', 'Graphics', 'Widgets', 'HeaderBar.vala'),
     join_paths('CHIP8', 'Graphics', 'PPU.vala'),
+    join_paths('CHIP8', 'IO', 'Keypad.vala'),
     join_paths('CHIP8', 'Memory', 'MMU.vala'),
     join_paths('CHIP8', 'Processor', 'CPU.vala'),
     join_paths('CHIP8', 'Processor', 'Registers.vala'),

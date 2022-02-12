@@ -26,6 +26,7 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
 
     private unowned Replay.CHIP8.Memory.MMU mmu;
     private unowned Replay.CHIP8.Graphics.PPU ppu;
+    private unowned Replay.CHIP8.IO.Keypad keypad;
 
     private Replay.CHIP8.Processor.Registers registers;
     private uint16 stack[16];
@@ -37,9 +38,10 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
     private int64 previous_instruction_update = 0;
     private int64 previous_timer_update = 0;
 
-    public CPU (Replay.CHIP8.Memory.MMU mmu, Replay.CHIP8.Graphics.PPU ppu) {
+    public CPU (Replay.CHIP8.Memory.MMU mmu, Replay.CHIP8.Graphics.PPU ppu, Replay.CHIP8.IO.Keypad keypad) {
         this.mmu = mmu;
         this.ppu = ppu;
+        this.keypad = keypad;
     }
 
     construct {
@@ -149,6 +151,7 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
                         }
                         break;
                     case 0x9:
+                        9XY0 (instruction);
                         break;
                     case 0xA:
                         ANNN (instruction);
@@ -163,11 +166,25 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
                         DXYN (instruction);
                         break;
                     case 0xE:
+                        switch (get_nn (instruction)) {
+                            case 0x9E:
+                                EX9E (instruction);
+                                break;
+                            case 0xA1:
+                                EXA1 (instruction);
+                                break;
+                            default:
+                                critical ("Unknown instruction: %04x", instruction);
+                                break;
+                        }
                         break;
                     case 0xF:
                         switch (get_nn (instruction)) {
                             case 0x07:
                                 FX07 (instruction);
+                                break;
+                            case 0x0A:
+                                FX0A (instruction);
                                 break;
                             case 0x15:
                                 FX15 (instruction);
@@ -295,7 +312,12 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
         set_vx (instruction, get_vx (instruction) << 1);
     }
     
-    private void 9XY0 (uint16 instruction) { /* TODO */ }
+    // Skip next instruction if Vx != Vy
+    private void 9XY0 (uint16 instruction) {
+        if (get_vx (instruction) != get_vy (instruction)) {
+            next_instruction ();
+        }
+    }
 
     // Set I = NNN
     private void ANNN (uint16 instruction) {
@@ -310,7 +332,7 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
 
     // Set Vx = (a random number) & NN
     private void CXNN (uint16 instruction) {
-        uint8 random = (uint8) GLib.Random.int_range (0, 0xFF);
+        uint8 random = (uint8) GLib.Random.int_range (0, 0x100); // Random number in range [0x00 - 0xFF]
         set_vx (instruction, random & get_nn (instruction));
     }
 
@@ -326,8 +348,17 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
         }
     }
 
-    private void EX9E () { /* TODO */ }
-    private void EXA1 () { /* TODO */ }
+    private void EX9E (uint16 instruction) {
+        if (keypad.is_key_pressed (get_vx (instruction))) {
+            next_instruction ();
+        }
+    }
+
+    private void EXA1 (uint16 instruction) {
+        if (!keypad.is_key_pressed (get_vx (instruction))) {
+            next_instruction ();
+        }
+    }
 
     // Set Vx = delay timer
     private void FX07 (uint16 instruction) {
@@ -335,7 +366,12 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
     }
 
     private void FX0A (uint16 instruction) {
-        
+        uint8? key_pressed = keypad.get_key_presssed ();
+        if (key_pressed != null) {
+            set_vx (instruction, key_pressed);
+        } else {
+            registers.pc -= 2;
+        }
     }
 
     // Set delay timer = Vx

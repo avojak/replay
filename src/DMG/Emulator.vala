@@ -46,6 +46,10 @@ public class Replay.DMG.Emulator : Replay.Emulator, GLib.Object {
         mmu.load_boot_rom ();
     }
 
+    public string[] get_supported_extensions () {
+        return new string[] {};
+    }
+
     public void load_rom (GLib.File file) {
         // TODO
     }

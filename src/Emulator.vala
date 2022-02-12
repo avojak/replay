@@ -21,6 +21,7 @@
 
 public interface Replay.Emulator : GLib.Object {
 
+    public abstract string[] get_supported_extensions ();
     public abstract void load_rom (GLib.File file);
     public abstract void start ();
     public abstract void stop ();

@@ -24,6 +24,7 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
     public const string HARDWARE_NAME = "CHIP-8";
     public const string COMMON_NAME = "CHIP-8";
 
+    private const string SUPPORTED_EXTENSIONS[1] = { "ch8" };
     private const int BUFFER_SIZE = 512;
 
     private Thread<int>? emulator_thread;
@@ -32,6 +33,7 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
     private Replay.CHIP8.Memory.MMU mmu;
     private Replay.CHIP8.Processor.CPU cpu;
     private Replay.CHIP8.Graphics.PPU ppu;
+    private Replay.CHIP8.IO.Keypad keypad;
     private Replay.CHIP8.Graphics.Widgets.Display display;
 
     private Replay.CHIP8.Debug.Dialog debugger;
@@ -39,7 +41,8 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
     construct {
         mmu = new Replay.CHIP8.Memory.MMU ();
         ppu = new Replay.CHIP8.Graphics.PPU (mmu);
-        cpu = new Replay.CHIP8.Processor.CPU (mmu, ppu);
+        keypad = new Replay.CHIP8.IO.Keypad ();
+        cpu = new Replay.CHIP8.Processor.CPU (mmu, ppu, keypad);
 
         initialize ();
     }
@@ -48,6 +51,10 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
         //  cpu.initialize_registers ();
         //  mmu.initialize_io_registers ();
         //  mmu.load_boot_rom ();
+    }
+
+    public string[] get_supported_extensions () {
+        return SUPPORTED_EXTENSIONS;
     }
 
     public void load_rom (GLib.File file) {
@@ -115,6 +122,12 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
         if (display == null) {
             display = new Replay.CHIP8.Graphics.Widgets.Display (main_window, ppu);
             display.show_all ();
+            display.key_pressed.connect ((keyboard_key) => {
+                keypad.key_pressed (Replay.CHIP8.IO.Keypad.KEYPAD_MAPPING.get (keyboard_key));
+            });
+            display.key_released.connect ((keyboard_key) => {
+                keypad.key_released (Replay.CHIP8.IO.Keypad.KEYPAD_MAPPING.get (keyboard_key));
+            });
             display.destroy.connect (() => {
                 display = null;
                 debugger = null;
