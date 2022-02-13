@@ -58,21 +58,33 @@ public class Replay.CHIP8.IO.Keypad : GLib.Object {
     }
 
     public void key_pressed (uint8 key) {
-        key_states.set (key, true);
+        lock (key_states) {
+            debug ("%X pressed", key);
+            key_states.set (key, true);
+        }
     }
 
     public void key_released (uint8 key) {
-        key_states.set (key, false);
+        lock (key_states) {
+            debug ("%X released", key);
+            key_states.set (key, false);
+        }
     }
 
     public bool is_key_pressed (uint8 key) {
-        return key_states.get (key);
+        lock (key_states) {
+            debug ("Is %X pressed? %s", key, key_states.get (key) ? "true" : "false");
+            return key_states.get (key);
+        }
     }
 
     public uint8? get_key_presssed () {
-        foreach (var entry in key_states.entries) {
-            if (entry.value) {
-                return entry.key;
+        lock (key_states) {
+            foreach (var entry in key_states.entries) {
+                if (entry.value) {
+                    debug ("%X is the pressed key", entry.key);
+                    return entry.key;
+                }
             }
         }
         return null;

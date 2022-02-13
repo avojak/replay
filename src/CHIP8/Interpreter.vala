@@ -24,7 +24,7 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
     public const string HARDWARE_NAME = "CHIP-8";
     public const string COMMON_NAME = "CHIP-8";
 
-    private const string SUPPORTED_EXTENSIONS[1] = { "ch8" };
+    private const string SUPPORTED_EXTENSIONS[] = { "ch8", "c8" };
     private const int BUFFER_SIZE = 512;
 
     private Thread<int>? emulator_thread;
@@ -43,6 +43,9 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
         ppu = new Replay.CHIP8.Graphics.PPU (mmu);
         keypad = new Replay.CHIP8.IO.Keypad ();
         cpu = new Replay.CHIP8.Processor.CPU (mmu, ppu, keypad);
+        display = new Replay.CHIP8.Graphics.Widgets.Display (ppu);
+
+        debugger = new Replay.CHIP8.Debug.Dialog ();
 
         initialize ();
     }
@@ -118,33 +121,41 @@ public class Replay.CHIP8.Interpreter : Replay.Emulator, GLib.Object {
         emulator_thread = null;
     }
 
+    public Gtk.Grid get_display () {
+        return display;
+    }
+
+    public Gtk.Grid get_debug_display () {
+        return debugger;
+    }
+
     public void show (Replay.MainWindow main_window) {
-        if (display == null) {
-            display = new Replay.CHIP8.Graphics.Widgets.Display (main_window, ppu);
-            display.show_all ();
-            display.key_pressed.connect ((keyboard_key) => {
-                keypad.key_pressed (Replay.CHIP8.IO.Keypad.KEYPAD_MAPPING.get (keyboard_key));
-            });
-            display.key_released.connect ((keyboard_key) => {
-                keypad.key_released (Replay.CHIP8.IO.Keypad.KEYPAD_MAPPING.get (keyboard_key));
-            });
-            display.destroy.connect (() => {
-                display = null;
-                debugger = null;
-                stop ();
-                closed ();
-            });
-            //  debugger = new Replay.CHIP8.Debug.Dialog (display);
-            //  debugger.show_all ();
-            //  debugger.present ();
-        }
-        display.present ();
+        //  if (display == null) {
+        //      display = new Replay.CHIP8.Graphics.Widgets.Display (main_window, ppu);
+        //      display.show_all ();
+        //      display.key_pressed.connect ((keyboard_key) => {
+        //          keypad.key_pressed (Replay.CHIP8.IO.Keypad.KEYPAD_MAPPING.get (keyboard_key));
+        //      });
+        //      display.key_released.connect ((keyboard_key) => {
+        //          keypad.key_released (Replay.CHIP8.IO.Keypad.KEYPAD_MAPPING.get (keyboard_key));
+        //      });
+        //      display.destroy.connect (() => {
+        //          display = null;
+        //          debugger = null;
+        //          stop ();
+        //          closed ();
+        //      });
+        //      //  debugger = new Replay.CHIP8.Debug.Dialog (display);
+        //      //  debugger.show_all ();
+        //      //  debugger.present ();
+        //  }
+        //  display.present ();
     }
 
     public void hide () {
-        if (display != null) {
-            display.close ();
-        }
+        //  if (display != null) {
+        //      display.close ();
+        //  }
     }
 
 }

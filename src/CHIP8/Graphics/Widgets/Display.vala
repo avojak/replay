@@ -19,34 +19,26 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.CHIP8.Graphics.Widgets.Display : Hdy.Window {
+public class Replay.CHIP8.Graphics.Widgets.Display : Gtk.Grid {
 
-    public unowned Replay.MainWindow main_window { get; construct; }
     public unowned Replay.CHIP8.Graphics.PPU ppu { get; construct; }
     
-    private const int BASE_SCALING = 8; // Base scaling factor to have a reasonable default display size 
+    private const int BASE_SCALING = 8; // Base scaling factor to have a reasonable default display size
 
-    private Gtk.DrawingArea drawing_area;
-
-    public Display (Replay.MainWindow main_window, Replay.CHIP8.Graphics.PPU ppu) {
+    public Display (Replay.CHIP8.Graphics.PPU ppu) {
         Object (
-            deletable: false,
-            resizable: false,
-            title: Replay.CHIP8.Interpreter.COMMON_NAME,
-            //  transient_for: main_window,
-            modal: false,
-            main_window: main_window,
+            expand: true,
             ppu: ppu
         );
     }
 
     construct {
-        drawing_area = new Gtk.DrawingArea ();
+        var drawing_area = new Gtk.DrawingArea ();
         drawing_area.width_request = Replay.CHIP8.Graphics.PPU.WIDTH * BASE_SCALING;
         drawing_area.height_request = Replay.CHIP8.Graphics.PPU.HEIGHT * BASE_SCALING;
         drawing_area.draw.connect (on_draw);
 
-        var header_bar = new Replay.CHIP8.Graphics.Widgets.HeaderBar ();
+        //  var header_bar = new Replay.CHIP8.Graphics.Widgets.HeaderBar ();
         //  var header_bar = new Hdy.HeaderBar () {
         //      title = Replay.CHIP8.Interpreter.COMMON_NAME,
         //      show_close_button = true,
@@ -56,12 +48,12 @@ public class Replay.CHIP8.Graphics.Widgets.Display : Hdy.Window {
         //  header_bar.get_style_context ().add_class ("default-decoration");
         // TODO: Add settings dropdown here for updating scaling factor, speed, etc...
 
-        var grid = new Gtk.Grid () {
-            expand = true
-        };
-        grid.attach (header_bar, 0, 0);
-        grid.attach (drawing_area, 0, 1);
-        add (grid);
+        //  var grid = new Gtk.Grid () {
+            //  expand = true
+        //  };
+        //  grid.attach (header_bar, 0, 0);
+        //  grid.attach (drawing_area, 0, 1);
+        add (drawing_area);
 
         this.key_press_event.connect ((event_key) => {
             var keyboard_key = event_key.str.up ()[0];

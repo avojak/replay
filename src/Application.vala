@@ -28,7 +28,7 @@ public class Replay.Application : Gtk.Application {
     public Application () {
         Object (
             application_id: Constants.APP_ID,
-            flags: ApplicationFlags.FLAGS_NONE
+            flags: ApplicationFlags.HANDLES_COMMAND_LINE
         );
     }
 
@@ -60,6 +60,56 @@ public class Replay.Application : Gtk.Application {
         var window = new Replay.MainWindow (this);
         this.add_window (window);
         return window;
+    }
+
+    protected override int command_line (ApplicationCommandLine command_line) {
+        string[] command_line_arguments = parse_command_line_arguments (command_line.get_arguments ());
+        // If the application wasn't already open, activate it now
+        if (windows.length () == 0) {
+            //  queued_command_line_arguments = command_line_arguments;
+            activate ();
+        } else {
+            handle_command_line_arguments (command_line_arguments);
+        }
+        return 0;
+    }
+
+    private string[] parse_command_line_arguments (string[] command_line_arguments) {
+        if (command_line_arguments.length == 0) {
+            return command_line_arguments;
+        } else {
+            // For Flatpak, the first commandline argument is the app ID, so we need to filter it out
+            if (command_line_arguments[0] == Constants.APP_ID) {
+                return command_line_arguments[1:command_line_arguments.length - 1];
+            } {
+                return command_line_arguments;
+            }
+        }
+    }
+
+    private void handle_command_line_arguments (string[] argv) {
+        //  GLib.List<Iridium.Models.IRCURI> uris = new GLib.List<Iridium.Models.IRCURI> ();
+        //  foreach (var uri_string in argv) {
+        //      try {
+        //          Soup.URI uri = new Soup.URI (uri_string);
+        //          if (uri == null) {
+        //              throw new OptionError.BAD_VALUE ("Argument is not a URL.");
+        //          }
+        //          if (uri.scheme != "irc") {
+        //              throw new OptionError.BAD_VALUE ("Cannot open non-irc: URL");
+        //          }
+        //          debug ("Received command line URI: %s", uri.to_string (false));
+        //          uris.append (new Iridium.Models.IRCURI (uri));
+        //      } catch (OptionError e) {
+        //          warning ("Argument parsing error: %s", e.message);
+        //      }
+        //  }
+
+        //  var window = get_active_window ();
+        //  // Ensure that the window is presented to the user when handling the URL.
+        //  // This can happen when the application is already open but in the background.
+        //  window.present ();
+        //  ((Iridium.MainWindow) window).handle_uris (uris);
     }
 
     protected override void activate () {

@@ -10,7 +10,7 @@ config_header = configure_file(
     configuration: conf_data
 )
 
-whalewatcher_files = files(
+application_files = files(
     join_paths('Application.vala'),
     join_paths('Emulator.vala'),
     join_paths('MainWindow.vala'),
@@ -55,7 +55,7 @@ whalewatcher_files = files(
 # Create a new executable, list the files we want to compile, list the dependencies we need, and install
 executable(
     application_id,
-    whalewatcher_files,
+    application_files,
     config_header,
     # css_gresource,
     dependencies: [

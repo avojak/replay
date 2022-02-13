@@ -1,0 +1,1 @@
+flatpak run --env=G_MESSAGES_DEBUG=all com.github.avojak.replay

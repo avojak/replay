@@ -19,9 +19,7 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.CHIP8.Debug.Dialog : Granite.Dialog {
-
-    public unowned Replay.CHIP8.Graphics.Widgets.Display display { get; construct; }
+public class Replay.CHIP8.Debug.Dialog : Gtk.Grid {
 
     private Gtk.Label pc_register_label;
     private Gtk.Label i_register_label;
@@ -41,16 +39,6 @@ public class Replay.CHIP8.Debug.Dialog : Granite.Dialog {
     private Gtk.Label vD_register_label;
     private Gtk.Label vE_register_label;
     private Gtk.Label vF_register_label;
-
-    public Dialog (Replay.CHIP8.Graphics.Widgets.Display display) {
-        Object (
-            deletable: false,
-            resizable: false,
-            title: "Debug",
-            modal: false,
-            display: display
-        );
-    }
 
     construct {
         var instruction_header_label = new Granite.HeaderLabel ("Instruction");
@@ -121,14 +109,17 @@ public class Replay.CHIP8.Debug.Dialog : Granite.Dialog {
 
         form_grid.attach (registers_grid, 0, 0);
 
-        var body = get_content_area ();
-        body.add (form_grid);
+        //  var body = get_content_area ();
+        //  body.add (form_grid);
+        attach (form_grid, 0, 0);
 
         //  int display_width, display_height, display_x, display_y;
         //  display.get_size (out display_width, out display_height);
         //  display.get_position (out display_x, out display_y);
 
         //  move (display_x + display_width, display_y);
+
+        show_all ();
     }
 
     private Gtk.Label create_label (string text) {

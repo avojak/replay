@@ -1,9 +1,0 @@
-option(
-    'profile',
-    type: 'combo',
-    choices: [
-        'default',
-        'dev'
-    ],
-    value: 'default'
-)

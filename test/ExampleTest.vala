@@ -19,30 +19,27 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Widgets.HeaderBar : Hdy.HeaderBar {
+public class Replay.CHIP8.ExampleTest : Replay.TestCase {
 
-    public HeaderBar () {
-        Object (
-            title: Constants.APP_NAME,
-            show_close_button: true,
-            has_subtitle: false
-        );
+    public ExampleTest () {
+        // assign a name for this class
+        base("ExampleTest");
+        // add test methods
+        add_test("test_example", test_example);
     }
 
-    construct {
-        var debug_button = new Gtk.Button ();
-        debug_button.image = new Gtk.Image.from_icon_name ("applications-development-symbolic", Gtk.IconSize.BUTTON);
-        debug_button.tooltip_text = "Debug";
-        debug_button.relief = Gtk.ReliefStyle.NONE;
-        debug_button.valign = Gtk.Align.CENTER;
-
-        debug_button.clicked.connect (() => {
-            debug_button_clicked ();
-        });
-
-        //  pack_end (debug_button);
+    public override void set_up () {
+        // setup your test
     }
 
-    public signal void debug_button_clicked ();
+    public void test_example() {
+        // add your expressions
+        // assert(expression);
+        new Replay.CHIP8.Memory.MMU ();
+    }
+
+    public override void tear_down () {
+        // tear down your test
+    }
 
 }

@@ -25,6 +25,8 @@ public interface Replay.Emulator : GLib.Object {
     public abstract void load_rom (GLib.File file);
     public abstract void start ();
     public abstract void stop ();
+    public abstract Gtk.Grid get_display ();
+    public abstract Gtk.Grid get_debug_display ();
     public abstract void show (Replay.MainWindow main_window);
     public abstract void hide ();
 

@@ -57,7 +57,7 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
         // Execute the instruction
         if ((now - previous_instruction_update) >= (1 / INSTRUCTION_FREQUENCY * 1000)) {
             instruction = (mmu.get_byte (registers.pc) << 8) | (mmu.get_byte (registers.pc + 1));
-            //  debug ("$%03X: 0x%04X", registers.pc, instruction);
+            debug ("$%03X: 0x%04X", registers.pc, instruction);
             //  uint8 instruction_type = (0xF000 & instruction) >> 12;
             //  if (instruction_type != 0x1 && instruction_type != 0x2 && instruction_type != 0xB) {
                 next_instruction ();
@@ -287,11 +287,15 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
 
     // Set Vx = Vx + Vy
     private void 8XY4 (uint16 instruction) {
-        set_vx (instruction, get_vx (instruction) + get_vy (instruction));
+        uint16 sum = get_vx (instruction) + get_vy (instruction);
+        set_vx (instruction, (uint8) (sum & 0x00FF));
+        // If sum was greater than 255, set VF to 1
+        registers.v[0xF] = sum > 0xFF ? 1 : 0;
     }
 
     // Set Vx = Vx - Vy
     private void 8XY5 (uint16 instruction) {
+        registers.v[0xF] = get_vx (instruction) > get_vy (instruction) ? 1 : 0;
         set_vx (instruction, get_vx (instruction) - get_vy (instruction));
     }
 
@@ -303,12 +307,13 @@ public class Replay.CHIP8.Processor.CPU : GLib.Object {
 
     // Set Vx = Vy - Vx
     private void 8XY7 (uint16 instruction) {
+        registers.v[0xF] = get_vy (instruction) > get_vx (instruction) ? 1 : 0;
         set_vx (instruction, get_vy (instruction) - get_vx (instruction));
     }
 
     private void 8XYE (uint16 instruction) {
         // TODO: Configurably set Vx = Vy first
-        registers.v[0xF] = (get_vx (instruction) & 0x80) == 1 ? 1 : 0;
+        registers.v[0xF] = (get_vx (instruction) & 0x80) >> 7 == 1 ? 1 : 0;
         set_vx (instruction, get_vx (instruction) << 1);
     }
     

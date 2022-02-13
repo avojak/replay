@@ -85,6 +85,14 @@ public class Replay.DMG.Emulator : Replay.Emulator, GLib.Object {
         emulator_thread = null;
     }
 
+    public Gtk.Grid get_display () {
+        return null;
+    }
+
+    public Gtk.Grid get_debug_display () {
+        return null;
+    }
+
     public void show (Replay.MainWindow main_window) {
         if (display == null) {
             display = new Replay.DMG.Graphics.Display (main_window);

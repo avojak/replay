@@ -90,7 +90,7 @@ public class Replay.MainWindow : Hdy.Window {
         Replay.Application.settings.set_int ("window-height", height);
     }
 
-    public void on_start_button_clicked () {
+    public void on_start_button_clicked (string rom_uri) {
         // TODO: Add named view for the emulator
         if (emulator != null) {
             return;
@@ -99,12 +99,16 @@ public class Replay.MainWindow : Hdy.Window {
         emulator = new Replay.CHIP8.Interpreter ();
         // TODO: Handle when ROM file not found
         //  emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "IBM Logo.ch8"));
-        emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "test_opcode.ch8"));
+        //  emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "test_opcode.ch8"));
         //  emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "Pong (alt).ch8"));
+        //  emulator.load_rom (GLib.File.new_for_path (Constants.PKG_DATA_DIR + "/" + "c8_test.c8"));
+        emulator.load_rom (GLib.File.new_for_uri (rom_uri));
         emulator.closed.connect (() => {
             emulator = null;
         });
-        emulator.show (this);
+        //  emulator.show (this);
+        main_layout.set_emulator_display (emulator.get_display ());
+        main_layout.set_emulator_debug_display (emulator.get_debug_display ());
         emulator.start ();
     }
 
@@ -113,7 +117,9 @@ public class Replay.MainWindow : Hdy.Window {
             return;
         }
         emulator.stop ();
-        emulator.hide ();
+        main_layout.remove_emulator_display (emulator.get_display ());
+        main_layout.remove_emulator_debug_display (emulator.get_debug_display ());
+        //  emulator.hide ();
         emulator = null;
     }
 
