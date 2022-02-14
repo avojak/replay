@@ -21,7 +21,7 @@
 
 public class Replay.CHIP8.Processor.CPU : GLib.Object {
 
-    private const int INSTRUCTION_FREQUENCY = 60; // TODO: ???
+    private const int INSTRUCTION_FREQUENCY = 500; // TODO: ???
     private const int TIMER_FREQUENCY = 60; // Timers are updated a frequency of 60Hz (i.e. once every 16.667ms)
 
     private unowned Replay.CHIP8.Memory.MMU mmu;
