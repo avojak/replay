@@ -23,7 +23,7 @@ public class Replay.Application : Gtk.Application {
 
     public static GLib.Settings settings;
 
-    private GLib.List<Replay.MainWindow> windows;
+    private GLib.List<Replay.Windows.MainWindow> windows;
 
     public Application () {
         Object (
@@ -39,7 +39,7 @@ public class Replay.Application : Gtk.Application {
 
     construct {
         settings = new GLib.Settings (Constants.APP_ID);
-        windows = new GLib.List<Replay.MainWindow> ();
+        windows = new GLib.List<Replay.Windows.MainWindow> ();
 
         startup.connect ((handler) => {
             Hdy.init ();
@@ -47,17 +47,17 @@ public class Replay.Application : Gtk.Application {
     }
 
     public override void window_added (Gtk.Window window) {
-        windows.append (window as Replay.MainWindow);
+        windows.append (window as Replay.Windows.MainWindow);
         base.window_added (window);
     }
 
     public override void window_removed (Gtk.Window window) {
-        windows.remove (window as Replay.MainWindow);
+        windows.remove (window as Replay.Windows.MainWindow);
         base.window_removed (window);
     }
 
-    private Replay.MainWindow add_new_window () {
-        var window = new Replay.MainWindow (this);
+    private Replay.Windows.MainWindow add_new_window () {
+        var window = new Replay.Windows.MainWindow (this);
         this.add_window (window);
         return window;
     }

@@ -19,30 +19,38 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Widgets.HeaderBar : Hdy.HeaderBar {
+public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
 
-    public HeaderBar () {
+    public unowned Replay.Windows.EmulatorWindow window { get; construct; }
+    public Retro.Core core { get; construct; }
+
+    private Replay.Widgets.EmulatorHeaderBar header_bar;
+
+    public EmulatorLayout (Replay.Windows.EmulatorWindow window, Retro.Core core) {
         Object (
-            title: Constants.APP_NAME,
-            show_close_button: true,
-            has_subtitle: false
+            window: window,
+            core: core,
+            width_request: 500,
+            height_request: 500
         );
     }
 
     construct {
-        var debug_button = new Gtk.Button ();
-        debug_button.image = new Gtk.Image.from_icon_name ("applications-development-symbolic", Gtk.IconSize.BUTTON);
-        debug_button.tooltip_text = "Debug";
-        debug_button.relief = Gtk.ReliefStyle.NONE;
-        debug_button.valign = Gtk.Align.CENTER;
+        header_bar = new Replay.Widgets.EmulatorHeaderBar ();
+        header_bar.get_style_context ().add_class ("default-decoration");
 
-        debug_button.clicked.connect (() => {
-            debug_button_clicked ();
-        });
+        var view = new Retro.CoreView () {
+            expand = true
+        };
+        view.set_as_default_controller (core);
+        view.set_core (core);
+        view.show ();
+        core.set_keyboard (view);
 
-        //  pack_end (debug_button);
+        attach (header_bar, 0, 0);
+        attach (view, 0, 1);
+
+        show_all ();
     }
-
-    public signal void debug_button_clicked ();
 
 }

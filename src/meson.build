@@ -11,46 +11,19 @@ config_header = configure_file(
 )
 
 application_files = files(
+    join_paths('Layouts', 'EmulatorLayout.vala'),
+    join_paths('Layouts', 'MainLayout.vala'),
+    join_paths('Widgets', 'EmulatorHeaderBar.vala'),
+    join_paths('Widgets', 'MainHeaderBar.vala'),
+    join_paths('Windows', 'EmulatorWindow.vala'),
+    join_paths('Windows', 'MainWindow.vala'),
     join_paths('Application.vala'),
-    join_paths('Emulator.vala'),
-    join_paths('MainWindow.vala'),
-    join_paths('MainLayout.vala'),
-    join_paths('Widgets', 'HeaderBar.vala'),
-    join_paths('Widgets', 'Dialogs', 'DebugDialog.vala'),
-    join_paths('Utils', 'BitUtils.vala'),
-    join_paths('CHIP8', 'Interpreter.vala'),
-    join_paths('CHIP8', 'Debug', 'Dialog.vala'),
-    join_paths('CHIP8', 'Graphics', 'Widgets', 'Display.vala'),
-    join_paths('CHIP8', 'Graphics', 'Widgets', 'HeaderBar.vala'),
-    join_paths('CHIP8', 'Graphics', 'PPU.vala'),
-    join_paths('CHIP8', 'IO', 'Keypad.vala'),
-    join_paths('CHIP8', 'Memory', 'MMU.vala'),
-    join_paths('CHIP8', 'Processor', 'CPU.vala'),
-    join_paths('CHIP8', 'Processor', 'Registers.vala'),
-    join_paths('DMG', 'Emulator.vala'),
-    join_paths('DMG', 'Graphics', 'Display.vala'),
-    join_paths('DMG', 'Graphics', 'GraphicsRegisters.vala'),
-    join_paths('DMG', 'Graphics', 'LCDC.vala'),
-    join_paths('DMG', 'Graphics', 'PPU.vala'),
-    join_paths('DMG', 'IO', 'Joypad.vala'),
-    join_paths('DMG', 'IO', 'SerialPort.vala'),
-    join_paths('DMG', 'Audio', 'APU.vala'),
-    join_paths('DMG', 'Audio', 'SoundRegisters.vala'),
-    join_paths('DMG', 'Memory', 'AddressSpace.vala'),
-    join_paths('DMG', 'Memory', 'BootRom.vala'),
-    join_paths('DMG', 'Memory', 'MMU.vala'),
-    join_paths('DMG', 'Memory', 'RAM.vala'),
-    join_paths('DMG', 'Memory', 'ROM.vala'),
-    join_paths('DMG', 'Memory', 'Timer.vala'),
-    join_paths('DMG', 'Memory', 'Cartridge', 'Cartridge.vala'),
-    join_paths('DMG', 'Processor', 'ALU.vala'),
-    join_paths('DMG', 'Processor', 'CPU.vala'),
-    join_paths('DMG', 'Processor', 'Jump.vala'),
-    join_paths('DMG', 'Processor', 'Operation.vala'),
-    join_paths('DMG', 'Processor', 'FlagRegister.vala'),
-    join_paths('DMG', 'Processor', 'Registers.vala'),
-    join_paths('DMG', 'Processor', 'InterruptManager.vala')
 )
+
+# This won't be necessary in future versions of retro-gtk
+c_args = [
+    '-DRETRO_GTK_USE_UNSTABLE_API'
+]
 
 # Create a new executable, list the files we want to compile, list the dependencies we need, and install
 executable(
@@ -58,12 +31,15 @@ executable(
     application_files,
     config_header,
     # css_gresource,
+    c_args: c_args,
     dependencies: [
         dependency('gtk+-3.0', version: '>= 3.6.4'),
         dependency('gee-0.8', version: '>= 0.8.5'),
         dependency('glib-2.0', version: '>= 2.30.0'),
         dependency('granite', version: '>= 0.6.0'),
-        dependency('libhandy-1', version: '>=1.0.0')
+        dependency('libhandy-1', version: '>= 1.0.0'),
+        # dependency('retro-gtk-0.14')
+        dependency('retro-gtk-1', version: '>= 1.0.2')
     ],
     vala_args: vala_args,
     install: true
