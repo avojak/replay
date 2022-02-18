@@ -23,6 +23,8 @@ public class Replay.Windows.MainWindow : Hdy.Window {
 
     private Replay.Layouts.MainLayout main_layout;
 
+    private Gee.List<Replay.Emulator> emulators = new Gee.ArrayList<Replay.Emulator> ();
+
     public MainWindow (Replay.Application application) {
         Object (
             application: application,
@@ -34,6 +36,13 @@ public class Replay.Windows.MainWindow : Hdy.Window {
 
     construct {
         main_layout = new Replay.Layouts.MainLayout (this);
+        main_layout.button_clicked.connect (() => {
+            var emulator = new Replay.Emulator (this);
+            emulator.load_rom ("file:///home/avojak/Downloads/Tetris (World).gb");
+            emulator.open ();
+            emulator.start ();
+            emulators.add (emulator);
+        });
         //  var core = new Retro.Core ("/app/share/libretro/cores/gearboy_libretro.so");
         //  core.set_medias ({ "file:///home/avojak/Downloads/Tetris (World).gb" });
         //  try {
@@ -76,7 +85,7 @@ public class Replay.Windows.MainWindow : Hdy.Window {
 
     public void show_app () {
         show_all ();
-        show ();
+        //  show ();
         present ();
     }
 

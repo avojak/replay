@@ -18,6 +18,7 @@ application_files = files(
     join_paths('Windows', 'EmulatorWindow.vala'),
     join_paths('Windows', 'MainWindow.vala'),
     join_paths('Application.vala'),
+    join_paths('Emulator.vala'),
 )
 
 # This won't be necessary in future versions of retro-gtk
@@ -33,11 +34,11 @@ executable(
     # css_gresource,
     c_args: c_args,
     dependencies: [
-        dependency('gtk+-3.0', version: '>= 3.6.4'),
-        dependency('gee-0.8', version: '>= 0.8.5'),
-        dependency('glib-2.0', version: '>= 2.30.0'),
-        dependency('granite', version: '>= 0.6.0'),
-        dependency('libhandy-1', version: '>= 1.0.0'),
+        dependency('gtk+-3.0', version: '>= 3.24.20'),
+        dependency('gee-0.8', version: '>= 0.20.3'),
+        dependency('glib-2.0', version: '>= 2.64.6'),
+        dependency('granite', version: '>= 6.2.0'),
+        dependency('libhandy-1', version: '>= 1.2.0'),
         # dependency('retro-gtk-0.14')
         dependency('retro-gtk-1', version: '>= 1.0.2')
     ],

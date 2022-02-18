@@ -21,6 +21,9 @@
 
 public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
 
+    private Gtk.Button pause_button;
+    private Gtk.Button resume_button;
+
     public EmulatorHeaderBar () {
         Object (
             title: Constants.APP_NAME,
@@ -30,6 +33,18 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
     }
 
     construct {
+        pause_button = new Gtk.Button ();
+        pause_button.image = new Gtk.Image.from_icon_name ("media-playback-pause", Gtk.IconSize.SMALL_TOOLBAR);
+        pause_button.tooltip_text = _("Pause");
+        pause_button.relief = Gtk.ReliefStyle.NONE;
+        pause_button.valign = Gtk.Align.CENTER;
+
+        resume_button = new Gtk.Button ();
+        resume_button.image = new Gtk.Image.from_icon_name ("media-playback-start", Gtk.IconSize.SMALL_TOOLBAR);
+        resume_button.tooltip_text = _("Resume");
+        resume_button.relief = Gtk.ReliefStyle.NONE;
+        resume_button.valign = Gtk.Align.CENTER;
+
         var settings_button = new Gtk.MenuButton ();
         settings_button.image = new Gtk.Image.from_icon_name ("preferences-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
         settings_button.tooltip_text = _("Menu");
@@ -49,10 +64,40 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
 
         var settings_popover = new Gtk.Popover (null);
         settings_popover.add (settings_popover_grid);
-
         settings_button.popover = settings_popover;
 
+        pack_start (pause_button);
+        pack_start (resume_button);
         pack_end (settings_button);
+
+        set_pause_button_visible (true);
+        set_resume_button_visible (false);
+
+        pause_button.clicked.connect (() => {
+            pause_button_clicked ();
+            set_pause_button_visible (false);
+            set_resume_button_visible (true);
+        });
+        resume_button.clicked.connect (() => {
+            resume_button_clicked ();
+            set_pause_button_visible (true);
+            set_resume_button_visible (false);
+        });
     }
+
+    private void set_pause_button_visible (bool visible) {
+        pause_button.sensitive = visible;
+        pause_button.no_show_all = !visible;
+        pause_button.visible = visible;
+    }
+
+    private void set_resume_button_visible (bool visible) {
+        resume_button.sensitive = visible;
+        resume_button.no_show_all = !visible;
+        resume_button.visible = visible;
+    }
+
+    public signal void pause_button_clicked ();
+    public signal void resume_button_clicked ();
 
 }

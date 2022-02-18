@@ -49,7 +49,7 @@ public class Replay.Layouts.MainLayout : Gtk.Grid {
             hexpand = true
         };
         button.clicked.connect (() => {
-            new Replay.Windows.EmulatorWindow (window);
+            button_clicked ();
         });
 
         attach (header_bar, 0, 0);
@@ -58,5 +58,7 @@ public class Replay.Layouts.MainLayout : Gtk.Grid {
 
         show_all ();
     }
+
+    public signal void button_clicked ();
 
 }

@@ -34,6 +34,18 @@ modules:
       - install -d /app/share/libretro/cores
       - install -m 644 platforms/libretro/gearboy_libretro.so /app/share/libretro/cores/gearboy_libretro.so
       - install -m 644 platforms/libretro/gearboy_libretro.info /app/share/libretro/cores/gearboy_libretro.info
+  - name: libretro-meteor
+    buildsystem: simple
+    sources:
+      - type: git
+        url: https://github.com/libretro/meteor-libretro.git
+        branch: 'master'
+    build-commands:
+      - make -C libretro
+      - install -d /app/share/libretro/cores
+      - install -m 644 libretro/meteor_libretro.so /app/share/libretro/cores/meteor_libretro.so
+      # TODO: Maybe get these files from here? https://github.com/libretro/libretro-super/blob/master/dist/info/meteor_libretro.info
+      # - install -m 644 libretro/meteor_libretro.info /app/share/libretro/cores/meteor_libretro.info
   - name: replay
     buildsystem: meson
     sources:
