@@ -23,8 +23,6 @@ public class Replay.Windows.MainWindow : Hdy.Window {
 
     private Replay.Layouts.MainLayout main_layout;
 
-    private Gee.List<Replay.Emulator> emulators = new Gee.ArrayList<Replay.Emulator> ();
-
     public MainWindow (Replay.Application application) {
         Object (
             application: application,
@@ -37,28 +35,9 @@ public class Replay.Windows.MainWindow : Hdy.Window {
     construct {
         main_layout = new Replay.Layouts.MainLayout (this);
         main_layout.button_clicked.connect (() => {
-            var emulator = new Replay.Emulator (this);
-            emulator.load_rom ("file:///home/avojak/Downloads/Tetris (World).gb");
-            emulator.open ();
-            emulator.start ();
-            emulators.add (emulator);
+            Replay.Application.emulator_manager.launch_game ("file:///home/avojak/Downloads/Tetris (World).gb");
         });
-        //  var core = new Retro.Core ("/app/share/libretro/cores/gearboy_libretro.so");
-        //  core.set_medias ({ "file:///home/avojak/Downloads/Tetris (World).gb" });
-        //  try {
-        //      core.boot ();
-        //  }
-        //  catch (Error e) {
-        //      critical (e.message);
-        //      //  return 1;
-        //  }
-        //  var view = new Retro.CoreView ();
-        //  view.set_as_default_controller (core);
-        //  view.set_core (core);
-        //  view.show ();
-        //  core.set_keyboard (view);
 
-        //  add (view);
         add (main_layout);
 
         restore_window_position ();
@@ -74,8 +53,6 @@ public class Replay.Windows.MainWindow : Hdy.Window {
         this.delete_event.connect (before_destroy);
 
         show_app ();
-
-        //  core.run ();
     }
 
     private void restore_window_position () {
@@ -83,13 +60,12 @@ public class Replay.Windows.MainWindow : Hdy.Window {
         resize (Replay.Application.settings.get_int ("window-width"), Replay.Application.settings.get_int ("window-height"));
     }
 
-    public void show_app () {
+    private void show_app () {
         show_all ();
-        //  show ();
         present ();
     }
 
-    public bool before_destroy () {
+    private bool before_destroy () {
         update_position_settings ();
         destroy ();
         return true;

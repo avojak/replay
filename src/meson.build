@@ -19,6 +19,7 @@ application_files = files(
     join_paths('Windows', 'MainWindow.vala'),
     join_paths('Application.vala'),
     join_paths('Emulator.vala'),
+    join_paths('EmulatorManager.vala'),
 )
 
 # This won't be necessary in future versions of retro-gtk

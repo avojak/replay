@@ -21,15 +21,15 @@
 
 public class Replay.Emulator : GLib.Object {
 
-    public unowned Replay.Windows.MainWindow main_window { get; construct; }
+    public unowned Replay.Application application { get; construct; }
 
     private Replay.Windows.EmulatorWindow? window = null;
     private Retro.Core? core = null;
     private GLib.File? rom = null;
 
-    public Emulator (Replay.Windows.MainWindow main_window) {
+    public Emulator (Replay.Application application) {
         Object (
-            main_window: main_window
+            application: application
         );
     }
 
@@ -44,12 +44,13 @@ public class Replay.Emulator : GLib.Object {
 
     public void open () {
         if (window == null) {
-            window = new Replay.Windows.EmulatorWindow (main_window);
+            window = new Replay.Windows.EmulatorWindow (application);
             window.pause_button_clicked.connect (pause);
             window.resume_button_clicked.connect (resume);
             window.destroy.connect (() => {
                 window = null;
             });
+            opened ();
         }
     }
 
@@ -57,6 +58,7 @@ public class Replay.Emulator : GLib.Object {
         if (window != null) {
             window.close ();
             window = null;
+            closed ();
         }
     }
 
@@ -81,6 +83,7 @@ public class Replay.Emulator : GLib.Object {
         view.set_as_default_controller (core);
         core.set_keyboard (view);
         core.run ();
+        started ();
     }
 
     public void stop () {
@@ -88,6 +91,7 @@ public class Replay.Emulator : GLib.Object {
             core.stop ();
             core.reset ();
             core = null;
+            stopped ();
         }
     }
 
@@ -95,6 +99,7 @@ public class Replay.Emulator : GLib.Object {
         if (core != null) {
             debug ("Pausing...");
             core.stop ();
+            stopped ();
         }
     }
 
@@ -102,7 +107,15 @@ public class Replay.Emulator : GLib.Object {
         if (core != null) {
             debug ("Resuming...");
             core.run ();
+            resumed ();
         }
     }
+
+    public signal void opened ();
+    public signal void closed ();
+    public signal void started ();
+    public signal void paused ();
+    public signal void resumed ();
+    public signal void stopped ();
 
 }

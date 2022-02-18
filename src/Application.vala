@@ -22,6 +22,7 @@
 public class Replay.Application : Gtk.Application {
 
     public static GLib.Settings settings;
+    public static Replay.EmulatorManager emulator_manager;
 
     private GLib.List<Replay.Windows.MainWindow> windows;
 
@@ -40,6 +41,8 @@ public class Replay.Application : Gtk.Application {
     construct {
         settings = new GLib.Settings (Constants.APP_ID);
         windows = new GLib.List<Replay.Windows.MainWindow> ();
+
+        emulator_manager = new Replay.EmulatorManager (this);
 
         startup.connect ((handler) => {
             Hdy.init ();

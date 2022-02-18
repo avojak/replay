@@ -29,9 +29,6 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
     public EmulatorLayout (Replay.Windows.EmulatorWindow window) {
         Object (
             window: window
-            //  core: core
-            //  width_request: 500,
-            //  height_request: 500
         );
     }
 
@@ -48,11 +45,8 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
         view = new Retro.CoreView () {
             expand = true
         };
-        //  view.set_as_default_controller (core);
-        //  view.set_core (core);
-        view.set_filter (Retro.VideoFilter.SMOOTH);
+        view.set_filter (Retro.VideoFilter.SMOOTH); // TODO: Default should be configurable
         view.show ();
-        //  core.set_keyboard (view);
 
         attach (header_bar, 0, 0);
         attach (view, 0, 1);
