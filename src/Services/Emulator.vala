@@ -19,7 +19,7 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Emulator : GLib.Object {
+public class Replay.Services.Emulator : GLib.Object {
 
     public unowned Replay.Application application { get; construct; }
 

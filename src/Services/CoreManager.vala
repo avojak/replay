@@ -19,7 +19,14 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.CoreManager : GLib.Object {
+public class Replay.Services.CoreManager : GLib.Object {
+
+    // The directory containing cores bundled with the app
+    private const string BUNDLED_CORE_DIR = "/app/share/libretro/cores";
+
+    construct {
+
+    }
 
     public Retro.Core get_for_extension (string extension) {
         //  return new Retro.Core ("/app/share/libretro/cores/meteor_libretro.so");

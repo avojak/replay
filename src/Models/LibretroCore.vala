@@ -19,30 +19,9 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.EmulatorManager : GLib.Object {
+public class Replay.Models.LibretroCore : GLib.Object {
 
-    public unowned Replay.Application application { get; construct; }
-
-    private Gee.List<Replay.Emulator> emulators = new Gee.ArrayList<Replay.Emulator> ();
-
-    public EmulatorManager (Replay.Application application) {
-        Object (
-            application: application
-        );
-    }
-
-    public void launch_game (string rom_uri) {
-        var emulator = new Replay.Emulator (application);
-        emulator.started.connect (() => {
-            emulators.add (emulator);
-        });
-        emulator.closed.connect (() => {
-            emulators.remove (emulator);
-        });
-        emulator.load_rom (rom_uri);
-        emulator.open ();
-        emulator.start ();
-        emulators.add (emulator);
-    }
+    public Replay.Models.LibretroCoreInfo info { get; set; }
+    public string uri { get; set; }
 
 }

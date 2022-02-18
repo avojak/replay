@@ -13,13 +13,17 @@ config_header = configure_file(
 application_files = files(
     join_paths('Layouts', 'EmulatorLayout.vala'),
     join_paths('Layouts', 'MainLayout.vala'),
+    join_paths('Models', 'LibretroCore.vala'),
+    join_paths('Models', 'LibretroCoreInfo.vala'),
+    join_paths('Services', 'CoreManager.vala'),
+    join_paths('Services', 'Emulator.vala'),
+    join_paths('Services', 'EmulatorManager.vala'),
+    join_paths('Services', 'SQLClient.vala'),
     join_paths('Widgets', 'EmulatorHeaderBar.vala'),
     join_paths('Widgets', 'MainHeaderBar.vala'),
     join_paths('Windows', 'EmulatorWindow.vala'),
     join_paths('Windows', 'MainWindow.vala'),
-    join_paths('Application.vala'),
-    join_paths('Emulator.vala'),
-    join_paths('EmulatorManager.vala'),
+    join_paths('Application.vala')
 )
 
 # This won't be necessary in future versions of retro-gtk
@@ -41,7 +45,8 @@ executable(
         dependency('granite', version: '>= 6.2.0'),
         dependency('libhandy-1', version: '>= 1.2.0'),
         # dependency('retro-gtk-0.14')
-        dependency('retro-gtk-1', version: '>= 1.0.2')
+        dependency('retro-gtk-1', version: '>= 1.0.2'),
+        dependency('sqlite3', version: '>= 3.31.1')
     ],
     vala_args: vala_args,
     install: true
