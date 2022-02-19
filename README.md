@@ -13,17 +13,37 @@
 
 ## Replay the Classics!
 
-Replay is a native Linux Game Boy emulator built in Vala and GTK for [elementary OS](https://elementary.io).
+Replay is a native Linux multi-system emulator built in Vala and GTK for [elementary OS](https://elementary.io).
+
+### Included Cores
+
+Replay ships with several [libretro](https://www.libretro.com) cores that are licensed in such a way which permit redistribution under the GPLv3 license:
+
+| Name | Emulation Platforms | License |
+| ---- | ------------------ | ------- |
+| mGBA | Nintendo Game Boy<br>Nintendo Game Boy Color<br>Nintendo Game Boy Advance | MIT |
+
+Additional cores can be easily imported.
+
+### Included Games
+
+Replay ships with several games that are licensed in such a way which permits redistribution under the GPLv3 license:
+
+| Name | Platform |
+| ---- | -------- |
+
+Additional games can be easily added to the library.
 
 ## Install from Source
 
 You can install Replay by compiling from source. Here's the list of
 dependencies required:
 
-- `granite (>= 0.6.0)`
-- `debhelper (>= 10.5.1)`
-- `gettext`
-- `libgtk-3-dev (>= 3.10)`
+- `libgranite (>= 6.2.0)`
+- `libgtk-3-dev (>= 3.24.20)`
+- `libgee-0.8-dev (>= 3.24.20)`
+- `libhandy-1-dev (>= 1.2.0)`
+- `retro-gtk-1 (>= 1.0.2)`
 - `meson`
 - `valac (>= 0.28.0)`
 
@@ -39,21 +59,11 @@ $ com.github.avojak.replay
 
 ### Flatpak
 
-To test the Flatpak build with Flatpak Builder:
+Flatpak is the preferred method of building Replay:
 
 ```bash
 $ flatpak-builder build com.github.avojak.replay.yml --user --install --force-clean
 $ flatpak run --env=G_MESSAGES_DEBUG=all com.github.avojak.replay
-```
-
-### Development Build
-
-You can also install a development build alongside a stable version by specifying the dev profile:
-
-```
-$ meson build --prefix=/usr -Dprofile=dev
-$ sudo ninja -C build install
-$ G_MESSAGES_DEBUG=all com.github.avojak.replay-dev
 ```
 
 ### Updating Translations
@@ -73,6 +83,14 @@ Generate translations for the languages listed in the `po/LINGUAS` files:
 $ ninja -C build com.github.avojak.replay-update-po
 ```
 
+## Installing Additional Cores
+
+TODO
+
+## Installing Additional Games
+
+TODO
+
 ---
 
 ## Copyright Notice
@@ -80,3 +98,7 @@ $ ninja -C build com.github.avojak.replay-update-po
 Replay is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Nintendo&reg;, or any of its subsidiaries or its affiliates. Game Boy&trade; is a registered trademark of Nintendo Corporation.
 
 All other product names mentioned herein, with or without the registered trademark symbol &reg; or trademark symbol &trade; are generally trademarks and/or registered trademarks of their respective owners.
+
+## Disclaimer
+
+Replay is not designed to enable illegal activity. We do not promote piracy, and Replay users are expected to follow all applicable local laws.

@@ -7,13 +7,32 @@ sdk: io.elementary.Sdk
 command: com.github.avojak.replay
 
 finish-args:
+  - '--device=dri' # For RetroGTK
   - '--share=ipc'
   - '--share=network'
   - '--socket=fallback-x11'
   - '--socket=wayland'
-  - '--filesystem=host'
+  - '--socket=pulseaudio' # For RetroGTK
+  # - '--filesystem=host' # For loading libretro cores
+  - '--filesystem=home' # For loading ROMs
 
 modules:
+  - name: retro-gtk
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/retro-gtk.git
+        tag: '1.0.2'
+  - name: libretro-mgba
+    buildsystem: simple
+    sources:
+      - type: git
+        url: https://github.com/libretro/mgba.git
+        branch: 'master' # TODO: Lock this down to a specific version/commit
+    build-commands:
+      - make -f Makefile.libretro
+      - install -d /app/share/libretro/cores
+      - install -m 644 mgba_libretro.so /app/share/libretro/cores/mgba_libretro.so
   - name: replay
     buildsystem: meson
     sources:

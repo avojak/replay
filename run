@@ -1,1 +1,8 @@
-flatpak run --env=G_MESSAGES_DEBUG=all com.github.avojak.replay
+#!/bin/bash
+
+# I'm lazy, and it's easier to remember './run' than the entire flatpak command
+EXTRA_ARGS=
+if [[ "$1" == "--debug" ]]; then
+    EXTRA_ARGS=--env=GTK_DEBUG=interactive
+fi
+flatpak run --env=G_MESSAGES_DEBUG=all $EXTRA_ARGS com.github.avojak.replay
