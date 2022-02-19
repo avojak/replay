@@ -13,11 +13,11 @@
 
 ## Replay the Classics!
 
-Replay is a native Linux frontend for [libretro](https://www.libretro.com) built in Vala and GTK for [elementary OS](https://elementary.io).
+Replay is a native Linux multi-system emulator built in Vala and GTK for [elementary OS](https://elementary.io).
 
-## Included Cores
+### Included Cores
 
-Replay ships with several libretro cores that are licensed in such a way which permit redistribution under the GPLv3 license:
+Replay ships with several [libretro](https://www.libretro.com) cores that are licensed in such a way which permit redistribution under the GPLv3 license:
 
 | Name | Emulation Platforms | License |
 | ---- | ------------------ | ------- |
@@ -25,7 +25,7 @@ Replay ships with several libretro cores that are licensed in such a way which p
 
 Additional cores can be easily imported.
 
-## Included Games
+### Included Games
 
 Replay ships with several games that are licensed in such a way which permits redistribution under the GPLv3 license:
 
@@ -82,6 +82,14 @@ Generate translations for the languages listed in the `po/LINGUAS` files:
 ```
 $ ninja -C build com.github.avojak.replay-update-po
 ```
+
+## Installing Additional Cores
+
+TODO
+
+## Installing Additional Games
+
+TODO
 
 ---
 
