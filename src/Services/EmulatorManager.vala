@@ -32,17 +32,24 @@ public class Replay.Services.EmulatorManager : GLib.Object {
     }
 
     public void launch_game (string rom_uri) {
+        // TODO: Validate rom_uri
         var emulator = new Replay.Services.Emulator (application);
-        emulator.started.connect (() => {
-            emulators.add (emulator);
-        });
-        emulator.closed.connect (() => {
-            emulators.remove (emulator);
-        });
+        emulator.started.connect (on_emulator_started);
+        emulator.closed.connect (on_emulator_closed);
         emulator.load_rom (rom_uri);
         emulator.open ();
         emulator.start ();
         emulators.add (emulator);
+    }
+
+    private void on_emulator_started (Replay.Services.Emulator emulator) {
+        debug ("Emulator started");
+        emulators.add (emulator);
+    }
+
+    private void on_emulator_closed (Replay.Services.Emulator emulator) {
+        debug ("Emulator closed");
+        emulators.remove (emulator);
     }
 
 }

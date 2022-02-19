@@ -25,12 +25,11 @@ public class Replay.Services.CoreManager : GLib.Object {
     private const string BUNDLED_CORE_DIR = "/app/share/libretro/cores";
 
     construct {
-
+        // TODO: Load known cores
     }
 
     public Retro.Core get_for_extension (string extension) {
-        //  return new Retro.Core ("/app/share/libretro/cores/meteor_libretro.so");
-        return new Retro.Core ("/app/share/libretro/cores/gearboy_libretro.so");
+        return new Retro.Core ("/app/share/libretro/cores/mgba_libretro.so");
     }
 
 }

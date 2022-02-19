@@ -61,34 +61,13 @@ public class Replay.Services.SQLClient : GLib.Object {
         }
 
         initialize_tables ();
+        // TODO: Check for bundled cores and descriptors that are not already present in the database
     }
 
     private void initialize_tables () {
         string sql = """
-            CREATE TABLE IF NOT EXISTS "servers" (
-                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-                "hostname" TEXT NOT NULL,
-                "port" INTEGER NOT NULL,
-                "nickname" TEXT NOT NULL,
-                "username" TEXT NOT NULL,
-                "realname" TEXT NOT NULL,
-                "auth_method" TEXT NOT NULL,
-                "tls" BOOL NOT NULL,
-                "enabled" BOOL NOT NULL,
-                "network_name" TEXT
-            );
-            CREATE TABLE IF NOT EXISTS "channels" (
-                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-                "server_id" INTEGER,
-                "channel" TEXT,
-                "enabled" BOOL,
-                "favorite" BOOL
-            );
-            CREATE TABLE IF NOT EXISTS "server_identities" (
-                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-                "host" TEXT,
-                "certificate_pem" TEXT,
-                "is_accepted" BOOL
+            CREATE TABLE IF NOT EXISTS "cores" (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT
             );
             """;
         database.exec (sql);

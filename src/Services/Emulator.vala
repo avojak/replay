@@ -48,7 +48,8 @@ public class Replay.Services.Emulator : GLib.Object {
             window.pause_button_clicked.connect (pause);
             window.resume_button_clicked.connect (resume);
             window.destroy.connect (() => {
-                window = null;
+                stop ();
+                close ();
             });
             opened ();
         }
@@ -69,7 +70,7 @@ public class Replay.Services.Emulator : GLib.Object {
         if (core != null) {
             return;
         }
-        core = new Retro.Core ("/app/share/libretro/cores/gearboy_libretro.so");
+        core = new Retro.Core ("/app/share/libretro/cores/mgba_libretro.so");
         core.set_medias ({ rom.get_uri () });
         try {
             core.boot ();

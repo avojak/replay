@@ -21,7 +21,7 @@
 
 public class Replay.Models.LibretroCore : GLib.Object {
 
-    public Replay.Models.LibretroCoreInfo info { get; set; }
+    public Retro.CoreDescriptor descriptor { get; set; }
     public string uri { get; set; }
 
 }

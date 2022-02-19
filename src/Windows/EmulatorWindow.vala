@@ -42,6 +42,8 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         });
         add (layout);
 
+        // TODO: Fix window not grabbing all keyboard input (e.g. arrow keys)
+
         // TODO: no magic numbers!
         resize (500, 500);
 

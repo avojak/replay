@@ -1,0 +1,18 @@
+[Libretro]
+Type=Emulator
+Version=1.0
+Name=mGBA
+Module=mgba_libretro.so
+LibretroVersion=1
+Authors=Jeffrey Pfau;
+License=MPL-2.0;
+
+[Platform:GameBoyAdvance]
+MimeType=application/x-gba-rom;
+Firmwares=GameBoyAdvance;
+
+[Firmware:GameBoyAdvance]
+Path=gba_bios.bin
+MD5=a860e8c0b6d573d191e4ec7db1b1e4f6
+SHA-512=88aee4b4ed6b9d4ce42993dd14b0f542fd496807e5693bad8efcaa24e55c1da79d502653e4e52c0f48a2c198aa35706a852b1adc9dbef8a44d8a3aa4f31517fd
+Mandatory=false

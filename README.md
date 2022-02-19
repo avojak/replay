@@ -21,7 +21,7 @@ Replay ships with several libretro cores that are licensed in such a way which p
 
 | Name | Emulation Platforms | License |
 | ---- | ------------------ | ------- |
-| gearboy | Nintendo Game Boy, Nintendo Game Boy Color | GPLv3 |
+| mGBA | Nintendo Game Boy<br>Nintendo Game Boy Color<br>Nintendo Game Boy Advance | MIT |
 
 Additional cores can be easily imported.
 
