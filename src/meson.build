@@ -3,6 +3,8 @@ conf_data.set('APP_ID', application_id)
 conf_data.set('APP_NAME', application_name)
 conf_data.set('VERSION', meson.project_version())
 conf_data.set('PKG_DATA_DIR', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name()))
+conf_data.set('LIBRETRO_CORE_DIR', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name(), 'libretro', 'cores'))
+conf_data.set('ROM_DIR', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name(), 'roms'))
 
 config_header = configure_file(
     input: 'config.vala.in',
@@ -16,6 +18,7 @@ application_files = files(
     join_paths('Models', 'LibretroCore.vala'),
     join_paths('Models', 'LibretroCoreInfo.vala'),
     join_paths('Services', 'CoreManager.vala'),
+    join_paths('Services', 'CoreRepository.vala'),
     join_paths('Services', 'Emulator.vala'),
     join_paths('Services', 'EmulatorManager.vala'),
     join_paths('Services', 'SQLClient.vala'),

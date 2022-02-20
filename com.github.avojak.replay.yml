@@ -33,6 +33,15 @@ modules:
       - make -f Makefile.libretro
       - install -d /app/share/libretro/cores
       - install -m 644 mgba_libretro.so /app/share/libretro/cores/mgba_libretro.so
+  - name: libretro-super
+    buildsystem: simple
+    sources:
+      - type: git
+        url: https://github.com/libretro/libretro-super.git
+        branch: 'master'
+    build-commands:
+      - install -d /app/share/libretro/cores
+      - install -m 644 dist/info/mgba_libretro.info /app/share/libretro/cores/mgba_libretro.info
   - name: replay
     buildsystem: meson
     sources:

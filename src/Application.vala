@@ -22,6 +22,7 @@
 public class Replay.Application : Gtk.Application {
 
     public static GLib.Settings settings;
+    public static Replay.Services.CoreRepository core_repository;
     public static Replay.Services.EmulatorManager emulator_manager;
 
     private GLib.List<Replay.Windows.MainWindow> windows;
@@ -40,9 +41,10 @@ public class Replay.Application : Gtk.Application {
 
     construct {
         settings = new GLib.Settings (Constants.APP_ID);
-        windows = new GLib.List<Replay.Windows.MainWindow> ();
-
+        core_repository = Replay.Services.CoreRepository.instance;
         emulator_manager = new Replay.Services.EmulatorManager (this);
+
+        windows = new GLib.List<Replay.Windows.MainWindow> ();
 
         startup.connect ((handler) => {
             Hdy.init ();
@@ -116,6 +118,9 @@ public class Replay.Application : Gtk.Application {
     }
 
     protected override void activate () {
+        // This must happen here because the main event loops will have started
+        core_repository.sql_client = Replay.Services.SQLClient.instance;
+
         // Respect the system style preference
         var granite_settings = Granite.Settings.get_default ();
         var gtk_settings = Gtk.Settings.get_default ();

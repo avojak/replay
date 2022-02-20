@@ -60,8 +60,9 @@ public class Replay.Services.SQLClient : GLib.Object {
             return;
         }
 
-        initialize_tables ();
+        //  initialize_tables ();
         // TODO: Check for bundled cores and descriptors that are not already present in the database
+        scan_core_directory ();
     }
 
     private void initialize_tables () {
@@ -127,6 +128,12 @@ public class Replay.Services.SQLClient : GLib.Object {
     //      }
     //      statement.reset ();
     //  }
+
+    private void scan_core_directory () {
+        debug (Constants.PKG_DATA_DIR);
+        debug (Constants.LIBRETRO_CORE_DIR);
+        debug (Constants.ROM_DIR);
+    }
 
     public Gee.List<Replay.Models.LibretroCore> get_cores () {
         // TODO: Implement

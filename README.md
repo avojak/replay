@@ -15,6 +15,9 @@
 
 Replay is a native Linux multi-system emulator built in Vala and GTK for [elementary OS](https://elementary.io).
 
+| ![Screenshot](data/assets/screenshots/replay-screenshot-01.png) | ![Screenshot](data/assets/screenshots/replay-screenshot-02.png) |
+|------------------------------------------------------------------|------------------------------------------------------------------|
+
 ### Included Cores
 
 Replay ships with several [libretro](https://www.libretro.com) cores that are licensed in such a way which permit redistribution under the GPLv3 license:
@@ -59,7 +62,7 @@ $ com.github.avojak.replay
 
 ### Flatpak
 
-Flatpak is the preferred method of building Replay:
+Flatpak is the preferred method of building Replay to ensure that built-in cores and core info are included:
 
 ```bash
 $ flatpak-builder build com.github.avojak.replay.yml --user --install --force-clean
