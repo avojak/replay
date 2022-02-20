@@ -96,7 +96,7 @@ public class Replay.Services.CoreRepository : GLib.Object {
             debug ("Found bundled core %s for %s", core_info.core_name, core_info.system_name);
             // Store the core
             known_cores.set (core_info.core_name, new Replay.Models.LibretroCore () {
-                uri = core_file.get_uri (),
+                path = core_file.get_path (),
                 info = core_info
             });
             // Update the ROM extension map
@@ -120,7 +120,7 @@ public class Replay.Services.CoreRepository : GLib.Object {
     }
 
     public Replay.Models.LibretroCore? get_core_for_rom (GLib.File rom) {
-        var extension = rom.get_path ().substring (rom.get_path ().last_index_of ("."));
+        var extension = rom.get_path ().substring (rom.get_path ().last_index_of (".") + 1);
         if (!rom_extensions.has_key (extension)) {
             return null;
         }

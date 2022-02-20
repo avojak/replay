@@ -68,7 +68,7 @@ public class Replay.Services.SQLClient : GLib.Object {
         string sql = """
             CREATE TABLE IF NOT EXISTS "cores" (
                 "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-                "uri" TEXT NOT NULL,
+                "path" TEXT NOT NULL,
                 "core_name" TEXT NOT NULL,
                 "display_name" TEXT NOT NULL,
                 "supported_extensions" TEXT NOT NULL,
@@ -140,8 +140,8 @@ public class Replay.Services.SQLClient : GLib.Object {
 
     public void insert_core (Replay.Models.LibretroCore core) {
         var sql = """
-            INSERT INTO cores (uri, core_name, display_name, supported_extensions, manufacturer, system_id, system_name, license, display_version, description) 
-            VALUES ($URI, $CORE_NAME, $DISPLAY_NAME, SUPPORTED_EXTENSIONS, $MANUFACTURER, $SYSTEM_ID, $SYSTEM_NAME, $LICENSE, $DISPLAY_VERSION, $DESCRIPTION);
+            INSERT INTO cores (path, core_name, display_name, supported_extensions, manufacturer, system_id, system_name, license, display_version, description) 
+            VALUES ($PATH, $CORE_NAME, $DISPLAY_NAME, SUPPORTED_EXTENSIONS, $MANUFACTURER, $SYSTEM_ID, $SYSTEM_NAME, $LICENSE, $DISPLAY_VERSION, $DESCRIPTION);
             """;
 
         Sqlite.Statement statement;
@@ -150,7 +150,7 @@ public class Replay.Services.SQLClient : GLib.Object {
             return;
         }
 
-        statement.bind_text (1, core.uri);
+        statement.bind_text (1, core.path);
         statement.bind_text (2, core.info.core_name);
         statement.bind_text (3, core.info.display_name);
         statement.bind_text (4, string.joinv (SUPPORTED_EXTENSIONS_DELIM, core.info.supported_extensions));
@@ -195,8 +195,8 @@ public class Replay.Services.SQLClient : GLib.Object {
         var core_info = new Replay.Models.LibretroCoreInfo ();
         for (int i = 0; i < num_columns; i++) {
             switch (statement.column_name (i)) {
-                case "uri":
-                    core.uri = statement.column_text (i);
+                case "path":
+                    core.path = statement.column_text (i);
                     break;
                 case "core_name":
                     core_info.core_name = statement.column_text (i);

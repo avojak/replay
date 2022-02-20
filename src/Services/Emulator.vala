@@ -70,13 +70,24 @@ public class Replay.Services.Emulator : GLib.Object {
         if (core != null) {
             return;
         }
-        core = new Retro.Core ("/app/share/com.github.avojak.replay/libretro/cores/mgba_libretro.so");
+        Replay.Models.LibretroCore? core_model = Replay.Application.core_repository.get_core_for_rom (rom);
+        if (core_model == null) {
+            // TODO: Display error to user
+            critical ("No core found for ROM: %s", rom.get_path ());
+            stop ();
+            close ();
+            return;
+        }
+        core = new Retro.Core (core_model.path);
         core.set_medias ({ rom.get_uri () });
         try {
+            debug ("Booting core %s...", core_model.info.core_name);
             core.boot ();
         } catch (GLib.Error e) {
+            // TODO: Display error to user
             critical (e.message);
             stop ();
+            close ();
             return;
         }
         unowned Retro.CoreView view = window.get_core_view ();
