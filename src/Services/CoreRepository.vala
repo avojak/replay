@@ -21,8 +21,6 @@
 
 public class Replay.Services.CoreRepository : GLib.Object {
 
-    public Replay.Services.SQLClient sql_client { get; set; }
-
     private static Replay.Services.CoreRepository _instance = null;
     public static Replay.Services.CoreRepository instance {
         get {
@@ -31,6 +29,62 @@ public class Replay.Services.CoreRepository : GLib.Object {
             }
             return _instance;
         }
+    }
+
+    public Replay.Services.SQLClient sql_client { get; set; }
+
+    public void initialize () {
+        // Load known cores from the database
+        // TODO
+        // Check whether known cores can still be found on the filesystem
+        // TODO
+        // Check for bundled cores and descriptors that are not already present in the database
+        scan_core_directory (GLib.File.new_for_path (Constants.LIBRETRO_CORE_DIR));
+    }
+
+    private void scan_core_directory (GLib.File core_directory) {
+        if (!core_directory.query_exists ()) {
+            warning ("Bundled core directory not found: %s", core_directory.get_path ());
+            return;
+        }
+        GLib.FileEnumerator file_enumerator;
+        try {
+            file_enumerator = core_directory.enumerate_children ("standard::*", GLib.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
+        } catch (GLib.Error e) {
+            warning ("Error while enumerating files in bundled core directory: %s", e.message);
+            return;
+        }
+        GLib.FileInfo info;
+        try {
+            while ((info = file_enumerator.next_file ()) != null) {
+                if (info.get_file_type () == GLib.FileType.DIRECTORY) {
+                    continue;
+                }
+                var core_file = GLib.File.new_for_path (Constants.LIBRETRO_CORE_DIR + "/" + info.get_name ());
+                if (core_file.get_path ().has_suffix (".so")) {
+                    var info_file = GLib.File.new_for_path (Constants.LIBRETRO_CORE_DIR + "/" + info.get_name ().replace (".so", ".info"));
+                    if (!info_file.query_exists ()) {
+                        warning ("Found bundled core without corresponding .info file: %s", core_file.get_path ());
+                        continue;
+                    }
+                    found_core (core_file, info_file);
+                }
+            }
+        } catch (GLib.Error e) {
+            warning ("Error while iterating over files in bundled core directory: %s", e.message);
+            return;
+        }
+    }
+
+    private void found_core (GLib.File core_file, GLib.File info_file) {
+        var core_info = new Replay.Models.LibretroCoreInfo.from_file (info_file);
+        // TODO: Check if already in database
+        bool is_new = false;
+        debug ("Found bundled core: %s %s", core_info.core_name, is_new ? "(new)" : "");
+        sql_client.insert_core (new Replay.Models.LibretroCore () {
+            uri = core_file.get_uri (),
+            info = core_info
+        });
     }
 
 }

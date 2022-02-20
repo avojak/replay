@@ -37,6 +37,8 @@ public class Replay.Application : Gtk.Application {
     static construct {
         info ("%s version: %s", Constants.APP_ID, Constants.VERSION);
         info ("Kernel version: %s", Posix.utsname ().release);
+        info ("Bundled core dir: %s", Constants.LIBRETRO_CORE_DIR);
+        info ("Bundled ROM dir: %s", Constants.ROM_DIR);
     }
 
     construct {
@@ -120,6 +122,7 @@ public class Replay.Application : Gtk.Application {
     protected override void activate () {
         // This must happen here because the main event loops will have started
         core_repository.sql_client = Replay.Services.SQLClient.instance;
+        core_repository.initialize ();
 
         // Respect the system style preference
         var granite_settings = Granite.Settings.get_default ();

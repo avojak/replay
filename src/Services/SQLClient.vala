@@ -22,6 +22,7 @@
 public class Replay.Services.SQLClient : GLib.Object {
 
     private const string DATABASE_FILE = "replay.db";
+    private const string SUPPORTED_EXTENSIONS_DELIM = ",";
 
     private Sqlite.Database database;
 
@@ -60,15 +61,23 @@ public class Replay.Services.SQLClient : GLib.Object {
             return;
         }
 
-        //  initialize_tables ();
-        // TODO: Check for bundled cores and descriptors that are not already present in the database
-        scan_core_directory ();
+        initialize_tables ();
     }
 
     private void initialize_tables () {
         string sql = """
             CREATE TABLE IF NOT EXISTS "cores" (
-                "id" INTEGER PRIMARY KEY AUTOINCREMENT
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "uri" TEXT NOT NULL,
+                "core_name" TEXT NOT NULL,
+                "display_name" TEXT NOT NULL,
+                "supported_extensions" TEXT NOT NULL,
+                "manufacturer" TEXT NOT NULL,
+                "system_id" TEXT NOT NULL,
+                "system_name" TEXT NOT NULL,
+                "license" TEXT NOT NULL,
+                "display_version" TEXT,
+                "description" TEXT
             );
             """;
         database.exec (sql);
@@ -129,23 +138,99 @@ public class Replay.Services.SQLClient : GLib.Object {
     //      statement.reset ();
     //  }
 
-    private void scan_core_directory () {
-        debug (Constants.PKG_DATA_DIR);
-        debug (Constants.LIBRETRO_CORE_DIR);
-        debug (Constants.ROM_DIR);
+    public void insert_core (Replay.Models.LibretroCore core) {
+        var sql = """
+            INSERT INTO cores (uri, core_name, display_name, supported_extensions, manufacturer, system_id, system_name, license, display_version, description) 
+            VALUES ($URI, $CORE_NAME, $DISPLAY_NAME, SUPPORTED_EXTENSIONS, $MANUFACTURER, $SYSTEM_ID, $SYSTEM_NAME, $LICENSE, $DISPLAY_VERSION, $DESCRIPTION);
+            """;
+
+        Sqlite.Statement statement;
+        if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
+            log_database_error (database.errcode (), database.errmsg ());
+            return;
+        }
+
+        statement.bind_text (1, core.uri);
+        statement.bind_text (2, core.info.core_name);
+        statement.bind_text (3, core.info.display_name);
+        statement.bind_text (4, string.joinv (SUPPORTED_EXTENSIONS_DELIM, core.info.supported_extensions));
+        statement.bind_text (5, core.info.manufacturer);
+        statement.bind_text (6, core.info.system_id);
+        statement.bind_text (7, core.info.system_name);
+        statement.bind_text (8, core.info.license);
+        statement.bind_text (9, core.info.display_version);
+        statement.bind_text (10, core.info.description);
+
+        string err_msg;
+        int ec = database.exec (statement.expanded_sql (), null, out err_msg);
+        if (ec != Sqlite.OK) {
+            log_database_error (ec, err_msg);
+            debug ("SQL statement: %s", statement.expanded_sql ());
+        }
+        statement.reset ();
     }
 
     public Gee.List<Replay.Models.LibretroCore> get_cores () {
-        // TODO: Implement
-        return new Gee.ArrayList<Replay.Models.LibretroCore> ();
+        var cores = new Gee.ArrayList<Replay.Models.LibretroCore> ();
+
+        var sql = "SELECT * FROM cores;";
+        Sqlite.Statement statement;
+        if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
+            log_database_error (database.errcode (), database.errmsg ());
+            return cores;
+        }
+
+        while (statement.step () == Sqlite.ROW) {
+            var server = parse_core_row (statement);
+            cores.add (server);
+        }
+        statement.reset ();
+
+        return cores;
     }
 
-    private static int bool_to_int (bool val) {
-        return val ? 1 : 0;
-    }
-
-    private static bool int_to_bool (int val) {
-        return val == 1;
+    private Replay.Models.LibretroCore parse_core_row (Sqlite.Statement statement) {
+        var num_columns = statement.column_count ();
+        var core = new Replay.Models.LibretroCore ();
+        var core_info = new Replay.Models.LibretroCoreInfo ();
+        for (int i = 0; i < num_columns; i++) {
+            switch (statement.column_name (i)) {
+                case "uri":
+                    core.uri = statement.column_text (i);
+                    break;
+                case "core_name":
+                    core_info.core_name = statement.column_text (i);
+                    break;
+                case "display_name":
+                    core_info.display_name = statement.column_text (i);
+                    break;
+                case "supported_extensions":
+                    core_info.supported_extensions = statement.column_text (i).split (SUPPORTED_EXTENSIONS_DELIM);
+                    break;
+                case "manufacturer":
+                    core_info.manufacturer = statement.column_text (i);
+                    break;
+                case "system_id":
+                    core_info.system_id = statement.column_text (i);
+                    break;
+                case "system_name":
+                    core_info.system_name = statement.column_text (i);
+                    break;
+                case "license":
+                    core_info.license = statement.column_text (i);
+                    break;
+                case "display_version":
+                    core_info.display_version = statement.column_text (i);
+                    break;
+                case "description":
+                    core_info.description = statement.column_text (i);
+                    break;
+                default:
+                    break;
+            }
+        }
+        core.info = core_info;
+        return core;
     }
 
     private static void log_database_error (int errcode, string errmsg) {

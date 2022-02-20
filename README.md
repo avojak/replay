@@ -24,7 +24,7 @@ Replay ships with several [libretro](https://www.libretro.com) cores that are li
 
 | Name | Emulation Platforms | License |
 | ---- | ------------------ | ------- |
-| mGBA | Nintendo Game Boy<br>Nintendo Game Boy Color<br>Nintendo Game Boy Advance | MIT |
+| mGBA | Nintendo Game Boy<br>Nintendo Game Boy Color<br>Nintendo Game Boy Advance | MPLv2.0 |
 
 Additional cores can be easily imported.
 
