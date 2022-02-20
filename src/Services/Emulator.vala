@@ -70,7 +70,7 @@ public class Replay.Services.Emulator : GLib.Object {
         if (core != null) {
             return;
         }
-        core = new Retro.Core ("/app/share/libretro/cores/mgba_libretro.so");
+        core = new Retro.Core ("/app/share/com.github.avojak.replay/libretro/cores/mgba_libretro.so");
         core.set_medias ({ rom.get_uri () });
         try {
             core.boot ();
