@@ -22,7 +22,7 @@ Replay is a native Linux multi-system emulator built in Vala and GTK for [elemen
 
 Replay ships with several [libretro](https://www.libretro.com) cores that are licensed in such a way which permit redistribution under the GPLv3 license:
 
-| Name | Emulation Platforms | License |
+| Name | System(s) | License |
 | ---- | ------------------ | ------- |
 | mGBA | Nintendo Game Boy<br>Nintendo Game Boy Color<br>Nintendo Game Boy Advance | MPLv2.0 |
 
@@ -32,7 +32,7 @@ Additional cores can be easily imported.
 
 Replay ships with several games that are licensed in such a way which permits redistribution under the GPLv3 license:
 
-| Name | Platform |
+| Name | System |
 | ---- | -------- |
 
 Additional games can be easily added to the library.
