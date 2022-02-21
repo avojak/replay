@@ -51,7 +51,7 @@ public class Replay.Services.CoreRepository : GLib.Object {
         // Check whether known cores can still be found on the filesystem
         // TODO
         // Check for bundled cores and descriptors that are not already present in the database
-        
+
         scan_core_directory (GLib.File.new_for_path (Constants.LIBRETRO_CORE_DIR));
         // TODO: Scan user directory for user-provided cores (if name conflict, defer to user-provided)
     }

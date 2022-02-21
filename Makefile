@@ -2,9 +2,12 @@
 
 SHELL := /bin/bash
 
-.PHONY: all flatpak
+.PHONY: all flatpak lint
 
 all: flatpak
 
 flatpak:
 	flatpak-builder build com.github.avojak.replay.yml --user --install --force-clean
+
+lint:
+	io.elementary.vala-lint ./src

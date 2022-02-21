@@ -81,7 +81,7 @@ public class Replay.Services.Emulator : GLib.Object {
         core = new Retro.Core (core_model.path);
         core.set_medias ({ rom.get_uri () });
         try {
-            debug ("Booting core %s...", core_model.info.core_name);
+            debug ("Booting core %s…", core_model.info.core_name);
             core.boot ();
         } catch (GLib.Error e) {
             // TODO: Display error to user
@@ -109,7 +109,7 @@ public class Replay.Services.Emulator : GLib.Object {
 
     public void pause () {
         if (core != null) {
-            debug ("Pausing...");
+            debug ("Pausing…");
             core.stop ();
             stopped ();
         }
@@ -117,7 +117,7 @@ public class Replay.Services.Emulator : GLib.Object {
 
     public void resume () {
         if (core != null) {
-            debug ("Resuming...");
+            debug ("Resuming…");
             core.run ();
             resumed ();
         }

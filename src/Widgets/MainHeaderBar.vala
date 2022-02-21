@@ -48,7 +48,7 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         preferences_menu_item.action_name = Replay.Services.MainWindowActionManager.ACTION_PREFIX + Replay.Services.MainWindowActionManager.ACTION_PREFERENCES;
         preferences_menu_item.get_child ().destroy ();
         preferences_menu_item.add (preferences_accellabel);
-        
+
         var quit_accellabel = new Granite.AccelLabel.from_action_name (
             _("Quit"),
             Replay.Services.MainWindowActionManager.ACTION_PREFIX + Replay.Services.MainWindowActionManager.ACTION_QUIT
