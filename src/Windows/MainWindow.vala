@@ -46,7 +46,8 @@ public class Replay.Windows.MainWindow : Hdy.Window {
         main_layout = new Replay.Layouts.MainLayout (this);
         main_layout.button_clicked.connect (() => {
             //  Replay.Application.emulator_manager.launch_game ("file:///home/avojak/Downloads/Tetris (World).gb");
-            Replay.Application.emulator_manager.launch_game ("file:///home/avojak/Downloads/Pokemon - Fire Red Version (U) (V1.1).gba");
+            //  Replay.Application.emulator_manager.launch_game ("file:///home/avojak/Downloads/Pokemon - Fire Red Version (U) (V1.1).gba");
+            Replay.Application.emulator_manager.launch_game ("file:///home/avojak/Downloads/varooom-3d/varooom-3d.gba");
         });
 
         add (main_layout);

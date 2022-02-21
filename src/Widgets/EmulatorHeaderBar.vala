@@ -56,11 +56,7 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         settings_popover_grid.orientation = Gtk.Orientation.VERTICAL;
         settings_popover_grid.width_request = 200;
         // TODO: Add item for opening the library
-        //  settings_popover_grid.attach (toggle_sidebar_menu_item, 0, 0, 1, 1);
-        //  settings_popover_grid.attach (reset_marker_menu_item, 0, 1, 1, 1);
-        //  settings_popover_grid.attach (preferences_menu_item, 0, 2, 1, 1);
-        //  settings_popover_grid.attach (create_menu_separator (), 0, 3, 1, 1);
-        //  settings_popover_grid.attach (quit_menu_item, 0, 4, 1, 1);
+        // TODO: Add item for showing emulator mapped controls
         settings_popover_grid.show_all ();
 
         var settings_popover = new Gtk.Popover (null);

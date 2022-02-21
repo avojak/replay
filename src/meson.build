@@ -17,11 +17,11 @@ application_files = files(
     join_paths('Layouts', 'MainLayout.vala'),
     join_paths('Models', 'LibretroCore.vala'),
     join_paths('Models', 'LibretroCoreInfo.vala'),
-    join_paths('Services', 'CoreManager.vala'),
     join_paths('Services', 'CoreRepository.vala'),
     join_paths('Services', 'Emulator.vala'),
     join_paths('Services', 'EmulatorManager.vala'),
     join_paths('Services', 'MainWindowActionManager.vala'),
+    join_paths('Services', 'ROMLibrary.vala'),
     join_paths('Services', 'SQLClient.vala'),
     join_paths('Widgets', 'EmulatorHeaderBar.vala'),
     join_paths('Widgets', 'MainHeaderBar.vala'),
@@ -48,7 +48,6 @@ executable(
         dependency('glib-2.0', version: '>= 2.64.6'),
         dependency('granite', version: '>= 6.2.0'),
         dependency('libhandy-1', version: '>= 1.2.0'),
-        # dependency('retro-gtk-0.14')
         dependency('retro-gtk-1', version: '>= 1.0.2'),
         dependency('sqlite3', version: '>= 3.31.1')
     ],
