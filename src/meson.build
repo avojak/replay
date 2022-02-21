@@ -21,6 +21,7 @@ application_files = files(
     join_paths('Services', 'CoreRepository.vala'),
     join_paths('Services', 'Emulator.vala'),
     join_paths('Services', 'EmulatorManager.vala'),
+    join_paths('Services', 'MainWindowActionManager.vala'),
     join_paths('Services', 'SQLClient.vala'),
     join_paths('Widgets', 'EmulatorHeaderBar.vala'),
     join_paths('Widgets', 'MainHeaderBar.vala'),

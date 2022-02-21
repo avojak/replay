@@ -21,11 +21,17 @@
 
 public class Replay.Windows.MainWindow : Hdy.Window {
 
+    public weak Replay.Application app { get; construct; }
+
+    private Replay.Services.MainWindowActionManager action_manager;
+    private Gtk.AccelGroup accel_group;
+
     private Replay.Layouts.MainLayout main_layout;
 
     public MainWindow (Replay.Application application) {
         Object (
             application: application,
+            app: application,
             border_width: 0,
             resizable: true,
             window_position: Gtk.WindowPosition.CENTER
@@ -33,6 +39,10 @@ public class Replay.Windows.MainWindow : Hdy.Window {
     }
 
     construct {
+        accel_group = new Gtk.AccelGroup ();
+        add_accel_group (accel_group);
+        action_manager = new Replay.Services.MainWindowActionManager (app, this);
+
         main_layout = new Replay.Layouts.MainLayout (this);
         main_layout.button_clicked.connect (() => {
             //  Replay.Application.emulator_manager.launch_game ("file:///home/avojak/Downloads/Tetris (World).gb");
@@ -66,7 +76,7 @@ public class Replay.Windows.MainWindow : Hdy.Window {
         present ();
     }
 
-    private bool before_destroy () {
+    public bool before_destroy () {
         update_position_settings ();
         destroy ();
         return true;
@@ -82,6 +92,10 @@ public class Replay.Windows.MainWindow : Hdy.Window {
         Replay.Application.settings.set_int ("pos-y", y);
         Replay.Application.settings.set_int ("window-width", width);
         Replay.Application.settings.set_int ("window-height", height);
+    }
+
+    public void show_preferences_dialog () {
+        // TODO
     }
 
 }

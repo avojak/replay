@@ -55,6 +55,7 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         settings_popover_grid.margin_bottom = 3;
         settings_popover_grid.orientation = Gtk.Orientation.VERTICAL;
         settings_popover_grid.width_request = 200;
+        // TODO: Add item for opening the library
         //  settings_popover_grid.attach (toggle_sidebar_menu_item, 0, 0, 1, 1);
         //  settings_popover_grid.attach (reset_marker_menu_item, 0, 1, 1, 1);
         //  settings_popover_grid.attach (preferences_menu_item, 0, 2, 1, 1);
