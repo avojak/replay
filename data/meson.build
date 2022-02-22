@@ -16,15 +16,11 @@ endforeach
 
 # Install the ROM files
 # install_data (
-#     join_paths('roms', 'chip8', 'IBM Logo.ch8'),
+#     join_paths('roms', 'GBWORDYL.gb'),
 #     install_dir: join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
 # )
 # install_data (
-#     join_paths('roms', 'chip8', 'Pong (alt).ch8'),
-#     install_dir: join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
-# )
-# install_data (
-#     join_paths('roms', 'chip8', 'test_opcode.ch8'),
+#     join_paths('roms', 'varooom-3d.gba'),
 #     install_dir: join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
 # )
 

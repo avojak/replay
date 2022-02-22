@@ -24,25 +24,46 @@ modules:
         url: https://gitlab.gnome.org/GNOME/retro-gtk.git
         tag: '1.0.2'
   # TODO: Might make sense to maintain a fork of the cores and ROMs to ensure availability
+  # LibRetro Cores
   - name: libretro-mgba
-    buildsystem: simple
+    # buildsystem: simple
+    no-autogen: true
     sources:
       - type: git
         url: https://github.com/libretro/mgba.git
         branch: 'master' # TODO: Lock this down to a specific version/commit
-    build-commands:
-      - make -f Makefile.libretro
-      - install -d /app/share/com.github.avojak.replay/libretro/cores
-      - install -m 644 mgba_libretro.so /app/share/com.github.avojak.replay/libretro/cores/mgba_libretro.so
-  - name: libretro-super
-    buildsystem: simple
-    sources:
-      - type: git
-        url: https://github.com/libretro/libretro-super.git
-        branch: 'master'
-    build-commands:
-      - install -d /app/share/com.github.avojak.replay/libretro/cores
-      - install -m 644 dist/info/mgba_libretro.info /app/share/com.github.avojak.replay/libretro/cores/mgba_libretro.info
+      - type: file
+        url: https://raw.githubusercontent.com/libretro/libretro-super/master/dist/info/mgba_libretro.info
+        sha256: 60a285a1c8b2c0a032bc9ce34a725741ba020b74daeb7a9aa4598d5a5f94f5a5
+    # build-commands:
+    #   - make -f Makefile.libretro
+    #   - install -d /app/share/com.github.avojak.replay/libretro/cores
+    #   - install -m 644 mgba_libretro.so /app/share/com.github.avojak.replay/libretro/cores/mgba_libretro.so
+    make-install-args:
+      - prefix=/app # Installs to /app/lib/libretro/mgba_libretro.so
+      # TODO: Figure out how to cleanup unnecessary files after the build
+    post-install:
+      - install -m 644 mgba_libretro.info /app/lib/libretro/mgba_libretro.info
+  # - name: libretro-super
+  #   buildsystem: simple
+  #   # no-autogen: true
+  #   sources:
+  #     - type: git
+  #       url: https://github.com/libretro/libretro-super.git
+  #       branch: 'master'
+  #   # make-install-args:
+  #   #   - /app/share/libretro
+  #   build-commands:
+  #     - install -d /app/lib/libretro
+  #     - install -m 644 dist/info/mgba_libretro.info /app/lib/libretro/mgba_libretro.info
+  # ROMs
+  # - name: ROMs
+  #   sources:
+  #     - type: file
+  #       path: data/roms/GBWORDYL.gb
+  #   build-commands:
+  #     - install -d /app/share/com.github.avojak.replay/roms
+  #     - install -m 644 GBWORDYL.gb /app/share/com.github.avojak.replay/roms/GBWORDYL.gb
   - name: replay
     buildsystem: meson
     sources:

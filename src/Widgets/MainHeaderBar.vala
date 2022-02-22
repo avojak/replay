@@ -33,6 +33,10 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         //  unowned Gtk.StyleContext style_context = get_style_context ();
         //  style_context.add_class (Gtk.STYLE_CLASS_FLAT);
 
+        // TODO: Add search entry
+
+        // TODO: Add ability to open a ROM file not in the library
+
         var settings_button = new Gtk.MenuButton ();
         settings_button.image = new Gtk.Image.from_icon_name ("preferences-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
         settings_button.tooltip_text = _("Menu");

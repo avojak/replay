@@ -3,8 +3,8 @@ conf_data.set('APP_ID', application_id)
 conf_data.set('APP_NAME', application_name)
 conf_data.set('VERSION', meson.project_version())
 conf_data.set('PKG_DATA_DIR', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name()))
-conf_data.set('LIBRETRO_CORE_DIR', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name(), 'libretro', 'cores'))
-conf_data.set('ROM_DIR', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name(), 'roms'))
+conf_data.set('LIBRETRO_CORE_DIR', join_paths(get_option('prefix'), get_option('libdir'), 'libretro'))
+conf_data.set('ROM_DIR', join_paths(get_option('prefix'), get_option('libdir'), 'roms'))
 
 config_header = configure_file(
     input: 'config.vala.in',
@@ -15,15 +15,19 @@ config_header = configure_file(
 application_files = files(
     join_paths('Layouts', 'EmulatorLayout.vala'),
     join_paths('Layouts', 'MainLayout.vala'),
+    join_paths('Models', 'Game.vala'),
     join_paths('Models', 'LibretroCore.vala'),
     join_paths('Models', 'LibretroCoreInfo.vala'),
+    join_paths('Models', 'System.vala'),
     join_paths('Services', 'CoreRepository.vala'),
     join_paths('Services', 'Emulator.vala'),
     join_paths('Services', 'EmulatorManager.vala'),
+    join_paths('Services', 'GameLibrary.vala'),
     join_paths('Services', 'MainWindowActionManager.vala'),
-    join_paths('Services', 'ROMLibrary.vala'),
     join_paths('Services', 'SQLClient.vala'),
+    join_paths('Views', 'LibraryView.vala'),
     join_paths('Widgets', 'EmulatorHeaderBar.vala'),
+    join_paths('Widgets', 'LibraryItem.vala'),
     join_paths('Widgets', 'MainHeaderBar.vala'),
     join_paths('Windows', 'EmulatorWindow.vala'),
     join_paths('Windows', 'MainWindow.vala'),

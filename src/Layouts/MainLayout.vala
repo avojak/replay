@@ -25,7 +25,7 @@ public class Replay.Layouts.MainLayout : Gtk.Grid {
 
     private Replay.Widgets.MainHeaderBar header_bar;
     private Gtk.ScrolledWindow scrolled_window;
-    private Gtk.FlowBox flow_box;
+    private Replay.Views.LibraryView library_view;
 
     public MainLayout (Replay.Windows.MainWindow window) {
         Object (
@@ -37,13 +37,14 @@ public class Replay.Layouts.MainLayout : Gtk.Grid {
         header_bar = new Replay.Widgets.MainHeaderBar ();
         header_bar.get_style_context ().add_class ("default-decoration");
 
-        flow_box = new Gtk.FlowBox () {
-            expand = true
-        };
+        library_view = new Replay.Views.LibraryView ();
+        library_view.add_game (new Replay.Models.Game () {
+            display_name = "Pokemon - Fire Red Version"
+        });
 
         scrolled_window = new Gtk.ScrolledWindow (null, null);
         scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-        scrolled_window.add (flow_box);
+        scrolled_window.add (library_view);
 
         var button = new Gtk.Button.with_label ("Start") {
             hexpand = true

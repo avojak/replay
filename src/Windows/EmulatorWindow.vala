@@ -42,21 +42,48 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         });
         add (layout);
 
-        // TODO: Fix window not grabbing all keyboard input (e.g. arrow keys)
+        // TODO: Fix window not properly grabbing all keyboard input (e.g. some arrow keys move focus to headerbar)
 
-        // TODO: no magic numbers!
-        resize (500, 500);
+        // TODO: Automatically pause/resume when the window loses/gains focus?
+
+        restore_window_position ();
+
+        this.delete_event.connect (before_destroy);
 
         show_emulator ();
     }
 
-    public unowned Retro.CoreView get_core_view () {
-        return layout.view;
+    private void restore_window_position () {
+        move (Replay.Application.settings.get_int ("emu-pos-x"), Replay.Application.settings.get_int ("emu-pos-y"));
+        resize (Replay.Application.settings.get_int ("emu-window-width"), Replay.Application.settings.get_int ("emu-window-height"));
     }
+
+    public bool before_destroy () {
+        update_position_settings ();
+        destroy ();
+        return true;
+    }
+
+    private void update_position_settings () {
+        int width, height, x, y;
+
+        get_size (out width, out height);
+        get_position (out x, out y);
+
+        Replay.Application.settings.set_int ("emu-pos-x", x);
+        Replay.Application.settings.set_int ("emu-pos-y", y);
+        Replay.Application.settings.set_int ("emu-window-width", width);
+        Replay.Application.settings.set_int ("emu-window-height", height);
+    }
+
 
     private void show_emulator () {
         show_all ();
         present ();
+    }
+
+    public unowned Retro.CoreView get_core_view () {
+        return layout.view;
     }
 
     public signal void pause_button_clicked ();

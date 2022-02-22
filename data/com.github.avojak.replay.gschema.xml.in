@@ -26,5 +26,45 @@
       <summary>The saved height of the window.</summary>
       <description>The saved height of the window.</description>
     </key>
+    <key name="emu-pos-x" type="i">
+      <default>360</default>
+      <summary>The saved horizontal position of the emulator window.</summary>
+      <description>The saved horizontal position of the emulator window.</description>
+    </key>
+    <key name="emu-pos-y" type="i">
+      <default>360</default>
+      <summary>The saved vertical position width of the emulator window.</summary>
+      <description>The saved vertical position of the emulator window.</description>
+    </key>
+    <key name="emu-window-width" type="i">
+      <default>500</default>
+      <summary>The saved width of the emulator window.</summary>
+      <description>The saved width of the emulator window.</description>
+    </key>
+    <key name="emu-window-height" type="i">
+      <default>500</default>
+      <summary>The saved height of the emulator window.</summary>
+      <description>The saved height of the emulator window.</description>
+    </key>
+    <key name="user-core-directory" type="s">
+      <default>""</default>
+      <summary>The directory where user-installed libretro cores are stored.</summary>
+      <description>The directory where user-installed libretro cores are stored.</description>
+    </key>
+    <key name="user-rom-directory" type="s">
+      <default>""</default>
+      <summary>The directory where user-installed ROMs are stored.</summary>
+      <description>The directory where user-installed ROMs are stored.</description>
+    </key>
+    <!-- <key name="download-game-info" type="b">
+      <default>true</default>
+      <summary>Whether or not to automatically download game information for ROM files.</summary>
+      <description>Whether or not to automatically download game information for ROM files.</description>
+    </key> -->
+    <key name="handle-window-focus-change" type="b">
+      <default>true</default>
+      <summary>Whether or not to automatically resume and pause a game when the window goes in and out of focus</summary>
+      <description>Whether or not to automatically resume and pause a game when the window goes in and out of focus</description>
+    </key>
   </schema>
 </schemalist>
