@@ -31,6 +31,8 @@ public class Replay.Services.GameLibrary : GLib.Object {
         }
     }
 
+    public Replay.Services.SQLClient sql_client { get; set; }
+
     // ROM path to game model mapping
     private Gee.Map<string, Replay.Models.Game> known_games = new Gee.HashMap<string, Replay.Models.Game> ();
 
@@ -66,7 +68,7 @@ public class Replay.Services.GameLibrary : GLib.Object {
                 }
                 // Can't make any assumptions about which file types are actually ROMs, but this is in the
                 // bundled directory, so there *shouldn't* be anything else in there.
-                found_rom (GLib.File.new_for_path (Constants.ROM_DIR + "/" + info.get_name ()));
+                on_rom_found (GLib.File.new_for_path (Constants.ROM_DIR + "/" + info.get_name ()));
             }
         } catch (GLib.Error e) {
             warning ("Error while iterating over files in bundled core directory: %s", e.message);
@@ -74,7 +76,10 @@ public class Replay.Services.GameLibrary : GLib.Object {
         }
     }
 
-    private void found_rom (GLib.File rom_file) {
+    private void on_rom_found (GLib.File rom_file) {
+        // TODO: Create Game model
+        rom_found ();
+
         //  if (!known_cores.has_key (core_info.core_name)) {
         //      debug ("Found bundled core %s for %s", core_info.core_name, core_info.system_name);
         //      // Store the core
@@ -101,5 +106,7 @@ public class Replay.Services.GameLibrary : GLib.Object {
         //      info = core_info
         //  });
     }
+
+    public signal void rom_found ();
 
 }

@@ -13,6 +13,9 @@ config_header = configure_file(
 )
 
 application_files = files(
+    join_paths('Core', 'Client.vala'),
+    join_paths('Core', 'LibrarySource.vala'),
+    join_paths('Core', 'LibretroCoreSource.vala'),
     join_paths('Layouts', 'EmulatorLayout.vala'),
     join_paths('Layouts', 'MainLayout.vala'),
     join_paths('Models', 'Game.vala'),
@@ -28,6 +31,7 @@ application_files = files(
     join_paths('Views', 'LibraryView.vala'),
     join_paths('Widgets', 'EmulatorHeaderBar.vala'),
     join_paths('Widgets', 'LibraryItem.vala'),
+    join_paths('Widgets', 'LibrarySidePanel.vala'),
     join_paths('Widgets', 'MainHeaderBar.vala'),
     join_paths('Windows', 'EmulatorWindow.vala'),
     join_paths('Windows', 'MainWindow.vala'),

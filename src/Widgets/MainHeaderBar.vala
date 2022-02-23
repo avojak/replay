@@ -26,12 +26,12 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
             title: Constants.APP_NAME,
             show_close_button: true,
             has_subtitle: false
+            //  decoration_layout: ":maximize"
         );
     }
 
     construct {
-        //  unowned Gtk.StyleContext style_context = get_style_context ();
-        //  style_context.add_class (Gtk.STYLE_CLASS_FLAT);
+        get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
 
         // TODO: Add search entry
 

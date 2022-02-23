@@ -34,7 +34,6 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
 
     construct {
         header_bar = new Replay.Widgets.EmulatorHeaderBar ();
-        header_bar.get_style_context ().add_class ("default-decoration");
         header_bar.pause_button_clicked.connect (() => {
             pause_button_clicked ();
         });

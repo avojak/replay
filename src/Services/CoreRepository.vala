@@ -81,7 +81,7 @@ public class Replay.Services.CoreRepository : GLib.Object {
                         warning ("Found bundled core without corresponding .info file: %s", core_file.get_path ());
                         continue;
                     }
-                    found_core (core_file, info_file);
+                    on_core_found (core_file, info_file);
                 }
             }
         } catch (GLib.Error e) {
@@ -90,15 +90,17 @@ public class Replay.Services.CoreRepository : GLib.Object {
         }
     }
 
-    private void found_core (GLib.File core_file, GLib.File info_file) {
+    private void on_core_found (GLib.File core_file, GLib.File info_file) {
         var core_info = new Replay.Models.LibretroCoreInfo.from_file (info_file);
         if (!known_cores.has_key (core_info.core_name)) {
             debug ("Found bundled core %s for %s", core_info.core_name, core_info.system_name);
             // Store the core
-            known_cores.set (core_info.core_name, new Replay.Models.LibretroCore () {
+            var core = new Replay.Models.LibretroCore () {
                 path = core_file.get_path (),
                 info = core_info
-            });
+            };
+            known_cores.set (core_info.core_name, core);
+            core_found (core);
             // Update the ROM extension map
             foreach (var extension in core_info.supported_extensions) {
                 if (!rom_extensions.has_key (extension)) {
@@ -128,5 +130,7 @@ public class Replay.Services.CoreRepository : GLib.Object {
         var core_name = rom_extensions.get (extension).get (0);
         return known_cores.get (core_name);
     }
+
+    public signal void core_found (Replay.Models.LibretroCore core);
 
 }

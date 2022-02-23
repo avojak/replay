@@ -44,11 +44,7 @@ public class Replay.Windows.MainWindow : Hdy.Window {
         action_manager = new Replay.Services.MainWindowActionManager (app, this);
 
         main_layout = new Replay.Layouts.MainLayout (this);
-        main_layout.button_clicked.connect (() => {
-            //  Replay.Application.emulator_manager.launch_game ("file:///home/avojak/Downloads/Tetris (World).gb");
-            Replay.Application.emulator_manager.launch_game ("file:///home/avojak/Downloads/Pokemon - Fire Red Version (U) (V1.1).gba");
-            //  Replay.Application.emulator_manager.launch_game ("file:///home/avojak/Downloads/varooom-3d/varooom-3d.gba");
-        });
+        main_layout.game_selected.connect (on_game_selected);
 
         add (main_layout);
 
@@ -97,6 +93,11 @@ public class Replay.Windows.MainWindow : Hdy.Window {
 
     public void show_preferences_dialog () {
         // TODO
+    }
+
+    private void on_game_selected (Replay.Models.Game game) {
+        debug ("game selected");
+        Replay.Application.emulator_manager.launch_game (GLib.File.new_for_path (game.rom_path).get_uri ());
     }
 
 }

@@ -37,11 +37,23 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             valign = Gtk.Align.CENTER,
             margin = 8
         };
-        grid.add (new Gtk.Image () {
+        var image = new Gtk.Image () {
             gicon = new ThemedIcon ("application-default-icon"),
             pixel_size = 128,
             margin_bottom = 8
-        });
+        };
+        var badge = new Gtk.Label (null) {
+            halign = Gtk.Align.END,
+            valign = Gtk.Align.START,
+            use_markup = true
+        };
+        badge.set_markup ("<b>!</b>");
+        badge.get_style_context ().add_class (Granite.STYLE_CLASS_BADGE);
+        var overlay = new Gtk.Overlay () {
+            halign = Gtk.Align.CENTER
+        };
+        //  overlay.add_overlay (badge); // TODO: Could use an icon here probably
+        overlay.add (image);
         var label = new Gtk.Label (null) {
             wrap = true,
             max_width_chars = 20,
@@ -50,6 +62,8 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             use_markup = true
         };
         label.set_markup (@"<b>$title</b>");
+
+        grid.add (overlay);
         grid.add (label);
 
         //  var style_context = get_style_context ();

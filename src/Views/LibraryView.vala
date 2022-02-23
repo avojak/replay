@@ -21,6 +21,8 @@
 
 public class Replay.Views.LibraryView : Gtk.Grid {
 
+    public Hdy.HeaderBar header_bar { get; construct; }
+
     private Gtk.FlowBox flow_box;
 
     public LibraryView () {
@@ -30,6 +32,8 @@ public class Replay.Views.LibraryView : Gtk.Grid {
     }
 
     construct {
+        header_bar = new Replay.Widgets.MainHeaderBar ();
+
         flow_box = new Gtk.FlowBox () {
             activate_on_single_click = true,
             selection_mode = Gtk.SelectionMode.SINGLE,
@@ -39,13 +43,25 @@ public class Replay.Views.LibraryView : Gtk.Grid {
             valign = Gtk.Align.START
         };
 
-        add (flow_box);
+        var scrolled_window = new Gtk.ScrolledWindow (null, null);
+        scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+        scrolled_window.add (flow_box);
+
+        attach (header_bar, 0, 0);
+        attach (scrolled_window, 0, 1);
 
         show_all ();
     }
 
     public void add_game (Replay.Models.Game game) {
-        flow_box.add (new Replay.Widgets.LibraryItem.for_game (game));
+        var item = new Replay.Widgets.LibraryItem.for_game (game);
+        item.activate.connect (() => {
+            debug ("Item activated");
+            game_selected (game);
+        });
+        flow_box.add (item);
     }
+
+    public signal void game_selected (Replay.Models.Game game);
 
 }

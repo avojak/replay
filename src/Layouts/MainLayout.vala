@@ -23,9 +23,9 @@ public class Replay.Layouts.MainLayout : Gtk.Grid {
 
     public unowned Replay.Windows.MainWindow window { get; construct; }
 
-    private Replay.Widgets.MainHeaderBar header_bar;
-    private Gtk.ScrolledWindow scrolled_window;
+    private Gtk.Paned paned;
     private Replay.Views.LibraryView library_view;
+    private Replay.Widgets.LibrarySidePanel library_side_panel;
 
     public MainLayout (Replay.Windows.MainWindow window) {
         Object (
@@ -34,17 +34,18 @@ public class Replay.Layouts.MainLayout : Gtk.Grid {
     }
 
     construct {
-        header_bar = new Replay.Widgets.MainHeaderBar ();
-        header_bar.get_style_context ().add_class ("default-decoration");
-
         library_view = new Replay.Views.LibraryView ();
+        library_view.game_selected.connect (on_game_selected);
         library_view.add_game (new Replay.Models.Game () {
-            display_name = "Pokemon - Fire Red Version"
+            display_name = "Pokemon - Fire Red Version",
+            rom_path = "/home/avojak/Downloads/Pokemon - Fire Red Version (U) (V1.1).gba"
         });
 
-        scrolled_window = new Gtk.ScrolledWindow (null, null);
-        scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-        scrolled_window.add (library_view);
+        library_side_panel = new Replay.Widgets.LibrarySidePanel ();
+
+        var header_group = new Hdy.HeaderGroup ();
+        header_group.add_header_bar (library_side_panel.header_bar);
+        header_group.add_header_bar (library_view.header_bar);
 
         var button = new Gtk.Button.with_label ("Start") {
             hexpand = true
@@ -53,13 +54,23 @@ public class Replay.Layouts.MainLayout : Gtk.Grid {
             button_clicked ();
         });
 
-        attach (header_bar, 0, 0);
-        attach (scrolled_window, 0, 1);
-        attach (button, 0, 2);
+        paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
+            position = 240
+        };
+        paned.pack1 (library_side_panel, false, false);
+        paned.pack2 (library_view, true, false);
+
+        attach (paned, 0, 0);
 
         show_all ();
     }
 
+    private void on_game_selected (Replay.Models.Game game) {
+        debug ("game selected");
+        game_selected (game);
+    }
+
     public signal void button_clicked ();
+    public signal void game_selected (Replay.Models.Game game);
 
 }

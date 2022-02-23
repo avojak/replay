@@ -23,6 +23,7 @@ public class Replay.Application : Gtk.Application {
 
     public static GLib.Settings settings;
     public static Replay.Services.CoreRepository core_repository;
+    public static Replay.Services.GameLibrary game_library;
     public static Replay.Services.EmulatorManager emulator_manager;
 
     private GLib.List<Replay.Windows.MainWindow> windows;
@@ -44,6 +45,7 @@ public class Replay.Application : Gtk.Application {
     construct {
         settings = new GLib.Settings (Constants.APP_ID);
         core_repository = Replay.Services.CoreRepository.instance;
+        game_library = Replay.Services.GameLibrary.instance;
         emulator_manager = new Replay.Services.EmulatorManager (this);
 
         windows = new GLib.List<Replay.Windows.MainWindow> ();
@@ -88,9 +90,8 @@ public class Replay.Application : Gtk.Application {
             // For Flatpak, the first commandline argument is the app ID, so we need to filter it out
             if (command_line_arguments[0] == Constants.APP_ID) {
                 return command_line_arguments[1:command_line_arguments.length - 1];
-            } {
-                return command_line_arguments;
             }
+            return command_line_arguments;
         }
     }
 
@@ -123,6 +124,8 @@ public class Replay.Application : Gtk.Application {
         // This must happen here because the main event loops will have started
         core_repository.sql_client = Replay.Services.SQLClient.instance;
         core_repository.initialize ();
+        game_library.sql_client = Replay.Services.SQLClient.instance;
+        game_library.initialize ();
 
         // Respect the system style preference
         var granite_settings = Granite.Settings.get_default ();

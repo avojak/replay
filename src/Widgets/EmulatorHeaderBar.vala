@@ -33,6 +33,8 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
     }
 
     construct {
+        get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
+        
         pause_button = new Gtk.Button ();
         pause_button.image = new Gtk.Image.from_icon_name ("media-playback-pause", Gtk.IconSize.SMALL_TOOLBAR);
         pause_button.tooltip_text = _("Pause");
