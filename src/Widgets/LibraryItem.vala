@@ -21,10 +21,12 @@
 
 public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
 
+    public Replay.Models.Game game { get; construct; }
     public string title { get; construct; }
 
     public LibraryItem.for_game (Replay.Models.Game game) {
         Object (
+            game: game,
             title: game.display_name
         );
     }

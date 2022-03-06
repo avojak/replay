@@ -3,8 +3,10 @@ conf_data.set('APP_ID', application_id)
 conf_data.set('APP_NAME', application_name)
 conf_data.set('VERSION', meson.project_version())
 conf_data.set('PKG_DATA_DIR', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name()))
-conf_data.set('LIBRETRO_CORE_DIR', join_paths(get_option('prefix'), get_option('libdir'), 'libretro'))
-conf_data.set('ROM_DIR', join_paths(get_option('prefix'), get_option('libdir'), 'roms'))
+conf_data.set('BUNDLED_LIBRETRO_CORE_DIR', join_paths(get_option('prefix'), get_option('libdir'), 'libretro'))
+conf_data.set('BUNDLED_ROM_DIR', join_paths(get_option('prefix'), get_option('libdir'), 'roms'))
+conf_data.set('SYSTEM_LIBRETRO_CORE_DIR', '/var/run/host/usr/lib/x86_64-linux-gnu/libretro')
+conf_data.set('SYSTEM_LIBRETRO_INFO_DIR', '/var/run/host/usr/share/libretro/info')
 
 config_header = configure_file(
     input: 'config.vala.in',
@@ -14,27 +16,32 @@ config_header = configure_file(
 
 application_files = files(
     join_paths('Core', 'Client.vala'),
+    join_paths('Core', 'DatabaseLibretroCoreSource.vala'),
+    join_paths('Core', 'FileSystemLibrarySource.vala'),
+    join_paths('Core', 'FileSystemLibretroCoreSource.vala'),
     join_paths('Core', 'LibrarySource.vala'),
     join_paths('Core', 'LibretroCoreSource.vala'),
     join_paths('Layouts', 'EmulatorLayout.vala'),
-    join_paths('Layouts', 'MainLayout.vala'),
+    join_paths('Layouts', 'LibraryLayout.vala'),
     join_paths('Models', 'Game.vala'),
     join_paths('Models', 'LibretroCore.vala'),
     join_paths('Models', 'LibretroCoreInfo.vala'),
-    join_paths('Models', 'System.vala'),
-    join_paths('Services', 'CoreRepository.vala'),
+    # join_paths('Models', 'System.vala'),
     join_paths('Services', 'Emulator.vala'),
     join_paths('Services', 'EmulatorManager.vala'),
     join_paths('Services', 'GameLibrary.vala'),
-    join_paths('Services', 'MainWindowActionManager.vala'),
+    join_paths('Services', 'LibretroCoreRepository.vala'),
+    join_paths('Services', 'LibraryWindowActionManager.vala'),
     join_paths('Services', 'SQLClient.vala'),
+    join_paths('Views', 'LibraryLoadingView.vala'),
     join_paths('Views', 'LibraryView.vala'),
     join_paths('Widgets', 'EmulatorHeaderBar.vala'),
     join_paths('Widgets', 'LibraryItem.vala'),
     join_paths('Widgets', 'LibrarySidePanel.vala'),
-    join_paths('Widgets', 'MainHeaderBar.vala'),
+    join_paths('Widgets', 'LibrarySidePanelItem.vala'),
+    join_paths('Widgets', 'LibraryHeaderBar.vala'),
     join_paths('Windows', 'EmulatorWindow.vala'),
-    join_paths('Windows', 'MainWindow.vala'),
+    join_paths('Windows', 'LibraryWindow.vala'),
     join_paths('Application.vala')
 )
 
@@ -48,7 +55,7 @@ executable(
     application_id,
     application_files,
     config_header,
-    # css_gresource,
+    css_gresource,
     c_args: c_args,
     dependencies: [
         dependency('gtk+-3.0', version: '>= 3.24.20'),

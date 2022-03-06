@@ -21,14 +21,9 @@
 
 public class Replay.Services.GameLibrary : GLib.Object {
 
-    private static Replay.Services.GameLibrary _instance = null;
-    public static Replay.Services.GameLibrary instance {
-        get {
-            if (_instance == null) {
-                _instance = new Replay.Services.GameLibrary ();
-            }
-            return _instance;
-        }
+    private static GLib.Once<Replay.Services.GameLibrary> instance;
+    public static unowned Replay.Services.GameLibrary get_default () {
+        return instance.once (() => { return new Replay.Services.GameLibrary (); });
     }
 
     public Replay.Services.SQLClient sql_client { get; set; }
@@ -39,46 +34,59 @@ public class Replay.Services.GameLibrary : GLib.Object {
     private GameLibrary () {
     }
 
-    public void initialize () {
+    public void set_games (Gee.List<Replay.Models.Game> games) {
+        known_games.clear ();
+        foreach (var game in games) {
+            if (!known_games.has_key (game.rom_path)) {
+                known_games.set (game.rom_path, game);
+            }
+        }
+    }
+
+    public Gee.Collection<Replay.Models.Game> get_games () {
+        return known_games.values;
+    }
+
+    //  public void initialize () {
         // Load known ROMs from database
         // TODO
         // Check whether known ROMs can still be found on the filesystem
         // TODO
         // Check for bundled ROMs not already present in the database
-        scan_rom_directory (GLib.File.new_for_path (Constants.ROM_DIR));
-    }
+        //  scan_rom_directory (GLib.File.new_for_path (Constants.ROM_DIR));
+    //  }
 
-    private void scan_rom_directory (GLib.File rom_directory) {
-        if (!rom_directory.query_exists ()) {
-            warning ("Bundled ROM directory not found: %s", rom_directory.get_path ());
-            return;
-        }
-        GLib.FileEnumerator file_enumerator;
-        try {
-            file_enumerator = rom_directory.enumerate_children ("standard::*", GLib.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
-        } catch (GLib.Error e) {
-            warning ("Error while enumerating files in bundled ROM directory: %s", e.message);
-            return;
-        }
-        GLib.FileInfo info;
-        try {
-            while ((info = file_enumerator.next_file ()) != null) {
-                if (info.get_file_type () == GLib.FileType.DIRECTORY) {
-                    continue;
-                }
-                // Can't make any assumptions about which file types are actually ROMs, but this is in the
-                // bundled directory, so there *shouldn't* be anything else in there.
-                on_rom_found (GLib.File.new_for_path (Constants.ROM_DIR + "/" + info.get_name ()));
-            }
-        } catch (GLib.Error e) {
-            warning ("Error while iterating over files in bundled core directory: %s", e.message);
-            return;
-        }
-    }
+    //  private void scan_rom_directory (GLib.File rom_directory) {
+    //      if (!rom_directory.query_exists ()) {
+    //          warning ("Bundled ROM directory not found: %s", rom_directory.get_path ());
+    //          return;
+    //      }
+    //      GLib.FileEnumerator file_enumerator;
+    //      try {
+    //          file_enumerator = rom_directory.enumerate_children ("standard::*", GLib.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
+    //      } catch (GLib.Error e) {
+    //          warning ("Error while enumerating files in bundled ROM directory: %s", e.message);
+    //          return;
+    //      }
+    //      GLib.FileInfo info;
+    //      try {
+    //          while ((info = file_enumerator.next_file ()) != null) {
+    //              if (info.get_file_type () == GLib.FileType.DIRECTORY) {
+    //                  continue;
+    //              }
+    //              // Can't make any assumptions about which file types are actually ROMs, but this is in the
+    //              // bundled directory, so there *shouldn't* be anything else in there.
+    //              on_rom_found (GLib.File.new_for_path (Constants.ROM_DIR + "/" + info.get_name ()));
+    //          }
+    //      } catch (GLib.Error e) {
+    //          warning ("Error while iterating over files in bundled core directory: %s", e.message);
+    //          return;
+    //      }
+    //  }
 
-    private void on_rom_found (GLib.File rom_file) {
+    //  private void on_rom_found (GLib.File rom_file) {
         // TODO: Create Game model
-        rom_found ();
+        //  rom_found ();
 
         //  if (!known_cores.has_key (core_info.core_name)) {
         //      debug ("Found bundled core %s for %s", core_info.core_name, core_info.system_name);
@@ -105,8 +113,8 @@ public class Replay.Services.GameLibrary : GLib.Object {
         //      uri = core_file.get_uri (),
         //      info = core_info
         //  });
-    }
+    //  }
 
-    public signal void rom_found ();
+    //  public signal void rom_found ();
 
 }

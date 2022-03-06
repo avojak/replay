@@ -25,10 +25,10 @@ public class Replay.Widgets.LibrarySidePanel : Gtk.Grid {
 
     private Granite.Widgets.SourceList source_list;
     private Granite.Widgets.SourceList.ExpandableItem collections_category;
-    private Granite.Widgets.SourceList.ExpandableItem favorites_category;
-    private Granite.Widgets.SourceList.ExpandableItem recent_category;
-    private Granite.Widgets.SourceList.ExpandableItem unplayed_category;
     private Granite.Widgets.SourceList.ExpandableItem systems_category;
+    //  private Granite.Widgets.SourceList.Item favorites_item;
+    //  private Granite.Widgets.SourceList.Item recent_item;
+    //  private Granite.Widgets.SourceList.Item unplayed_item;
 
     construct {
         unowned Gtk.StyleContext style_context = get_style_context ();
@@ -41,25 +41,31 @@ public class Replay.Widgets.LibrarySidePanel : Gtk.Grid {
         header_bar.get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
 
         source_list = new Granite.Widgets.SourceList ();
-        
+        source_list.item_selected.connect ((item) => {
+            item_selected (item);
+        });
+
         collections_category = new Granite.Widgets.SourceList.ExpandableItem (_("Game Collections")) {
             selectable = false,
             expanded = true
         };
-        favorites_category = new Granite.Widgets.SourceList.ExpandableItem (_("Favorites")) {
-            icon = new GLib.ThemedIcon ("starred")
-        };
-        recent_category = new Granite.Widgets.SourceList.ExpandableItem (_("Recently Played")) {
-            icon = new GLib.ThemedIcon ("document-open-recent")
-        };
-        unplayed_category = new Granite.Widgets.SourceList.ExpandableItem (_("Unplayed")) {
-            icon = new GLib.ThemedIcon ("mail-unread")
-        };
-        collections_category.add (favorites_category);
-        collections_category.add (recent_category);
-        collections_category.add (unplayed_category);
+        //  favorites_item = new Granite.Widgets.SourceList.Item (_("Favorites")) {
+        //      icon = new GLib.ThemedIcon ("starred")
+        //  };
+        //  recent_item = new Granite.Widgets.SourceList.Item (_("Recently Played")) {
+        //      icon = new GLib.ThemedIcon ("document-open-recent")
+        //  };
+        //  unplayed_item = new Granite.Widgets.SourceList.Item (_("Unplayed")) {
+        //      icon = new GLib.ThemedIcon ("mail-unread")
+        //  };
+        //  collections_category.add (favorites_item);
+        //  collections_category.add (recent_item);
+        //  collections_category.add (unplayed_item);
 
-        systems_category = new Granite.Widgets.SourceList.ExpandableItem (_("Systems"));
+        systems_category = new Granite.Widgets.SourceList.ExpandableItem (_("Systems")) {
+            selectable = false,
+            expanded = true
+        };
 
         source_list.root.add (collections_category);
         source_list.root.add (systems_category);
@@ -68,9 +74,48 @@ public class Replay.Widgets.LibrarySidePanel : Gtk.Grid {
         attach (source_list, 0, 1);
     }
 
-    public void add_system (string display_name, string id) {
-        var item = new Granite.Widgets.SourceList.Item (display_name);
-        systems_category.add (item);
+    public void add_collection (string display_name, string view_name, string icon_name) {
+        collections_category.add (new Replay.Widgets.LibrarySidePanelItem (display_name, view_name) {
+            icon = new GLib.ThemedIcon (icon_name)
+        });
     }
+
+    public void add_system (string display_name, string view_name, string icon_name) {
+        systems_category.add (new Replay.Widgets.LibrarySidePanelItem (display_name, view_name) {
+            icon = new GLib.ThemedIcon (icon_name)
+        });
+    }
+
+    public void increment_badge (string view_name) {
+        foreach (var item in collections_category.children) {
+            var side_panel_item = item as Replay.Widgets.LibrarySidePanelItem;
+            if (side_panel_item.view_name == view_name) {
+                side_panel_item.badge = (int.parse (side_panel_item.badge) + 1).to_string ();
+            }
+        }
+        foreach (var item in systems_category.children) {
+            var side_panel_item = item as Replay.Widgets.LibrarySidePanelItem;
+            if (side_panel_item.view_name == view_name) {
+                side_panel_item.badge = (int.parse (side_panel_item.badge) + 1).to_string ();
+            }
+        }
+    }
+
+    public void decrement_badge (string view_name) {
+        foreach (var item in collections_category.children) {
+            var side_panel_item = item as Replay.Widgets.LibrarySidePanelItem;
+            if (side_panel_item.view_name == view_name) {
+                side_panel_item.badge = (int.parse (side_panel_item.badge) - 1).to_string ();
+            }
+        }
+        foreach (var item in systems_category.children) {
+            var side_panel_item = item as Replay.Widgets.LibrarySidePanelItem;
+            if (side_panel_item.view_name == view_name) {
+                side_panel_item.badge = (int.parse (side_panel_item.badge) - 1).to_string ();
+            }
+        }
+    }
+
+    public signal void item_selected (Granite.Widgets.SourceList.Item item);
 
 }

@@ -3,6 +3,8 @@ namespace Constants {
     public const string APP_NAME = "@APP_NAME@";
     public const string VERSION = "@VERSION@";
     public const string PKG_DATA_DIR = "@PKG_DATA_DIR@";
-    public const string LIBRETRO_CORE_DIR = "@LIBRETRO_CORE_DIR@";
-    public const string ROM_DIR = "@ROM_DIR@";
+    public const string BUNDLED_LIBRETRO_CORE_DIR = "@BUNDLED_LIBRETRO_CORE_DIR@";
+    public const string BUNDLED_ROM_DIR = "@BUNDLED_ROM_DIR@";
+    public const string SYSTEM_LIBRETRO_CORE_DIR = "@SYSTEM_LIBRETRO_CORE_DIR@";
+    public const string SYSTEM_LIBRETRO_INFO_DIR = "@SYSTEM_LIBRETRO_INFO_DIR@";
 }

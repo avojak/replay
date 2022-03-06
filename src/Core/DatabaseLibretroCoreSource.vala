@@ -19,8 +19,10 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public interface Replay.Core.LibretroCoreSource : GLib.Object {
+public class Replay.Core.DatabaseLibretroCoreSource : Replay.Core.LibretroCoreSource, GLib.Object {
 
-    public abstract Gee.Collection<Replay.Models.LibretroCore> scan ();
+    public Gee.Collection<Replay.Models.LibretroCore> scan () {
+        return Replay.Core.Client.get_default ().core_repository.get_cores ();
+    }
 
 }

@@ -19,7 +19,7 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Services.MainWindowActionManager : GLib.Object {
+public class Replay.Services.LibraryWindowActionManager : GLib.Object {
 
     public const string ACTION_PREFIX = "win.";
     public const string ACTION_QUIT = "action_quit";
@@ -33,11 +33,11 @@ public class Replay.Services.MainWindowActionManager : GLib.Object {
     private static Gee.MultiMap<string, string> accelerators;
 
     public unowned Replay.Application application { get; construct; }
-    public unowned Replay.Windows.MainWindow window { get; construct; }
+    public unowned Replay.Windows.LibraryWindow window { get; construct; }
 
     private GLib.SimpleActionGroup action_group;
 
-    public MainWindowActionManager (Replay.Application application, Replay.Windows.MainWindow window) {
+    public LibraryWindowActionManager (Replay.Application application, Replay.Windows.LibraryWindow window) {
         Object (
             application: application,
             window: window

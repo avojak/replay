@@ -26,35 +26,59 @@ public class Replay.Core.Client : GLib.Object {
         return instance.once (() => { return new Replay.Core.Client (); });
     }
 
+    public Replay.Services.LibretroCoreRepository core_repository;
+    public Replay.Services.GameLibrary game_library;
+    public Replay.Services.EmulatorManager emulator_manager;
+
     private Gee.List<Replay.Core.LibretroCoreSource> core_sources = new Gee.ArrayList<Replay.Core.LibretroCoreSource> ();
     private Gee.List<Replay.Core.LibrarySource> library_sources = new Gee.ArrayList<Replay.Core.LibrarySource> ();
 
     construct {
+        core_repository = Replay.Services.LibretroCoreRepository.get_default ();
+        game_library = Replay.Services.GameLibrary.get_default ();
+        emulator_manager = new Replay.Services.EmulatorManager (Replay.Application.get_instance ());
+        
         // Add the default sources for bundled cores and ROMs
-        core_sources.add (new Replay.Core.LibretroCoreSource (Constants.LIBRETRO_CORE_DIR));
-        library_sources.add (new Replay.Core.LibrarySource (Constants.ROM_DIR));
+        core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.BUNDLED_LIBRETRO_CORE_DIR));
+        core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.SYSTEM_LIBRETRO_CORE_DIR));
+        library_sources.add (new Replay.Core.FileSystemLibrarySource (Constants.BUNDLED_ROM_DIR));
     }
 
-    public async void scan_all_sources () {
-        yield scan_core_sources ();
-        yield scan_library_sources ();
-    }
+    //  public async void scan_all_sources () {
+    //      yield scan_core_sources ();
+    //      yield scan_library_sources ();
+    //  }
 
-    public async void scan_core_sources () {
+    public async Gee.Collection<Replay.Models.LibretroCore> scan_core_sources () {
+        var cores = new Gee.HashMap<string, Replay.Models.LibretroCore> ();
         foreach (var core_source in core_sources) {
-            core_source.scan ();
+            foreach (var core in core_source.scan ()) {
+                if (!cores.has_key (core.info.core_name)) {
+                    cores.set (core.info.core_name, core);
+                }
+            }
         }
-        core_sources_scanned ();
+        foreach (var core in cores.values) {
+            debug ("Found core %s for %s", core.info.core_name, core.info.system_name);
+        }
+        // TODO: Store stuff in database if necessary
+        core_repository.set_cores (cores.values);
+        return cores.values;
+        //  core_sources_scanned (cores);
     }
 
-    public async void scan_library_sources () {
+    public async Gee.List<Replay.Models.Game> scan_library_sources () {
+        var games = new Gee.ArrayList<Replay.Models.Game> ();
         foreach (var library_source in library_sources) {
-            library_source.scan ();
+            games.add_all (library_source.scan ());
         }
-        library_sources_scanned ();
+        // TODO: Store stuff in database if necessary
+        game_library.set_games (games);
+        return games;
+        //  library_sources_scanned (games);
     }
 
-    public signal void core_sources_scanned ();
-    public signal void library_sources_scanned ();
+    public signal void core_sources_scanned (Gee.List<Replay.Models.LibretroCore> cores);
+    public signal void library_sources_scanned (Gee.List<Replay.Models.Game> games);
 
 }

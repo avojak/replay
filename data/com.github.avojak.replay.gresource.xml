@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/github/avojak/replay">
+    <file alias="LibraryLoadingView.css" compressed="true">styles/LibraryLoadingView.css</file>
+  </gresource>
+</gresources>

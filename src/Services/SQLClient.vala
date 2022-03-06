@@ -21,20 +21,15 @@
 
 public class Replay.Services.SQLClient : GLib.Object {
 
+    private static GLib.Once<Replay.Services.SQLClient> instance;
+    public static unowned Replay.Services.SQLClient get_default () {
+        return instance.once (() => { return new Replay.Services.SQLClient (); });
+    }
+
     private const string DATABASE_FILE = "replay.db";
     private const string SUPPORTED_EXTENSIONS_DELIM = ",";
 
     private Sqlite.Database database;
-
-    private static Replay.Services.SQLClient _instance = null;
-    public static Replay.Services.SQLClient instance {
-        get {
-            if (_instance == null) {
-                _instance = new Replay.Services.SQLClient ();
-            }
-            return _instance;
-        }
-    }
 
     private SQLClient () {
         info ("Database file: %s", DATABASE_FILE);

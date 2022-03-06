@@ -13,8 +13,8 @@ finish-args:
   - '--socket=fallback-x11'
   - '--socket=wayland'
   - '--socket=pulseaudio' # For RetroGTK
-  # - '--filesystem=host' # For loading libretro cores
-  - '--filesystem=home' # For loading ROMs
+  - '--filesystem=host' # For loading libretro cores
+  - '--filesystem=home' # For loading ROMs and save data
 
 modules:
   - name: retro-gtk
@@ -57,13 +57,16 @@ modules:
   #     - install -d /app/lib/libretro
   #     - install -m 644 dist/info/mgba_libretro.info /app/lib/libretro/mgba_libretro.info
   # ROMs
-  # - name: ROMs
-  #   sources:
-  #     - type: file
-  #       path: data/roms/GBWORDYL.gb
-  #   build-commands:
-  #     - install -d /app/share/com.github.avojak.replay/roms
-  #     - install -m 644 GBWORDYL.gb /app/share/com.github.avojak.replay/roms/GBWORDYL.gb
+  - name: ROMs
+    buildsystem: simple
+    no-autogen: true
+    sources:
+      - type: dir
+        path: data/roms
+    build-commands:
+      - install -d /app/lib/roms
+      - install -m 644 -t /app/lib/roms ./*
+    #   - install -m 644 GBWORDYL.gb /app/share/com.github.avojak.replay/roms/GBWORDYL.gb
   - name: replay
     buildsystem: meson
     sources:

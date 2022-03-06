@@ -19,16 +19,16 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Windows.MainWindow : Hdy.Window {
+public class Replay.Windows.LibraryWindow : Hdy.Window {
 
     public weak Replay.Application app { get; construct; }
 
-    private Replay.Services.MainWindowActionManager action_manager;
+    private Replay.Services.LibraryWindowActionManager action_manager;
     private Gtk.AccelGroup accel_group;
 
-    private Replay.Layouts.MainLayout main_layout;
+    private Replay.Layouts.LibraryLayout layout;
 
-    public MainWindow (Replay.Application application) {
+    public LibraryWindow (Replay.Application application) {
         Object (
             application: application,
             app: application,
@@ -41,12 +41,12 @@ public class Replay.Windows.MainWindow : Hdy.Window {
     construct {
         accel_group = new Gtk.AccelGroup ();
         add_accel_group (accel_group);
-        action_manager = new Replay.Services.MainWindowActionManager (app, this);
+        action_manager = new Replay.Services.LibraryWindowActionManager (app, this);
 
-        main_layout = new Replay.Layouts.MainLayout (this);
-        main_layout.game_selected.connect (on_game_selected);
+        layout = new Replay.Layouts.LibraryLayout (this);
+        layout.game_selected.connect (on_game_selected);
 
-        add (main_layout);
+        add (layout);
 
         restore_window_position ();
 
@@ -91,13 +91,39 @@ public class Replay.Windows.MainWindow : Hdy.Window {
         Replay.Application.settings.set_int ("window-height", height);
     }
 
+    public void reload_library () {
+        foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
+            Replay.Models.LibretroCore? core = Replay.Core.Client.get_default ().core_repository.get_core_for_rom (GLib.File.new_for_path (game.rom_path));
+            layout.add_game (game, core == null ? null : core.info.system_id);
+        }
+        //  var games_by_system = new Gee.HashMap<string, Gee.List<Replay.Models.Game>> ();
+        //  foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
+        //      Replay.Models.LibretroCore? core = Replay.Core.Client.get_default ().core_repository.get_core_for_rom (GLib.File.new_for_path (game.rom_path));
+        //      var key = core != null ? core.info.system_id : "";
+        //      if (!games_by_system.has_key (key)) {
+        //          games_by_system.set (key, new Gee.ArrayList<Replay.Models.Game> ());
+        //      }
+        //      games_by_system.get (key).add (game);
+        //  }
+        //  layout.set_games (games_by_system);
+    }
+
+    public void reload_systems () {
+        foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores ()) {
+            layout.add_view_for_core (core);
+        }
+    }
+
+    public void show_favorites_view () {
+        layout.show_favorites_view ();
+    }
+
     public void show_preferences_dialog () {
         // TODO
     }
 
     private void on_game_selected (Replay.Models.Game game) {
-        debug ("game selected");
-        Replay.Application.emulator_manager.launch_game (GLib.File.new_for_path (game.rom_path).get_uri ());
+        Replay.Core.Client.get_default ().emulator_manager.launch_game (GLib.File.new_for_path (game.rom_path).get_uri ());
     }
 
 }

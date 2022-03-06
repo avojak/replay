@@ -19,43 +19,8 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Core.LibrarySource : GLib.Object {
+public interface Replay.Core.LibrarySource : GLib.Object {
 
-    public string path { get; }
-
-    public LibrarySource (string path) {
-        Object (
-            path: path
-        );
-    }
-
-    public void scan () {
-        var directory = GLib.File.new_for_path (path);
-        if (!directory.query_exists ()) {
-            warning ("Library source directory not found: %s", directory.get_path ());
-            return;
-        }
-        GLib.FileEnumerator file_enumerator;
-        try {
-            file_enumerator = directory.enumerate_children ("standard::*", GLib.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
-        } catch (GLib.Error e) {
-            warning ("Error while enumerating files in library source directory: %s", e.message);
-            return;
-        }
-        GLib.FileInfo info;
-        try {
-            while ((info = file_enumerator.next_file ()) != null) {
-                if (info.get_file_type () == GLib.FileType.DIRECTORY) {
-                    continue;
-                }
-                // Can't make any assumptions about which file types are actually ROMs, but this is in the
-                // bundled directory, so there *shouldn't* be anything else in there.
-                //  on_rom_found (GLib.File.new_for_path (Constants.ROM_DIR + "/" + info.get_name ()));
-            }
-        } catch (GLib.Error e) {
-            warning ("Error while iterating over files in library source directory: %s", e.message);
-            return;
-        }
-    }
+    public abstract Gee.Collection<Replay.Models.Game> scan ();
 
 }

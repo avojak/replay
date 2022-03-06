@@ -45,21 +45,21 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
 
         var preferences_accellabel = new Granite.AccelLabel.from_action_name (
             _("Preferences…"),
-            Replay.Services.MainWindowActionManager.ACTION_PREFIX + Replay.Services.MainWindowActionManager.ACTION_PREFERENCES
+            Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_PREFERENCES
         );
 
         var preferences_menu_item = new Gtk.ModelButton ();
-        preferences_menu_item.action_name = Replay.Services.MainWindowActionManager.ACTION_PREFIX + Replay.Services.MainWindowActionManager.ACTION_PREFERENCES;
+        preferences_menu_item.action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_PREFERENCES;
         preferences_menu_item.get_child ().destroy ();
         preferences_menu_item.add (preferences_accellabel);
 
         var quit_accellabel = new Granite.AccelLabel.from_action_name (
             _("Quit"),
-            Replay.Services.MainWindowActionManager.ACTION_PREFIX + Replay.Services.MainWindowActionManager.ACTION_QUIT
+            Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_QUIT
         );
 
         var quit_menu_item = new Gtk.ModelButton ();
-        quit_menu_item.action_name = Replay.Services.MainWindowActionManager.ACTION_PREFIX + Replay.Services.MainWindowActionManager.ACTION_QUIT;
+        quit_menu_item.action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_QUIT;
         quit_menu_item.get_child ().destroy ();
         quit_menu_item.add (quit_accellabel);
 

@@ -21,12 +21,21 @@
 
 public class Replay.Application : Gtk.Application {
 
-    public static GLib.Settings settings;
-    public static Replay.Services.CoreRepository core_repository;
-    public static Replay.Services.GameLibrary game_library;
-    public static Replay.Services.EmulatorManager emulator_manager;
+    private static GLib.Once<Replay.Application> instance;
+    public static unowned Replay.Application get_instance () {
+        return instance.once (() => { return new Replay.Application (); });
+    }
 
-    private GLib.List<Replay.Windows.MainWindow> windows;
+    public static GLib.Settings settings;
+    //  public static Replay.Services.LibretroCoreRepository core_repository;
+    //  public static Replay.Services.GameLibrary game_library;
+    //  public static Replay.Services.EmulatorManager emulator_manager;
+
+    public static bool silent = false;
+
+    //  private GLib.List<Replay.Windows.LibraryWindow> library_windows;
+
+    private Replay.Windows.LibraryWindow? library_window;
 
     public Application () {
         Object (
@@ -38,43 +47,47 @@ public class Replay.Application : Gtk.Application {
     static construct {
         info ("%s version: %s", Constants.APP_ID, Constants.VERSION);
         info ("Kernel version: %s", Posix.utsname ().release);
-        info ("Bundled core dir: %s", Constants.LIBRETRO_CORE_DIR);
-        info ("Bundled ROM dir: %s", Constants.ROM_DIR);
+        info ("Bundled core dir: %s", Constants.BUNDLED_LIBRETRO_CORE_DIR);
+        info ("Bundled ROM dir: %s", Constants.BUNDLED_ROM_DIR);
+        info ("System core dir: %s", Constants.SYSTEM_LIBRETRO_CORE_DIR);
     }
 
     construct {
         settings = new GLib.Settings (Constants.APP_ID);
-        core_repository = Replay.Services.CoreRepository.instance;
-        game_library = Replay.Services.GameLibrary.instance;
-        emulator_manager = new Replay.Services.EmulatorManager (this);
+        //  core_repository = Replay.Services.LibretroCoreRepository.get_default ();
+        //  game_library = Replay.Services.GameLibrary.get_default ();
+        //  emulator_manager = new Replay.Services.EmulatorManager (this);
 
-        windows = new GLib.List<Replay.Windows.MainWindow> ();
+        //  library_windows = new GLib.List<Replay.Windows.LibraryWindow> ();
 
         startup.connect ((handler) => {
             Hdy.init ();
         });
     }
 
-    public override void window_added (Gtk.Window window) {
-        windows.append (window as Replay.Windows.MainWindow);
-        base.window_added (window);
-    }
+    //  public override void window_added (Gtk.Window window) {
+    //      this.library_window = window as Replay.Windows.LibraryWindow;
+    //      base.window_added (window);
+    //  }
 
-    public override void window_removed (Gtk.Window window) {
-        windows.remove (window as Replay.Windows.MainWindow);
-        base.window_removed (window);
-    }
+    //  public override void window_removed (Gtk.Window window) {
+    //      //  library_windows.remove (window as Replay.Windows.LibraryWindow);
+    //      this.library_window = null;
+    //      base.window_removed (window);
+    //  }
 
-    private Replay.Windows.MainWindow add_new_window () {
-        var window = new Replay.Windows.MainWindow (this);
-        this.add_window (window);
-        return window;
+    private void add_new_window () {
+        this.library_window = new Replay.Windows.LibraryWindow (this);
+        library_window.destroy.connect (() => {
+            library_window = null;
+        });
+        this.add_window (library_window);
     }
 
     protected override int command_line (ApplicationCommandLine command_line) {
         string[] command_line_arguments = parse_command_line_arguments (command_line.get_arguments ());
         // If the application wasn't already open, activate it now
-        if (windows.length () == 0) {
+        if (library_window == null) {
             //  queued_command_line_arguments = command_line_arguments;
             activate ();
         } else {
@@ -117,15 +130,15 @@ public class Replay.Application : Gtk.Application {
         //  // Ensure that the window is presented to the user when handling the URL.
         //  // This can happen when the application is already open but in the background.
         //  window.present ();
-        //  ((Iridium.MainWindow) window).handle_uris (uris);
+        //  ((Iridium.LibraryWindow) window).handle_uris (uris);
     }
 
     protected override void activate () {
         // This must happen here because the main event loops will have started
-        core_repository.sql_client = Replay.Services.SQLClient.instance;
-        core_repository.initialize ();
-        game_library.sql_client = Replay.Services.SQLClient.instance;
-        game_library.initialize ();
+        //  core_repository.sql_client = Replay.Services.SQLClient.get_default ();
+        //  core_repository.initialize ();
+        //  game_library.sql_client = Replay.Services.SQLClient.get_default ();
+        //  game_library.initialize ();
 
         // Respect the system style preference
         var granite_settings = Granite.Settings.get_default ();
@@ -135,11 +148,34 @@ public class Replay.Application : Gtk.Application {
             gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
         });
 
+        var client = Replay.Core.Client.get_default ();
+        //  if (!silent) {
         this.add_new_window ();
+        //  client.core_sources_scanned.connect (() => {
+        //      window.update_library ();
+        //  });
+        //  client.library_sources_scanned.connect (() => {
+        //      window.update_systems ();
+        //  });
+        //  client.scan_all_sources.begin ();
+        client.scan_core_sources.begin ((obj, res) => {
+            client.scan_core_sources.end (res);
+            library_window.reload_systems ();
+            // Scan for games *after* all the cores have been loaded to facilitate mapping games to cores
+            // that can play them
+            client.scan_library_sources.begin ((obj, res) => {
+                client.scan_library_sources.end (res);
+                library_window.reload_library ();
+            });
+        });
+        //  } else {
+        //      client.scan_core_sources.begin ();
+        //      client.scan_library_sources.begin ();
+        //  }
     }
 
     public static int main (string[] args) {
-        var app = new Replay.Application ();
+        var app = Replay.Application.get_instance ();
         return app.run (args);
     }
 

@@ -28,5 +28,18 @@ public class Replay.Models.Game : GLib.Object {
     public string? image_data { get; set; }
     public bool is_favorite { get; set; }
     public bool is_hidden { get; set; }
+    public bool is_unplayed { get; set; }
+    public bool is_recently_played { get; set; }
+
+    public Game.from_file (GLib.File file) {
+        Object (
+            rom_path: file.get_path (),
+            display_name: file.get_basename (),
+            is_favorite: false,
+            is_hidden: false,
+            is_unplayed: true,
+            is_recently_played: false
+        );
+    }
 
 }

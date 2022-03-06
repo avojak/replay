@@ -19,8 +19,15 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public interface Replay.Core.LibretroCoreSource : GLib.Object {
+public class Replay.Widgets.LibrarySidePanelItem : Granite.Widgets.SourceList.Item {
 
-    public abstract Gee.Collection<Replay.Models.LibretroCore> scan ();
+    public string view_name { get; construct; }
+
+    public LibrarySidePanelItem (string name, string view_name) {
+        Object (
+            name: name,
+            view_name: view_name
+        );
+    }
 
 }
