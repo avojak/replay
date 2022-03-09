@@ -6,6 +6,12 @@ SHELL := /bin/bash
 
 all: flatpak
 
+init:
+	sudo apt install meson elementary-sdk
+	sudo apt install libsqlite3-dev libgtk-3-dev
+	flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary.io/repo.flatpakrepo
+	flatpak install -y appcenter io.elementary.Platform io.elementary.Sdk
+
 flatpak:
 	flatpak-builder build com.github.avojak.replay.yml --user --install --force-clean
 

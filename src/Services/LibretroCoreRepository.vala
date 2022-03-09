@@ -137,7 +137,7 @@ public class Replay.Services.LibretroCoreRepository : GLib.Object {
         //  });
     //  }
 
-    public Replay.Models.LibretroCore? get_core_for_rom (GLib.File rom) {
+    public Replay.Models.LibretroCore? get_preferred_core_for_rom (GLib.File rom) {
         var extension = rom.get_path ().substring (rom.get_path ().last_index_of (".") + 1);
         if (!rom_extensions.has_key (extension)) {
             return null;
@@ -145,6 +145,18 @@ public class Replay.Services.LibretroCoreRepository : GLib.Object {
         // TODO: Check for preferences, etc. instead of just returning the first
         var core_name = rom_extensions.get (extension).get (0);
         return known_cores.get (core_name);
+    }
+
+    public Gee.Collection<Replay.Models.LibretroCore> get_cores_for_rom (GLib.File rom) {
+        var extension = rom.get_path ().substring (rom.get_path ().last_index_of (".") + 1);
+        var cores = new Gee.ArrayList<Replay.Models.LibretroCore> ();
+        if (!rom_extensions.has_key (extension)) {
+            return cores;
+        }
+        foreach (var core_name in rom_extensions.get (extension)) {
+            cores.add (known_cores.get (core_name));
+        }
+        return cores;
     }
 
     public Gee.Collection<Replay.Models.LibretroCore> get_cores () {

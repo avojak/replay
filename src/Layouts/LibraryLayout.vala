@@ -43,35 +43,39 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         };
         var header_bar = new Replay.Widgets.MainHeaderBar ();
 
-        library_stack = new Gtk.Stack () {
-            //  transition_type = Gtk.StackTransitionType.SLIDE_RIGHT
-        };
-        library_stack.add_named (new Replay.Views.LibraryLoadingView (), Replay.Views.LibraryLoadingView.NAME);
-        //  library_stack.add_named (new Replay.Views.LibraryView (), "favorites");
-        //  library_stack.add_named (new Replay.Views.LibraryView (), "recent");
-        //  library_stack.add_named (new Replay.Views.LibraryView (), "unplayed");
-
-        library_stack.set_visible_child_name (Replay.Views.LibraryLoadingView.NAME);
+        library_stack = new Gtk.Stack ();
+        library_stack.add_named (new Replay.Views.WelcomeView (), Replay.Views.WelcomeView.NAME);
 
         library_grid.attach (header_bar, 0, 0);
         library_grid.attach (library_stack, 0, 1);
 
-        //  library_view = new Replay.Views.LibraryView ();
-        //  library_view.game_selected.connect (on_game_selected);
-        //  library_view.add_game (new Replay.Models.Game () {
-        //      display_name = "Pokemon - Fire Red Version",
-        //      rom_path = "/home/avojak/Downloads/Pokemon - Fire Red Version (U) (V1.1).gba"
-        //  });
-
         library_side_panel = new Replay.Widgets.LibrarySidePanel ();
-        //  library_side_panel.add_collection (_("Favorites"), "favorites", "starred");
-        //  library_side_panel.add_collection (_("Recently Played"), "recent", "document-open-recent");
-        //  library_side_panel.add_collection (_("Unplayed"), "unplayed", "mail-unread");
         library_side_panel.item_selected.connect (on_side_panel_item_selected);
 
-        add_collection_view (_("Favorites"), FAVORITES_VIEW_NAME, "starred");
-        add_collection_view (_("Recently Played"), RECENT_VIEW_NAME, "document-open-recent");
-        add_collection_view (_("Unplayed"), UNPLAYED_VIEW_NAME, "mail-unread");
+        add_collection_view (
+            _("Favorites"),
+            FAVORITES_VIEW_NAME,
+            "starred",
+            _("No Favorite Games"),
+            _("Games which have been starred will appear here"),
+            "user-bookmarks" // TODO: Find a suitable icon of the right size
+        );
+        add_collection_view (
+            _("Recently Played"),
+            RECENT_VIEW_NAME,
+            "document-open-recent",
+            _("No Recent Games"),
+            _("Games which have been recently played will appear here"),
+            "document-open-recent"
+        );
+        add_collection_view (
+            _("Unplayed"),
+            UNPLAYED_VIEW_NAME,
+            "mail-unread",
+            _("No Unplayed Games"),
+            _("Games which have not yet been played will appear here"),
+            "mail-unread" // TODO: Find a suitable icon of the right size
+        );
 
         var header_group = new Hdy.HeaderGroup ();
         header_group.add_header_bar (library_side_panel.header_bar);
@@ -86,10 +90,13 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         attach (paned, 0, 0);
 
         show_all ();
+
+        // TODO: Load last shown view, but default to WelcomeView
+        library_stack.set_visible_child_name (Replay.Views.WelcomeView.NAME);
     }
 
-    private void add_collection_view (string display_name, string view_name, string icon_name) {
-        var view = new Replay.Views.LibraryView ();
+    private void add_collection_view (string display_name, string view_name, string icon_name, string placeholder_title, string placeholder_description, string placeholder_icon_name) {
+        var view = new Replay.Views.LibraryView (placeholder_title, placeholder_description, placeholder_icon_name);
         view.game_selected.connect ((game) => {
             on_game_selected (game);
         });
@@ -98,7 +105,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     }
 
     private void add_system_view (string display_name, string view_name, string icon_name) {
-        var view = new Replay.Views.LibraryView ();
+        var view = new Replay.Views.LibraryView (_("No Games Available"), _("There are no games in the library that can be played by this system"), icon_name);
         view.game_selected.connect ((game) => {
             on_game_selected (game);
         });
@@ -111,23 +118,25 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         // TODO: Remove the item from the side panel
     }
 
-    public void add_game (Replay.Models.Game game, string? system_id) {
+    public void add_game (Replay.Models.Game game, Gee.List<string> core_names) {
         if (game.is_hidden) {
             return;
         }
         if (game.is_favorite) {
             add_game_to_view (game, FAVORITES_VIEW_NAME);
         }
-        if (game.is_unplayed) {
+        if (!game.is_played) {
             add_game_to_view (game, UNPLAYED_VIEW_NAME);
         }
         if (game.is_recently_played) {
             add_game_to_view (game, RECENT_VIEW_NAME);
         }
-        if (system_id == null) {
-            // TODO: Add to catch-all category
+        if (core_names.size > 0) {
+            foreach (var core_name in core_names) {
+                add_game_to_view (game, core_name);
+            }
         } else {
-            add_game_to_view (game, system_id);
+            // TODO: Add to catch-all category
         }
     }
 
@@ -193,9 +202,9 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     //  }
 
     public void add_view_for_core (Replay.Models.LibretroCore core) {
-        var view_name = core.info.system_id;
+        var display_name = core.info.display_name;
+        var view_name = core.info.core_name;
         if (library_stack.get_child_by_name (view_name) == null) {
-            var display_name = "%s %s".printf (core.info.manufacturer, core.info.system_name);
             add_system_view (display_name, view_name, "input-gaming");
         }
     }
@@ -214,7 +223,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     //      // Remove old cores
     //      foreach (var child in library_stack.get_children ()) {
     //          // Ignore the loading view
-    //          //  if ( == Replay.Views.LibraryLoadingView.NAME) {
+    //          //  if ( == Replay.Views.WelcomeView.NAME) {
     //          //      continue;
     //          //  }
     //          //  var library_view = child as Replay.Views.LibraryView;

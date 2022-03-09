@@ -26,36 +26,53 @@ modules:
   # TODO: Might make sense to maintain a fork of the cores and ROMs to ensure availability
   # LibRetro Cores
   - name: libretro-mgba
-    # buildsystem: simple
     no-autogen: true
     sources:
       - type: git
         url: https://github.com/libretro/mgba.git
         branch: 'master' # TODO: Lock this down to a specific version/commit
-      - type: file
-        url: https://raw.githubusercontent.com/libretro/libretro-super/master/dist/info/mgba_libretro.info
-        sha256: 60a285a1c8b2c0a032bc9ce34a725741ba020b74daeb7a9aa4598d5a5f94f5a5
-    # build-commands:
-    #   - make -f Makefile.libretro
-    #   - install -d /app/share/com.github.avojak.replay/libretro/cores
-    #   - install -m 644 mgba_libretro.so /app/share/com.github.avojak.replay/libretro/cores/mgba_libretro.so
     make-install-args:
       - prefix=/app # Installs to /app/lib/libretro/mgba_libretro.so
       # TODO: Figure out how to cleanup unnecessary files after the build
-    post-install:
-      - install -m 644 mgba_libretro.info /app/lib/libretro/mgba_libretro.info
-  # - name: libretro-super
-  #   buildsystem: simple
-  #   # no-autogen: true
+  # - name: libretro-quicknes
+  #   no-autogen: true
   #   sources:
   #     - type: git
-  #       url: https://github.com/libretro/libretro-super.git
+  #       url: https://github.com/libretro/QuickNES_Core
   #       branch: 'master'
-  #   # make-install-args:
-  #   #   - /app/share/libretro
-  #   build-commands:
-  #     - install -d /app/lib/libretro
-  #     - install -m 644 dist/info/mgba_libretro.info /app/lib/libretro/mgba_libretro.info
+  #   no-make-install: true
+  #   post-install:
+  #     - install -m 644 quicknes_libretro.so /app/lib/libretro/quicknes_libretro.so
+  # - name: libretro-bnes
+  #   no-autogen: true
+  #   sources:
+  #     - type: git
+  #       url: https://github.com/libretro/bnes-libretro.git
+  #       branch: 'master'
+  #   no-make-install: true
+  #   post-install:
+  #     - install -m 644 bnes_libretro.so /app/lib/libretro/bnes_libretro.so
+  # - name: libretro-bsnes-mercury-performance
+  #   no-autogen: true
+  #   sources:
+  #     - type: git
+  #       url: https://github.com/libretro/bsnes-mercury.git
+  #       branch: 'master'
+  #   no-make-install: true
+  #   post-install:
+  #     - install -m 644 bsnes_mercury_performance_libretro.so /app/lib/libretro/bsnes_mercury_performance_libretro.so
+  # Install the LibRetro info files for only the bundled cores
+  - name: libretro-core-info
+    buildsystem: simple
+    no-autogen: true
+    sources:
+      - type: git
+        url: https://github.com/libretro/libretro-core-info.git
+        tag: 'v1.10.1'
+    build-commands:
+      - install -m 644 mgba_libretro.info /app/lib/libretro/mgba_libretro.info
+      # - install -m 644 quicknes_libretro.info /app/lib/libretro/quicknes_libretro.info
+      # - install -m 644 bnes_libretro.info /app/lib/libretro/bnes_libretro.info
   # ROMs
   - name: ROMs
     buildsystem: simple
@@ -66,7 +83,6 @@ modules:
     build-commands:
       - install -d /app/lib/roms
       - install -m 644 -t /app/lib/roms ./*
-    #   - install -m 644 GBWORDYL.gb /app/share/com.github.avojak.replay/roms/GBWORDYL.gb
   - name: replay
     buildsystem: meson
     sources:

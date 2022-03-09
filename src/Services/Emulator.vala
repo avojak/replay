@@ -71,7 +71,7 @@ public class Replay.Services.Emulator : GLib.Object {
             return;
         }
         // TODO: This should probably be determined from the EmulatorManager
-        Replay.Models.LibretroCore? core_model = Replay.Core.Client.get_default ().core_repository.get_core_for_rom (rom);
+        Replay.Models.LibretroCore? core_model = Replay.Core.Client.get_default ().core_repository.get_preferred_core_for_rom (rom);
         if (core_model == null) {
             // TODO: Display error to user
             critical ("No core found for ROM: %s", rom.get_path ());

@@ -24,7 +24,7 @@ Replay ships with several [libretro](https://www.libretro.com) cores that are li
 
 | Name | System(s) | License |
 | ---- | ------------------ | ------- |
-| mGBA | Nintendo Game Boy<br>Nintendo Game Boy Color<br>Nintendo Game Boy Advance | MPLv2.0 |
+| mGBA | Game Boy<br>Game Boy Color<br>Game Boy Advance | MPLv2.0 |
 
 Additional cores can be easily imported.
 
@@ -32,8 +32,10 @@ Additional cores can be easily imported.
 
 Replay ships with several games that are licensed in such a way which permits redistribution under the GPLv3 license:
 
-| Name | System |
-| ---- | -------- |
+| Name | System | License |  |
+| ---- | ------ | ------- | --- |
+| Varooom 3D | Game Boy Advance | ZLib | [Source](https://github.com/GValiente/butano) |
+| Game Boy Wordyl | Game Boy | GPLv3 | [Source](https://github.com/bbbbbr/gb-wordle) | 
 
 Additional games can be easily added to the library.
 

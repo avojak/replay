@@ -25,8 +25,8 @@ public class Replay.Models.LibretroCoreInfo : GLib.Object {
     public string display_name { get; set; }
     public string[] supported_extensions { get; set; }
     public string manufacturer { get; set; }
-    public string system_id { get; set; }
-    public string system_name { get; set; }
+    public string? system_id { get; set; }
+    public string? system_name { get; set; }
     public string license { get; set; }
     public string? display_version { get; set; }
     public string? description { get; set; }

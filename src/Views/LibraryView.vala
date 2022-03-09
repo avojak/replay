@@ -21,19 +21,43 @@
 
 public class Replay.Views.LibraryView : Gtk.Grid {
 
+    private static Gtk.CssProvider provider;
+
     //  public Hdy.HeaderBar header_bar { get; construct; }
 
     public Gee.List<Replay.Models.Game> games = new Gee.ArrayList<Replay.Models.Game> ();
 
+    public string placeholder_title { get; construct; }
+    public string placeholder_description { get; construct; }
+    public string placeholder_icon_name { get; construct; }
+
+    private Gtk.Stack stack;
     private Gtk.FlowBox flow_box;
 
-    public LibraryView () {
+    public LibraryView (string placeholder_title, string placeholder_description, string placeholder_icon_name) {
         Object (
-            expand: true
+            expand: true,
+            placeholder_title: placeholder_title,
+            placeholder_description: placeholder_description,
+            placeholder_icon_name: placeholder_icon_name
         );
     }
 
+    static construct {
+        provider = new Gtk.CssProvider ();
+        provider.load_from_resource ("com/github/avojak/replay/AlertView.css");
+    }
+
     construct {
+        stack = new Gtk.Stack ();
+
+        var alert_view = new Granite.Widgets.AlertView (
+            placeholder_title,
+            placeholder_description,
+            placeholder_icon_name
+        );
+        alert_view.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
         flow_box = new Gtk.FlowBox () {
             activate_on_single_click = false,
             selection_mode = Gtk.SelectionMode.SINGLE,
@@ -51,22 +75,33 @@ public class Replay.Views.LibraryView : Gtk.Grid {
         scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         scrolled_window.add (flow_box);
 
-        attach (scrolled_window, 0, 0);
+        stack.add_named (scrolled_window, "scrolled_window");
+        stack.add_named (alert_view, "alert_view");
+
+        attach (stack, 0, 0);
 
         show_all ();
+
+        stack.set_visible_child_name ("alert_view");
     }
 
     public bool add_game (Replay.Models.Game game) {
         if (games.contains (game)) {
             return false;
         }
-        flow_box.add (new Replay.Widgets.LibraryItem.for_game (game));
+        var game_item = new Replay.Widgets.LibraryItem.for_game (game);
+        game_item.set_played (game.is_played);
+        flow_box.add (game_item);
         games.add (game);
+        stack.set_visible_child_name ("scrolled_window");
         return true;
     }
 
     public void remove_game (Replay.Models.Game game) {
         // TODO: May have to store the LibraryItem models in a map that we can use for lookup
+        if (games.size == 0) {
+            stack.set_visible_child_name ("alert_view");
+        }
     }
 
     public signal void game_selected (Replay.Models.Game game);

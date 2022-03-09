@@ -19,26 +19,11 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Views.LibraryLoadingView : Gtk.Grid {
-
-    private static Gtk.CssProvider provider;
-
-    public const string NAME = _("Loading");
-
-    static construct {
-        provider = new Gtk.CssProvider ();
-        provider.load_from_resource ("com/github/avojak/replay/LibraryLoadingView.css");
-    }
-
-    construct {
-        var loading_view = new Granite.Widgets.AlertView (
-            _("Loading Games and Cores"),
-            _("Scanning game library and core sources"),
-            "sync-synchronizing"
-        );
-        loading_view.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-        add (loading_view);
-        show_all ();
-    }
-
+.view {
+    /* 
+     * Set the background color of Granite.Widgets.AlertView to fully transparent so
+     * that there isn't a noticable color difference between the header bar and the
+     * alert view.
+     */
+    background-color: rgba(255, 255, 255, 0);
 }

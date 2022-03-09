@@ -93,8 +93,12 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
 
     public void reload_library () {
         foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
-            Replay.Models.LibretroCore? core = Replay.Core.Client.get_default ().core_repository.get_core_for_rom (GLib.File.new_for_path (game.rom_path));
-            layout.add_game (game, core == null ? null : core.info.system_id);
+            var cores = Replay.Core.Client.get_default ().core_repository.get_cores_for_rom (GLib.File.new_for_path (game.rom_path));
+            var core_names = new Gee.ArrayList<string> ();
+            foreach (var core in cores) {
+                core_names.add (core.info.core_name);
+            }
+            layout.add_game (game, core_names);
         }
         //  var games_by_system = new Gee.HashMap<string, Gee.List<Replay.Models.Game>> ();
         //  foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {

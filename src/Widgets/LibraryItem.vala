@@ -24,6 +24,8 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
     public Replay.Models.Game game { get; construct; }
     public string title { get; construct; }
 
+    private Gtk.Revealer unplayed_badge;
+
     public LibraryItem.for_game (Replay.Models.Game game) {
         Object (
             game: game,
@@ -32,6 +34,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
     }
 
     construct {
+        // TODO: Fix alignment when the labels spans multiple lines - the images won't currently lineup
         var grid = new Gtk.Grid () {
             orientation = Gtk.Orientation.VERTICAL,
             hexpand = true,
@@ -56,17 +59,38 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         };
         //  overlay.add_overlay (badge); // TODO: Could use an icon here probably
         overlay.add (image);
+        //  overlay.set_tooltip_text ("Game could not be found");
+
+        var label_grid = new Gtk.Grid () {
+            hexpand = true,
+            margin_bottom = 8,
+            halign = Gtk.Align.CENTER
+        };
+
+        var unplayed_image = new Gtk.Image () {
+            gicon = new ThemedIcon ("mail-unread"),
+            pixel_size = 16,
+            margin_right = 8
+        };
+        unplayed_badge = new Gtk.Revealer () {
+            transition_type = Gtk.RevealerTransitionType.NONE
+        };
+        unplayed_badge.add (unplayed_image);
+
         var label = new Gtk.Label (null) {
             wrap = true,
             max_width_chars = 20,
             justify = Gtk.Justification.CENTER,
-            margin_bottom = 8,
+            //  margin_bottom = 8,
             use_markup = true
         };
         label.set_markup (@"<b>$title</b>");
 
+        label_grid.attach (unplayed_badge, 0, 0);
+        label_grid.attach (label, 1, 0);
+
         grid.add (overlay);
-        grid.add (label);
+        grid.add (label_grid);
 
         //  var style_context = get_style_context ();
         //  style_context.add_class (Granite.STYLE_CLASS_CARD);
@@ -75,6 +99,17 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         child = grid;
 
         show_all ();
+    }
+
+    public void set_played (bool played) {
+        // Only change the revealer if the desired state is different from the current
+        if (played == unplayed_badge.child_revealed) {
+            unplayed_badge.set_reveal_child (!played);
+        }
+    }
+
+    public void set_favorite (bool favorite) {
+        // TODO
     }
 
 }
