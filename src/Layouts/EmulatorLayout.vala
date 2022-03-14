@@ -45,6 +45,10 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
             expand = true
         };
         view.set_filter (Retro.VideoFilter.SMOOTH); // TODO: Default should be configurable
+        // Prevent loss of focus when using arrow keys within a game
+        view.key_press_event.connect (() => {
+            return true;
+        });
         view.show ();
 
         attach (header_bar, 0, 0);

@@ -17,3 +17,5 @@ flatpak:
 
 lint:
 	io.elementary.vala-lint ./src
+
+translations:
