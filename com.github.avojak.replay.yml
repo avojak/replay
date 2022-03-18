@@ -74,15 +74,34 @@ modules:
       # - install -m 644 quicknes_libretro.info /app/lib/libretro/quicknes_libretro.info
       # - install -m 644 bnes_libretro.info /app/lib/libretro/bnes_libretro.info
   # ROMs
-  - name: ROMs
-    buildsystem: simple
+  # - name: ROMs
+  #   buildsystem: simple
+  #   no-autogen: true
+  #   sources:
+  #     - type: dir
+  #       path: data/roms
+  #   build-commands:
+  #     - install -d /app/lib/roms
+  #     - install -m 644 -t /app/lib/roms ./*
+  - name: gb-wordle
     no-autogen: true
     sources:
-      - type: dir
-        path: data/roms
-    build-commands:
+      - type: git
+        url: https://github.com/Replay-Project/gb-wordle
+        tag: 'v0.75'
+      - type: archive
+        url: https://github.com/gbdk-2020/gbdk-2020/releases/download/4.0.6/gbdk-linux64.tar.gz
+        sha256: fecdadbeb5dcab5ceebff67ff4a7630bf6f572880d4e86ac600585d8064dc7c1
+        strip-components: 0
+    make-args:
+      - GBDK_HOME=./gbdk/
+    build-options:
+      cflags: ""
+      cflags-override: true
+    no-make-install: true
+    post-install:
       - install -d /app/lib/roms
-      - install -m 644 -t /app/lib/roms ./*
+      - install -m 644 -t /app/lib/roms build/gb/GBWORDYL.gb
   - name: replay
     buildsystem: meson
     sources:
