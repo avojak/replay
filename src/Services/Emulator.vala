@@ -21,6 +21,9 @@
 
 public class Replay.Services.Emulator : GLib.Object {
 
+    private const string SAVE_RAM_FILE_EXTENSION = "srm";
+    private const string SAVE_STATE_FILE_EXTENSION = "state";
+
     public unowned Replay.Application application { get; construct; }
 
     private Replay.Windows.EmulatorWindow? window = null;
@@ -48,6 +51,7 @@ public class Replay.Services.Emulator : GLib.Object {
             window.pause_button_clicked.connect (pause);
             window.resume_button_clicked.connect (resume);
             window.destroy.connect (() => {
+                save_memory ();
                 stop ();
                 close ();
             });
@@ -79,7 +83,10 @@ public class Replay.Services.Emulator : GLib.Object {
             close ();
             return;
         }
+
+        // Initialize the core and load memory and/or state
         core = new Retro.Core (core_model.path);
+        core.set_save_directory (GLib.Environment.get_home_dir ()); // TODO: Change this (does it even work...?)
         core.set_medias ({ rom.get_uri () });
         try {
             debug ("Booting core %s…", core_model.info.core_name);
@@ -91,10 +98,20 @@ public class Replay.Services.Emulator : GLib.Object {
             close ();
             return;
         }
+        load_memory ();
+
+        // Set the view
         unowned Retro.CoreView view = window.get_core_view ();
         view.set_core (core);
         view.set_as_default_controller (core);
         core.set_keyboard (view);
+
+        // Connect to core signals (should this be done prior to booting the core?)
+        core.crashed.connect ((message) => {
+            crashed (message);
+        });
+
+        // Run the game
         core.run ();
         started ();
     }
@@ -124,11 +141,88 @@ public class Replay.Services.Emulator : GLib.Object {
         }
     }
 
+    public void save_state () {
+        if (core != null) {
+            var state_file = get_state_file_for_rom (rom);
+            debug ("Saving state to file: %s", state_file.get_path ());
+            try {
+                core.save_state (state_file.get_path ());
+            } catch (GLib.Error e) {
+                warning ("Error while saving state: %s", e.message);
+            }
+        }
+    }
+
+    /*
+     * Savestates should be considered volatile and may not work correctly for certain games. This is a good feature
+     * to have, but automatically reloading a savestate is NOT a good idea, as it may corrupt RAM when it is loaded.
+     */
+    public void load_state () {
+        if (core != null) {
+            var state_file = get_state_file_for_rom (rom);
+            if (state_file.query_exists ()) {
+                debug ("Loading state from file: %s", state_file.get_path ());
+                try {
+                    core.load_state (state_file.get_path ());
+                } catch (GLib.Error e) {
+                    warning ("Error while loading state: %s", e.message);
+                }
+            } else {
+                debug ("No state file found");
+            }
+        }
+    }
+
+    public void save_memory () {
+        if (core != null) {
+            var memory_file = get_memory_file_for_rom (rom);
+            debug ("Saving memory to file: %s", memory_file.get_path ());
+            try {
+                core.save_memory (Retro.MemoryType.SAVE_RAM, memory_file.get_path ());
+            } catch (GLib.Error e) {
+                warning ("Error while saving memory: %s", e.message);
+            }
+        }
+    }
+
+    public void load_memory () {
+        if (core != null && rom != null) {
+            var memory_file = get_memory_file_for_rom (rom);
+            if (memory_file.query_exists ()) {
+                debug ("Loading memory from file: %s", memory_file.get_path ());
+                try {
+                    core.load_memory (Retro.MemoryType.SAVE_RAM, memory_file.get_path ());
+                } catch (GLib.Error e) {
+                    warning ("Error while loading memory: %s", e.message);
+                }
+            } else {
+                debug ("No memory file found");
+            }
+        }
+    }
+
+    private GLib.File get_memory_file_for_rom (GLib.File rom_file) {
+        var rom_extension = Replay.Utils.FileUtils.get_extension (rom_file);
+        var rom_filename = rom_file.get_basename ();
+        var rom_directory = rom_file.get_parent ().get_path ();
+        var memory_filename = rom_filename.replace (rom_extension, SAVE_RAM_FILE_EXTENSION);
+        return GLib.File.new_for_path ("%s/%s".printf (rom_directory, memory_filename));
+    }
+
+    private GLib.File get_state_file_for_rom (GLib.File rom_file) {
+        var rom_extension = Replay.Utils.FileUtils.get_extension (rom_file);
+        var rom_filename = rom_file.get_basename ();
+        var rom_directory = rom_file.get_parent ().get_path ();
+        var state_filename = rom_filename.replace (rom_extension, SAVE_STATE_FILE_EXTENSION);
+        return GLib.File.new_for_path ("%s/%s".printf (rom_directory, state_filename));
+    }
+
     public signal void opened ();
     public signal void closed ();
     public signal void started ();
     public signal void paused ();
     public signal void resumed ();
     public signal void stopped ();
+    public signal void crashed (string message);
 
 }

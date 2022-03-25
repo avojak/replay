@@ -33,6 +33,7 @@ set_setting emu-pos-x 360
 set_setting emu-pos-y 360
 set_setting emu-window-width 500
 set_setting emu-window-height 500
+set_setting emu-window-fullscreen false
 set_setting user-core-directory ""
 set_setting user-rom-directory ""
 set_setting handle-window-focus-change true

@@ -49,10 +49,11 @@ public class Replay.Core.FileSystemLibrarySource : Replay.Core.LibrarySource, GL
                 if (info.get_file_type () == GLib.FileType.DIRECTORY) {
                     continue;
                 }
-                // Can't make any assumptions about which file types are actually ROMs, but this is in the
-                // bundled directory, so there *shouldn't* be anything else in there.
-                //  on_rom_found (GLib.File.new_for_path (Constants.ROM_DIR + "/" + info.get_name ()));
-                games.add (new Replay.Models.Game.from_file (GLib.File.new_for_path (path + "/" + info.get_name ())));
+                var file = GLib.File.new_for_path ("%s/%s".printf (path, info.get_name ()));
+                // Only add games where the extension is declared to be supported by at least one core
+                if (Replay.Core.Client.get_default ().core_repository.get_supported_extensions ().contains (Replay.Utils.FileUtils.get_extension (file))) {
+                    games.add (new Replay.Models.Game.from_file (file));
+                }
             }
         } catch (GLib.Error e) {
             warning ("Error while iterating over files in library source directory: %s", e.message);

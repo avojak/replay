@@ -21,87 +21,61 @@
 
 public class Replay.Views.LibraryView : Gtk.Grid {
 
-    private static Gtk.CssProvider provider;
+    private const string FAVORITES_VIEW_NAME = "collection:favorites";
+    private const string RECENT_VIEW_NAME = "collection:recent";
+    private const string UNPLAYED_VIEW_NAME = "collection:unplayed";
 
-    //  public Hdy.HeaderBar header_bar { get; construct; }
+    private Replay.Layouts.LibraryLayout library_layout;
 
-    public Gee.List<Replay.Models.Game> games = new Gee.ArrayList<Replay.Models.Game> ();
-
-    public string placeholder_title { get; construct; }
-    public string placeholder_description { get; construct; }
-    public string placeholder_icon_name { get; construct; }
-
-    private Gtk.Stack stack;
-    private Gtk.FlowBox flow_box;
-
-    public LibraryView (string placeholder_title, string placeholder_description, string placeholder_icon_name) {
+    public LibraryView () {
         Object (
-            expand: true,
-            placeholder_title: placeholder_title,
-            placeholder_description: placeholder_description,
-            placeholder_icon_name: placeholder_icon_name
+            expand: true
         );
-    }
-
-    static construct {
-        provider = new Gtk.CssProvider ();
-        provider.load_from_resource ("com/github/avojak/replay/AlertView.css");
     }
 
     construct {
-        stack = new Gtk.Stack ();
+        library_layout = new Replay.Layouts.LibraryLayout ();
+        library_layout.add_collection (_("Favorites"), "starred", FAVORITES_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
+            _("No Favorite Games"),
+            _("Games which have been starred will appear here"),
+            "user-bookmarks",
+            (library_item) => {
+                //  debug ("%s is favorite: %s", library_item.game.display_name, library_item.game.is_favorite.to_string ());
+                return library_item.game.is_favorite;
+            }));
+        library_layout.add_collection (_("Recently Played"), "document-open-recent", RECENT_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
+            _("No Recent Games"),
+            _("Games which have been recently played will appear here"),
+            "document-open-recent",
+            (library_item) => {
+                //  debug ("%s is recently played: %s", library_item.game.display_name, library_item.game.is_recently_played.to_string ());
+                return library_item.game.is_recently_played;
+            }
+        ));
+        library_layout.add_collection (_("Unplayed"), "mail-unread", UNPLAYED_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
+            _("No Unplayed Games"),
+            _("Games which have not yet been played will appear here"),
+            "mail-unread", // TODO: Find a suitable icon of the right size
+            (library_item) => {
+                //  debug ("%s is played: %s", library_item.game.display_name, library_item.game.is_played.to_string ());
+                return !library_item.game.is_played;
+            }
+        ));
 
-        var alert_view = new Granite.Widgets.AlertView (
-            placeholder_title,
-            placeholder_description,
-            placeholder_icon_name
-        );
-        alert_view.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-        flow_box = new Gtk.FlowBox () {
-            activate_on_single_click = false,
-            selection_mode = Gtk.SelectionMode.SINGLE,
-            homogeneous = true,
-            expand = true,
-            margin = 12,
-            valign = Gtk.Align.START
-        };
-        flow_box.child_activated.connect ((child) => {
-            var library_item = child as Replay.Widgets.LibraryItem;
-            game_selected (library_item.game);
+        library_layout.game_selected.connect ((game) => {
+            game_selected (game);
         });
 
-        var scrolled_window = new Gtk.ScrolledWindow (null, null);
-        scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-        scrolled_window.add (flow_box);
-
-        stack.add_named (scrolled_window, "scrolled_window");
-        stack.add_named (alert_view, "alert_view");
-
-        attach (stack, 0, 0);
+        attach (library_layout, 0, 0);
 
         show_all ();
 
-        stack.set_visible_child_name ("alert_view");
+        // TODO: Load last-shown view, or show welcome view
+        library_layout.select_view (FAVORITES_VIEW_NAME);
     }
 
-    public bool add_game (Replay.Models.Game game) {
-        if (games.contains (game)) {
-            return false;
-        }
-        var game_item = new Replay.Widgets.LibraryItem.for_game (game);
-        game_item.set_played (game.is_played);
-        flow_box.add (game_item);
-        games.add (game);
-        stack.set_visible_child_name ("scrolled_window");
-        return true;
-    }
-
-    public void remove_game (Replay.Models.Game game) {
-        // TODO: May have to store the LibraryItem models in a map that we can use for lookup
-        if (games.size == 0) {
-            stack.set_visible_child_name ("alert_view");
-        }
+    public void add_game (Replay.Models.Game game) {
+        library_layout.add_game (game);
     }
 
     public signal void game_selected (Replay.Models.Game game);

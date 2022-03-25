@@ -19,39 +19,27 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Views.WelcomeView : Granite.Widgets.Welcome {
+public class Replay.Views.LibraryAlertView : Granite.Widgets.AlertView {
 
     private static Gtk.CssProvider provider;
 
-    public const string NAME = "Welcome";
+    public const string NAME = "Alert";
 
     static construct {
         provider = new Gtk.CssProvider ();
-        provider.load_from_resource ("com/github/avojak/replay/WelcomeView.css");
+        provider.load_from_resource ("com/github/avojak/replay/AlertView.css");
     }
 
-    public WelcomeView () {
+    public LibraryAlertView () {
         Object (
-            title: _("Welcome to Replay"),
-            subtitle: _("Replay your favorite classic video games!"),
-            valign: Gtk.Align.FILL,
-            halign: Gtk.Align.FILL,
-            expand: true
+            title: _(""),
+            description: _(""),
+            icon_name: ""
         );
     }
 
     construct {
         get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-        append ("text-x-vala", "Visit Valadoc", "The canonical source for Vala API references.");
-        append ("text-x-source", "Get Granite Source", "Granite's source code is hosted on GitHub.");
-
-        activated.connect (index => {
-            switch (index) {
-                default:
-                    assert_not_reached ();
-            }
-        });
     }
 
 }

@@ -46,6 +46,11 @@
       <summary>The saved height of the emulator window.</summary>
       <description>The saved height of the emulator window.</description>
     </key>
+    <key name="emu-window-fullscreen" type="b">
+      <default>false</default>
+      <summary>Whether or not to open new emulator windows in fullscreen mode.</summary>
+      <description>Whether or not to open new emulator windows in fullscreen mode.</description>
+    </key>
     <key name="user-core-directory" type="s">
       <default>""</default>
       <summary>The directory where user-installed libretro cores are stored.</summary>

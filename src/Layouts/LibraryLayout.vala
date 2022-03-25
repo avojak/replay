@@ -21,229 +21,143 @@
 
 public class Replay.Layouts.LibraryLayout : Gtk.Grid {
 
-    private const string FAVORITES_VIEW_NAME = "favorites";
-    private const string RECENT_VIEW_NAME = "recent";
-    private const string UNPLAYED_VIEW_NAME = "unplayed";
+    private static Gtk.CssProvider provider;
 
-    public unowned Replay.Windows.LibraryWindow window { get; construct; }
+    private Replay.Widgets.LibrarySidePanel side_panel;
+    private Gtk.Grid grid;
+    private Replay.Widgets.GameGrid game_grid;
+    private Granite.Widgets.AlertView alert_view;
+    private Gtk.Stack stack;
 
-    private Gtk.Stack library_stack;
-    //  private Gee.Map<string, Gtk.Widget> stack_views;
-    private Replay.Widgets.LibrarySidePanel library_side_panel;
+    private Gee.Map<string, Replay.Models.LibraryItemFilterFunction> filter_mapping;
 
-    public LibraryLayout (Replay.Windows.LibraryWindow window) {
+    public LibraryLayout () {
         Object (
-            window: window
+            expand: true
         );
     }
 
+    static construct {
+        provider = new Gtk.CssProvider ();
+        provider.load_from_resource ("com/github/avojak/replay/AlertView.css");
+    }
+
     construct {
-        var library_grid = new Gtk.Grid () {
+        filter_mapping = new Gee.HashMap<string, Replay.Models.LibraryItemFilterFunction> ();
+
+        var header_bar = new Replay.Widgets.MainHeaderBar ();
+        side_panel = new Replay.Widgets.LibrarySidePanel ();
+        side_panel.item_selected.connect (on_side_panel_item_selected);
+
+        game_grid = new Replay.Widgets.GameGrid ();
+        game_grid.item_selected.connect ((library_item) => {
+            game_selected (library_item.game);
+        });
+        game_grid.item_added_to_favorites.connect ((library_item) => {
+            Replay.Core.Client.get_default ().game_library.set_game_favorite (library_item.game, true);
+            game_grid.refilter ();
+            update_side_panel_badges ();
+        });
+        game_grid.item_removed_from_favorites.connect ((library_item) => {
+            Replay.Core.Client.get_default ().game_library.set_game_favorite (library_item.game, false);
+            game_grid.refilter ();
+            update_side_panel_badges ();
+        });
+        game_grid.item_marked_played.connect ((library_item) => {
+            Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, true);
+            game_grid.refilter ();
+            update_side_panel_badges ();
+        });
+        game_grid.item_marked_unplayed.connect ((library_item) => {
+            Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, false);
+            game_grid.refilter ();
+            update_side_panel_badges ();
+        });
+
+        alert_view = new Granite.Widgets.AlertView ("", "", "");
+        alert_view.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+        stack = new Gtk.Stack () {
             expand = true
         };
-        var header_bar = new Replay.Widgets.MainHeaderBar ();
+        stack.add_named (game_grid, "game-grid");
+        stack.add_named (alert_view, "alert-view");
 
-        library_stack = new Gtk.Stack ();
-        library_stack.add_named (new Replay.Views.WelcomeView (), Replay.Views.WelcomeView.NAME);
-
-        library_grid.attach (header_bar, 0, 0);
-        library_grid.attach (library_stack, 0, 1);
-
-        library_side_panel = new Replay.Widgets.LibrarySidePanel ();
-        library_side_panel.item_selected.connect (on_side_panel_item_selected);
-
-        add_collection_view (
-            _("Favorites"),
-            FAVORITES_VIEW_NAME,
-            "starred",
-            _("No Favorite Games"),
-            _("Games which have been starred will appear here"),
-            "user-bookmarks" // TODO: Find a suitable icon of the right size
-        );
-        add_collection_view (
-            _("Recently Played"),
-            RECENT_VIEW_NAME,
-            "document-open-recent",
-            _("No Recent Games"),
-            _("Games which have been recently played will appear here"),
-            "document-open-recent"
-        );
-        add_collection_view (
-            _("Unplayed"),
-            UNPLAYED_VIEW_NAME,
-            "mail-unread",
-            _("No Unplayed Games"),
-            _("Games which have not yet been played will appear here"),
-            "mail-unread" // TODO: Find a suitable icon of the right size
-        );
-
-        var header_group = new Hdy.HeaderGroup ();
-        header_group.add_header_bar (library_side_panel.header_bar);
-        header_group.add_header_bar (header_bar);
+        grid = new Gtk.Grid () {
+            expand = true
+        };
+        grid.attach (header_bar, 0, 0);
+        grid.attach (stack, 0, 1);
 
         var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
             position = 240
         };
-        paned.pack1 (library_side_panel, false, false);
-        paned.pack2 (library_grid, true, false);
+        paned.pack1 (side_panel, false, false);
+        paned.pack2 (grid, true, false);
 
         attach (paned, 0, 0);
 
+        var header_group = new Hdy.HeaderGroup ();
+        header_group.add_header_bar (side_panel.header_bar);
+        header_group.add_header_bar (header_bar);
+
         show_all ();
 
-        // TODO: Load last shown view, but default to WelcomeView
-        library_stack.set_visible_child_name (Replay.Views.WelcomeView.NAME);
+        // TODO: Load from settings
+        stack.set_visible_child_name ("game-grid");
     }
 
-    private void add_collection_view (string display_name, string view_name, string icon_name, string placeholder_title, string placeholder_description, string placeholder_icon_name) {
-        var view = new Replay.Views.LibraryView (placeholder_title, placeholder_description, placeholder_icon_name);
-        view.game_selected.connect ((game) => {
-            on_game_selected (game);
-        });
-        library_side_panel.add_collection (display_name, view_name, icon_name);
-        library_stack.add_named (view, view_name);
+    public void add_collection (string display_name, string icon_name, string view_name, Replay.Models.LibraryItemFilterFunction filter_func) {
+        // Add to the side panel
+        side_panel.add_collection (display_name, icon_name, view_name);
+        // Register the filter
+        filter_mapping.set (view_name, filter_func);
+        // Update badges
+        update_side_panel_badges ();
     }
 
-    private void add_system_view (string display_name, string view_name, string icon_name) {
-        var view = new Replay.Views.LibraryView (_("No Games Available"), _("There are no games in the library that can be played by this system"), icon_name);
-        view.game_selected.connect ((game) => {
-            on_game_selected (game);
-        });
-        library_side_panel.add_system (display_name, view_name, icon_name);
-        library_stack.add_named (view, view_name);
+    public void add_game (Replay.Models.Game game) {
+        game_grid.add_game (game);
+        update_side_panel_badges ();
     }
 
-    private void remove_system_view (string view_name) {
-        // TODO: Remove the view from the stack
-        // TODO: Remove the item from the side panel
+    public void remove_game (Replay.Models.Game game) {
+        game_grid.remove_game (game);
+        update_side_panel_badges ();
     }
 
-    public void add_game (Replay.Models.Game game, Gee.List<string> core_names) {
-        if (game.is_hidden) {
-            return;
-        }
-        if (game.is_favorite) {
-            add_game_to_view (game, FAVORITES_VIEW_NAME);
-        }
-        if (!game.is_played) {
-            add_game_to_view (game, UNPLAYED_VIEW_NAME);
-        }
-        if (game.is_recently_played) {
-            add_game_to_view (game, RECENT_VIEW_NAME);
-        }
-        if (core_names.size > 0) {
-            foreach (var core_name in core_names) {
-                add_game_to_view (game, core_name);
+    public void select_view (string view_name) {
+        side_panel.select_view (view_name);
+    }
+
+    private void on_side_panel_item_selected (Replay.Widgets.LibrarySidePanelItem item) {
+        var filter_func = filter_mapping.get (item.view_name);
+        Idle.add (() => {
+            game_grid.set_filter_func (filter_func);
+            // Need to switch back to the game grid so that get_visible_children() can
+            // determine how many children are visible
+            stack.set_visible_child_name ("game-grid");
+            if (game_grid.get_visible_children () > 0) {
+                stack.set_visible_child_name ("game-grid");
+            } else {
+                alert_view.title = filter_func.placeholder_title;
+                alert_view.description = filter_func.placeholder_description;
+                alert_view.icon_name = filter_func.placeholder_icon_name;
+                stack.set_visible_child_name ("alert-view");
             }
-        } else {
-            // TODO: Add to catch-all category
-        }
+            return false;
+        });
     }
 
-    private void add_game_to_view (Replay.Models.Game game, string view_name) {
-        unowned Replay.Views.LibraryView? view = library_stack.get_child_by_name (view_name) as Replay.Views.LibraryView;
-        if (view == null) {
-            warning ("No view found with name %s", view_name);
-            return;
-        }
-        if (view.add_game (game)) {
-            library_side_panel.increment_badge (view_name);
-        }
-    }
-
-    //  public void set_games (Gee.HashMap<string, Gee.List<Replay.Models.Game>> games_by_system) {
-    //      foreach (var entry in games_by_system.entries) {
-    //          foreach (var game in entry.value) {
-    //              // Don't show hidden games
-    //              if (game.is_hidden) {
-    //                  continue;
-    //              }
-    //              if (game.is_favorite) {
-    //                  unowned Replay.Views.LibraryView? view = library_stack.get_child_by_name ("favorites") as Replay.Views.LibraryView;
-    //                  if (view == null) {
-    //                      continue;
-    //                  }
-    //                  if (view.add_game (game)) {
-    //                      library_side_panel.increment_badge ("favorites");
-    //                  }
-    //              }
-    //              if (game.is_unplayed) {
-    //                  unowned Replay.Views.LibraryView? view = library_stack.get_child_by_name ("unplayed") as Replay.Views.LibraryView;
-    //                  if (view == null) {
-    //                      continue;
-    //                  }
-    //                  if (view.add_game (game)) {
-    //                      library_side_panel.increment_badge ("unplayed");
-    //                  }
-                    
-    //              }
-    //              if (game.is_recently_played) {
-    //                  unowned Replay.Views.LibraryView? view = library_stack.get_child_by_name ("recent") as Replay.Views.LibraryView;
-    //                  if (view == null) {
-    //                      continue;
-    //                  }
-    //                  if (view.add_game (game)) {
-    //                      library_side_panel.increment_badge ("recent");
-    //                  }
-    //              }
-    //              if (entry.key == "") {
-    //                  // TODO: Add to catch-all category
-    //              } else {
-    //                  unowned Replay.Views.LibraryView? view = library_stack.get_child_by_name (entry.key) as Replay.Views.LibraryView;
-    //                  if (view == null) {
-    //                      continue;
-    //                  }
-    //                  if (view.add_game (game)) {
-    //                      library_side_panel.increment_badge (entry.key);
-    //                  }
-    //              }
-    //          }
-    //      }
-    //  }
-
-    public void add_view_for_core (Replay.Models.LibretroCore core) {
-        var display_name = core.info.display_name;
-        var view_name = core.info.core_name;
-        if (library_stack.get_child_by_name (view_name) == null) {
-            add_system_view (display_name, view_name, "input-gaming");
-        }
-    }
-
-    //  public void set_cores (Gee.Collection<Replay.Models.LibretroCore> cores) {
-    //      var supported_system_ids = new Gee.ArrayList<string> ();
-    //      // Add new cores
-    //      foreach (var core in cores) {
-    //          var view_name = core.info.system_id;
-    //          supported_system_ids.add (view_name);
-    //          if (library_stack.get_child_by_name (view_name) == null) {
-    //              var display_name = "%s %s".printf (core.info.manufacturer, core.info.system_name);
-    //              add_system_view (display_name, view_name, "input-gaming");
-    //          }
-    //      }
-    //      // Remove old cores
-    //      foreach (var child in library_stack.get_children ()) {
-    //          // Ignore the loading view
-    //          //  if ( == Replay.Views.WelcomeView.NAME) {
-    //          //      continue;
-    //          //  }
-    //          //  var library_view = child as Replay.Views.LibraryView;
-    //          //  if (!supported_system_ids.contains (library_view.name)) {
-    //          //      library_stack.remove (child);
-    //          //  }
-    //      }
-    //  }
-
-    private void on_side_panel_item_selected (Granite.Widgets.SourceList.Item item) {
-        var side_panel_item = item as Replay.Widgets.LibrarySidePanelItem;
-        library_stack.set_visible_child_name (side_panel_item.view_name);
-    }
-
-    private void on_game_selected (Replay.Models.Game game) {
-        game_selected (game);
-    }
-
-    public void show_favorites_view () {
-        library_stack.set_visible_child_name ("favorites");
+    private void update_side_panel_badges () {
+        Idle.add (() => {
+            foreach (var side_panel_item in side_panel.get_items ()) {
+                var filter_func = filter_mapping.get (side_panel_item.view_name);
+                int count = game_grid.count_visible_children (filter_func);
+                side_panel_item.badge = count > 0 ? count.to_string () : "";
+            }
+            return false;
+        });
     }
 
     public signal void game_selected (Replay.Models.Game game);

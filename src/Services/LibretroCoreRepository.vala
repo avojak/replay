@@ -163,6 +163,16 @@ public class Replay.Services.LibretroCoreRepository : GLib.Object {
         return known_cores.values;
     }
 
+    public Gee.List<string> get_supported_extensions () {
+        var extensions = new Gee.ArrayList<string> ();
+        foreach (var entry in known_cores.entries) {
+            foreach (var extension in entry.value.info.supported_extensions) {
+                extensions.add (extension);
+            }
+        }
+        return extensions;
+    }
+
     //  public signal void core_found (Replay.Models.LibretroCore core);
 
 }

@@ -9,12 +9,13 @@ command: com.github.avojak.replay
 finish-args:
   - '--device=dri' # For RetroGTK
   - '--share=ipc'
-  - '--share=network'
+  # - '--share=network' # Might be needed for a user to select a ROM directory on a network drive, but I don't think this should be a default
   - '--socket=fallback-x11'
   - '--socket=wayland'
-  - '--socket=pulseaudio' # For RetroGTK
-  - '--filesystem=host' # For loading libretro cores
-  - '--filesystem=home' # For loading ROMs and save data
+  - '--socket=pulseaudio' # For RetroGTK audio
+  - '--filesystem=host' # For loading additional libretro cores
+  #- '--filesystem=home' # For loading additional ROMs and save data (Don't need this because 'host' provides sufficient home directory access)
+  # TODO: Will probably need Bluetooth and USB device access here for controllers
 
 modules:
   - name: retro-gtk

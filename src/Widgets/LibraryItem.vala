@@ -21,7 +21,7 @@
 
 public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
 
-    public Replay.Models.Game game { get; construct; }
+    public unowned Replay.Models.Game game { get; construct; }
     public string title { get; construct; }
 
     private Gtk.Revealer unplayed_badge;
@@ -38,6 +38,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         var grid = new Gtk.Grid () {
             orientation = Gtk.Orientation.VERTICAL,
             hexpand = true,
+            vexpand = true,
             halign = Gtk.Align.CENTER,
             valign = Gtk.Align.CENTER,
             margin = 8
@@ -63,6 +64,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
 
         var label_grid = new Gtk.Grid () {
             hexpand = true,
+            vexpand = true,
             margin_bottom = 8,
             halign = Gtk.Align.CENTER
         };
@@ -98,6 +100,8 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
 
         child = grid;
 
+        set_played (game.is_played);
+
         show_all ();
     }
 
@@ -109,7 +113,11 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
     }
 
     public void set_favorite (bool favorite) {
-        // TODO
+    }
+
+    public void set_visible (bool visible) {
+        //  this.hide ();
+        this.visible = visible;
     }
 
 }

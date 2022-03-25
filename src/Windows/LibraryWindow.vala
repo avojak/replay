@@ -26,10 +26,13 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
     private Replay.Services.LibraryWindowActionManager action_manager;
     private Gtk.AccelGroup accel_group;
 
-    private Replay.Layouts.LibraryLayout layout;
+    private Replay.Widgets.Dialogs.PreferencesDialog? preferences_dialog = null;
+
+    private Replay.Views.LibraryView view;
 
     public LibraryWindow (Replay.Application application) {
         Object (
+            title: Constants.APP_NAME,
             application: application,
             app: application,
             border_width: 0,
@@ -43,18 +46,15 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
         add_accel_group (accel_group);
         action_manager = new Replay.Services.LibraryWindowActionManager (app, this);
 
-        layout = new Replay.Layouts.LibraryLayout (this);
-        layout.game_selected.connect (on_game_selected);
+        view = new Replay.Views.LibraryView ();
+        view.game_selected.connect (on_game_selected);
 
-        add (layout);
+        add (view);
 
         restore_window_position ();
 
         this.destroy.connect (() => {
-            // Do stuff before closing the application
-            // TODO: Save state of games
-            // TODO: Stop emulator cores
-
+            // Do stuff before closing the library
             //  GLib.Process.exit (0);
         });
 
@@ -92,13 +92,16 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
     }
 
     public void reload_library () {
+        debug ("Reloading library...");
         foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
             var cores = Replay.Core.Client.get_default ().core_repository.get_cores_for_rom (GLib.File.new_for_path (game.rom_path));
             var core_names = new Gee.ArrayList<string> ();
             foreach (var core in cores) {
                 core_names.add (core.info.core_name);
             }
-            layout.add_game (game, core_names);
+            debug ("Adding game %s", game.display_name);
+            view.add_game (game);
+            //  layout.add_game (game, core_names);
         }
         //  var games_by_system = new Gee.HashMap<string, Gee.List<Replay.Models.Game>> ();
         //  foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
@@ -113,17 +116,25 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
     }
 
     public void reload_systems () {
+        debug ("Reloading systems...");
         foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores ()) {
-            layout.add_view_for_core (core);
+            //  layout.add_view_for_core (core);
         }
     }
 
     public void show_favorites_view () {
-        layout.show_favorites_view ();
+        //  layout.show_favorites_view ();
     }
 
     public void show_preferences_dialog () {
-        // TODO
+        if (preferences_dialog == null) {
+            preferences_dialog = new Replay.Widgets.Dialogs.PreferencesDialog (this);
+            preferences_dialog.show_all ();
+            preferences_dialog.destroy.connect (() => {
+                preferences_dialog = null;
+            });
+        }
+        preferences_dialog.present ();
     }
 
     private void on_game_selected (Replay.Models.Game game) {

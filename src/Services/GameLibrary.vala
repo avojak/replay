@@ -47,6 +47,26 @@ public class Replay.Services.GameLibrary : GLib.Object {
         return known_games.values;
     }
 
+    public void set_game_played (Replay.Models.Game game, bool played) {
+        foreach (var entry in known_games.entries) {
+            if (entry.value == game) {
+                entry.value.is_played = played;
+                // TODO: Persist this change
+                return;
+            }
+        }
+    }
+
+    public void set_game_favorite (Replay.Models.Game game, bool favorite) {
+        foreach (var entry in known_games.entries) {
+            if (entry.value == game) {
+                entry.value.is_favorite = favorite;
+                // TODO: Persist this change
+                return;
+            }
+        }
+    }
+
     //  public void initialize () {
         // Load known ROMs from database
         // TODO

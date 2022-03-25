@@ -34,7 +34,7 @@ Replay ships with several games that are licensed in such a way which permits re
 
 | Name | System | License |  |
 | ---- | ------ | ------- | --- |
-| Varooom 3D | Game Boy Advance | ZLib | [Source](https://github.com/GValiente/butano) |
+<!-- | Varooom 3D | Game Boy Advance | ZLib | [Source](https://github.com/GValiente/butano) | -->
 | Game Boy Wordyl | Game Boy | GPLv3 | [Source](https://github.com/bbbbbr/gb-wordle) | 
 
 Additional games can be easily added to the library.

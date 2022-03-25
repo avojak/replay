@@ -1,0 +1,1 @@
+`input-pixel-symbolic.svg` sourced from the Akira UX project: https://github.com/akiraux/Akira/blob/master/data/icons/symbolic/input-pixel-symbolic.svg

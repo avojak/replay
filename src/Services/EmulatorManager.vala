@@ -36,6 +36,7 @@ public class Replay.Services.EmulatorManager : GLib.Object {
         var emulator = new Replay.Services.Emulator (application);
         emulator.started.connect (on_emulator_started);
         emulator.closed.connect (on_emulator_closed);
+        emulator.crashed.connect (on_emulator_crashed);
         emulator.load_rom (rom_uri);
         emulator.open ();
         emulator.start ();
@@ -49,6 +50,12 @@ public class Replay.Services.EmulatorManager : GLib.Object {
 
     private void on_emulator_closed (Replay.Services.Emulator emulator) {
         debug ("Emulator closed");
+        emulators.remove (emulator);
+    }
+
+    public void on_emulator_crashed (Replay.Services.Emulator emulator, string message) {
+        // TODO: Display this to the user
+        debug ("Emulator crashed: %s", message);
         emulators.remove (emulator);
     }
 

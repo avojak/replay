@@ -42,6 +42,25 @@ public class Replay.Core.Client : GLib.Object {
         core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.BUNDLED_LIBRETRO_CORE_DIR));
         core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.SYSTEM_LIBRETRO_CORE_DIR));
         library_sources.add (new Replay.Core.FileSystemLibrarySource (Constants.BUNDLED_ROM_DIR));
+
+        // Lookup preference for user-specified ROM directory. If none specified (e.g. first launch), default to ~/Games/Replay/.
+        // TODO: Seems like creating ~/Games/Replay won't be possible due to Flatpak sandbox?
+        var user_rom_dir = Replay.Application.settings.get_string ("user-rom-directory");
+        if (user_rom_dir.strip ().length == 0) {
+            user_rom_dir = GLib.Environment.get_home_dir (); // "%s/Games/Replay".printf (GLib.Environment.get_home_dir ());
+            Replay.Application.settings.set_string ("user-rom-directory", user_rom_dir);
+            //  var user_rom_dir_file = GLib.File.new_for_path (user_rom_dir);
+            //  if (!user_rom_dir_file.query_exists ()) {
+            //      try {
+            //          if (!user_rom_dir_file.make_directory_with_parents ()) {
+            //              warning ("Did not create user rom directory (%s)", user_rom_dir);
+            //          }
+            //      } catch (GLib.Error e) {
+            //          warning ("Error while creating user rom directory (%s): %s", user_rom_dir, e.message);
+            //      }
+            //  }
+        }
+        library_sources.add (new Replay.Core.FileSystemLibrarySource (user_rom_dir));
     }
 
     //  public async void scan_all_sources () {
