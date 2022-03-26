@@ -163,6 +163,21 @@ public class Replay.Services.LibretroCoreRepository : GLib.Object {
         return known_cores.values;
     }
 
+    public Gee.Map<string, Gee.Collection<Replay.Models.LibretroCore>> get_cores_by_manufacturer () {
+        var mapping = new Gee.TreeMap<string, Gee.Collection<Replay.Models.LibretroCore>> ((key_a, key_b) => {
+            return key_a.ascii_casecmp (key_b);
+        });
+        foreach (var core in get_cores ()) {
+            if (!mapping.has_key (core.info.manufacturer)) {
+                mapping.set (core.info.manufacturer, new Gee.TreeSet<Replay.Models.LibretroCore> ((core_a, core_b) => {
+                    return core_a.info.core_name.ascii_casecmp (core_b.info.core_name);
+                }));
+            }
+            mapping.get (core.info.manufacturer).add (core);
+        }
+        return mapping;
+    }
+
     public Gee.List<string> get_supported_extensions () {
         var extensions = new Gee.ArrayList<string> ();
         foreach (var entry in known_cores.entries) {

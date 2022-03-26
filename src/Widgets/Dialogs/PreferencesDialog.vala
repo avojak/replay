@@ -36,7 +36,9 @@ public class Replay.Widgets.Dialogs.PreferencesDialog : Granite.Dialog {
 
     construct {
         var stack_grid = new Gtk.Grid () {
-            expand = true
+            expand = true,
+            height_request = 500,
+            width_request = 500
         };
 
         var stack_switcher = new Gtk.StackSwitcher () {

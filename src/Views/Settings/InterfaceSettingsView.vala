@@ -54,7 +54,8 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
         }
 
         video_filter_combo = new Gtk.ComboBox.with_model (video_filter_list_store) {
-            hexpand = true
+            //  hexpand = true
+            halign = Gtk.Align.START
         };
         var video_filter_cell = new Gtk.CellRendererText ();
         video_filter_combo.pack_start (video_filter_cell, false);
@@ -109,7 +110,8 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
             secondary_icon_name = "input-pixel-symbolic",
             secondary_icon_activatable = false,
             secondary_icon_sensitive = false,
-            hexpand = true
+            //  hexpand = true
+            halign = Gtk.Align.START
         };
         button.set_value (default_value);
         return button;

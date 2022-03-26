@@ -51,6 +51,11 @@
       <summary>Whether or not to open new emulator windows in fullscreen mode.</summary>
       <description>Whether or not to open new emulator windows in fullscreen mode.</description>
     </key>
+    <key name="emu-boot-bios" type="b">
+      <default>false</default>
+      <summary>Whether or not to boot emulators with the BIOS.</summary>
+      <description>Whether or not to boot emulators with the BIOS.</description>
+    </key>
     <key name="user-core-directory" type="s">
       <default>""</default>
       <summary>The directory where user-installed libretro cores are stored.</summary>

@@ -59,10 +59,21 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             flow_box.select_child (child); // Makes it clear which item was clicked
             unowned var library_item = child as Replay.Widgets.LibraryItem;
             var menu = new Gtk.Menu ();
-            var run_item = create_image_menu_item (_("Run"), "media-playback-start");
+            var run_item = create_image_menu_item (_("Run"), "");
             run_item.activate.connect (() => {
                 on_item_activated (library_item);
             });
+            var run_with_item = create_image_menu_item (_("Run with"), "");
+            var run_with_submenu = new Gtk.Menu ();
+            foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores_for_rom (GLib.File.new_for_path (library_item.game.rom_path))) {
+                var item = new Gtk.MenuItem.with_label (core.info.core_name);
+                item.activate.connect (() => {
+                    // TODO: Pass specific core
+                    on_item_activated (library_item);
+                });
+                run_with_submenu.add (item);
+            }
+            run_with_item.submenu = run_with_submenu;
             var played_item = create_image_menu_item (_("Mark as Played"), "mail-read");
             played_item.activate.connect (() => {
                 library_item.set_played (true);
@@ -95,6 +106,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             });
             // TODO: Support adding item to add to a custom category
             menu.add (run_item);
+            menu.add (run_with_item);
             menu.add (new Gtk.SeparatorMenuItem ());
             menu.add (library_item.game.is_favorite ? unfavorite_item : favorite_item);
             menu.add (library_item.game.is_played ? unplayed_item : played_item);

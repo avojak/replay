@@ -20,8 +20,9 @@ flatpak-init:
 
 init: flatpak-init
 
+# TODO: Add offline option to add --disable-download flag
 flatpak:
-	flatpak-builder build com.github.avojak.replay.yml --user --install --force-clean
+	flatpak-builder build com.github.avojak.replay.yml --user --install --force-clean --disable-download
 
 lint:
 	io.elementary.vala-lint ./src

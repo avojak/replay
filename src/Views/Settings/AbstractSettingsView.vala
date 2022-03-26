@@ -23,8 +23,9 @@ public abstract class Replay.Views.Settings.AbstractSettingsView : Gtk.Grid {
 
     protected AbstractSettingsView () {
         Object (
-            expand: true,
-            margin: 8,
+            halign: Gtk.Align.CENTER,
+            vexpand: true,
+            margin: 24,
             row_spacing: 6,
             column_spacing: 12
         );

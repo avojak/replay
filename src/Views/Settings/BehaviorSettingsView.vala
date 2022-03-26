@@ -31,7 +31,8 @@ public class Replay.Views.Settings.BehaviorSettingsView : Replay.Views.Settings.
             halign = Gtk.Align.END
         };
         user_rom_dir_entry = new Gtk.FileChooserButton (_("Select Your ROM Directory\u2026"), Gtk.FileChooserAction.SELECT_FOLDER) {
-            hexpand = true
+            //  hexpand = true
+            halign = Gtk.Align.START
         };
         user_rom_dir_entry.set_uri (GLib.File.new_for_path (GLib.Environment.get_home_dir ()).get_uri ());
         user_rom_dir_entry.file_set.connect (() => {
@@ -43,7 +44,8 @@ public class Replay.Views.Settings.BehaviorSettingsView : Replay.Views.Settings.
             halign = Gtk.Align.END
         };
         save_data_dir_entry = new Gtk.FileChooserButton (_("Select Your Save Data Directory\u2026"), Gtk.FileChooserAction.SELECT_FOLDER) {
-            hexpand = true
+            //  hexpand = true
+            halign = Gtk.Align.START
         };
         save_data_dir_entry.set_uri (GLib.File.new_for_path (GLib.Environment.get_home_dir ()).get_uri ());
         save_data_dir_entry.file_set.connect (() => {
@@ -51,11 +53,55 @@ public class Replay.Views.Settings.BehaviorSettingsView : Replay.Views.Settings.
             // TODO
         });
 
+        var playback_header_label = new Granite.HeaderLabel (_("Playback"));
+
+        var bios_label = new Gtk.Label (_("Boot BIOS:")) {
+            halign = Gtk.Align.END
+        };
+        var bios_switch = new Gtk.Switch () {
+            halign = Gtk.Align.START,
+            valign = Gtk.Align.CENTER
+        };
+        Replay.Application.settings.bind ("emu-boot-bios", bios_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+
+        var focus_lost_label = new Gtk.Label (_("Pause on Focus Lost:")) {
+            halign = Gtk.Align.END
+        };
+        var focus_lost_switch = new Gtk.Switch () {
+            halign = Gtk.Align.START,
+            valign = Gtk.Align.CENTER
+        };
+        Replay.Application.settings.bind ("handle-window-focus-change", focus_lost_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+
+        var speed_label = new Gtk.Label (_("Speed Rate:")) {
+            halign = Gtk.Align.END
+        };
+        var speed_spin_button = create_spin_button (0.1, 3.0, 1.0);
+
         attach (game_data_header_label, 0, 0, 2);
         attach (user_rom_dir_label, 0, 1);
         attach (user_rom_dir_entry, 1, 1);
         attach (save_data_dir_label, 0, 2);
         attach (save_data_dir_entry, 1, 2);
+        attach (playback_header_label, 0, 3, 2);
+        attach (bios_label, 0, 4);
+        attach (bios_switch, 1, 4);
+        attach (focus_lost_label, 0, 5);
+        attach (focus_lost_switch, 1, 5);
+        attach (speed_label, 0, 6);
+        attach (speed_spin_button, 1, 6);
+    }
+
+    private Gtk.SpinButton create_spin_button (double min_value, double max_value, double default_value) {
+        var button = new Gtk.SpinButton.with_range (min_value, max_value, 0.1) {
+            //  secondary_icon_name = "input-pixel-symbolic",
+            //  secondary_icon_activatable = false,
+            //  secondary_icon_sensitive = false,
+            //  hexpand = true
+            halign = Gtk.Align.START
+        };
+        button.set_value (default_value);
+        return button;
     }
 
 }

@@ -41,6 +41,7 @@ application_files = files(
     join_paths('Views', 'Settings', 'AbstractSettingsView.vala'),
     join_paths('Views', 'Settings', 'BehaviorSettingsView.vala'),
     join_paths('Views', 'Settings', 'InterfaceSettingsView.vala'),
+    join_paths('Views', 'Settings', 'SystemSettingsPage.vala'),
     join_paths('Views', 'Settings', 'SystemsSettingsView.vala'),
     join_paths('Views', 'LibraryAlertView.vala'),
     join_paths('Views', 'LibraryView.vala'),
