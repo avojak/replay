@@ -21,6 +21,8 @@
 
 public class Replay.Views.LibraryView : Gtk.Grid {
 
+    private const int RECENTLY_PLAYED_THRESHOLD_DAYS = 30;
+
     private const string FAVORITES_VIEW_NAME = "collection:favorites";
     private const string RECENT_VIEW_NAME = "collection:recent";
     private const string UNPLAYED_VIEW_NAME = "collection:unplayed";
@@ -40,27 +42,38 @@ public class Replay.Views.LibraryView : Gtk.Grid {
             _("Games which have been starred will appear here"),
             "user-bookmarks",
             (library_item) => {
-                //  debug ("%s is favorite: %s", library_item.game.display_name, library_item.game.is_favorite.to_string ());
                 return library_item.game.is_favorite;
-            }));
+            }),
+            new Replay.Models.LibraryItemSortFunction ((library_item_1, library_item_2) => {
+                return library_item_1.game.display_name.ascii_casecmp (library_item_2.game.display_name);
+            })
+        );
         library_layout.add_collection (_("Recently Played"), "document-open-recent", RECENT_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
             _("No Recent Games"),
             _("Games which have been recently played will appear here"),
             "document-open-recent",
             (library_item) => {
-                //  debug ("%s is recently played: %s", library_item.game.display_name, library_item.game.is_recently_played.to_string ());
-                return library_item.game.is_recently_played;
-            }
-        ));
+                return (library_item.game.last_played != null) && (library_item.game.last_played.difference (new GLib.DateTime.now_utc ()) <= (RECENTLY_PLAYED_THRESHOLD_DAYS * GLib.TimeSpan.DAY));
+            }),
+            new Replay.Models.LibraryItemSortFunction ((library_item_1, library_item_2) => {
+                if (library_item_1.game.last_played == null || library_item_2.game.last_played == null) {
+                    // Don't need to get fancy here - if one or both are null, the visual filter will take care of it anyway
+                    return 0;
+                }
+                return -1 * library_item_1.game.last_played.compare (library_item_2.game.last_played);
+            })
+        );
         library_layout.add_collection (_("Unplayed"), "mail-unread", UNPLAYED_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
             _("No Unplayed Games"),
             _("Games which have not yet been played will appear here"),
             "mail-unread", // TODO: Find a suitable icon of the right size
             (library_item) => {
-                //  debug ("%s is played: %s", library_item.game.display_name, library_item.game.is_played.to_string ());
                 return !library_item.game.is_played;
-            }
-        ));
+            }),
+            new Replay.Models.LibraryItemSortFunction ((library_item_1, library_item_2) => {
+                return library_item_1.game.display_name.ascii_casecmp (library_item_2.game.display_name);
+            })
+        );
 
         library_layout.game_selected.connect ((game) => {
             game_selected (game);

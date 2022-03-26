@@ -25,6 +25,7 @@ application_files = files(
     join_paths('Layouts', 'LibraryLayout.vala'),
     join_paths('Models', 'Game.vala'),
     join_paths('Models', 'LibraryItemFilterFunction.vala'),
+    join_paths('Models', 'LibraryItemSortFunction.vala'),
     join_paths('Models', 'LibretroCore.vala'),
     join_paths('Models', 'LibretroCoreInfo.vala'),
     join_paths('Models', 'VideoFilterMapping.vala'),

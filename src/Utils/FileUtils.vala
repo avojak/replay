@@ -21,8 +21,9 @@
 
 public class Replay.Utils.FileUtils : GLib.Object {
 
-    public static string get_extension (GLib.File file) {
-        return file.get_path ().substring (file.get_path ().last_index_of (".") + 1);
+    public static string get_extension (GLib.File file, bool normalize = true) {
+        var extension = file.get_path ().substring (file.get_path ().last_index_of (".") + 1);
+        return normalize ? extension.down () : extension;
     }
 
 }

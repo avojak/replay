@@ -47,7 +47,7 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
         action_manager = new Replay.Services.LibraryWindowActionManager (app, this);
 
         view = new Replay.Views.LibraryView ();
-        view.game_selected.connect (on_game_selected);
+        view.game_selected.connect (launch_game);
 
         add (view);
 
@@ -137,8 +137,9 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
         preferences_dialog.present ();
     }
 
-    private void on_game_selected (Replay.Models.Game game) {
+    private void launch_game (Replay.Models.Game game) {
         Replay.Core.Client.get_default ().emulator_manager.launch_game (GLib.File.new_for_path (game.rom_path).get_uri ());
+        Replay.Core.Client.get_default ().game_library.update_last_run_date (game);
     }
 
 }

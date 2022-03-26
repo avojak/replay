@@ -51,6 +51,9 @@ public class Replay.Services.GameLibrary : GLib.Object {
         foreach (var entry in known_games.entries) {
             if (entry.value == game) {
                 entry.value.is_played = played;
+                if (!played) {
+                    entry.value.last_played = null;
+                }
                 // TODO: Persist this change
                 return;
             }
@@ -61,6 +64,16 @@ public class Replay.Services.GameLibrary : GLib.Object {
         foreach (var entry in known_games.entries) {
             if (entry.value == game) {
                 entry.value.is_favorite = favorite;
+                // TODO: Persist this change
+                return;
+            }
+        }
+    }
+
+    public void update_last_run_date (Replay.Models.Game game) {
+        foreach (var entry in known_games.entries) {
+            if (entry.value == game) {
+                entry.value.last_played = new GLib.DateTime.now_utc ();
                 // TODO: Persist this change
                 return;
             }

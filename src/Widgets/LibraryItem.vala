@@ -40,7 +40,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             hexpand = true,
             vexpand = true,
             halign = Gtk.Align.CENTER,
-            valign = Gtk.Align.CENTER,
+            valign = Gtk.Align.START,
             margin = 8
         };
         var image = new Gtk.Image () {
@@ -55,11 +55,22 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         };
         badge.set_markup ("<b>!</b>");
         badge.get_style_context ().add_class (Granite.STYLE_CLASS_BADGE);
+        var unplayed_image = new Gtk.Image () {
+            gicon = new ThemedIcon ("mail-unread"),
+            pixel_size = 32
+        };
+        unplayed_badge = new Gtk.Revealer () {
+            transition_type = Gtk.RevealerTransitionType.NONE,
+            halign = Gtk.Align.START,
+            valign = Gtk.Align.START
+        };
+        unplayed_badge.add (unplayed_image);
         var overlay = new Gtk.Overlay () {
             halign = Gtk.Align.CENTER
         };
         //  overlay.add_overlay (badge); // TODO: Could use an icon here probably
         overlay.add (image);
+        overlay.add_overlay (unplayed_badge);
         //  overlay.set_tooltip_text ("Game could not be found");
 
         var label_grid = new Gtk.Grid () {
@@ -69,15 +80,16 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             halign = Gtk.Align.CENTER
         };
 
-        var unplayed_image = new Gtk.Image () {
-            gicon = new ThemedIcon ("mail-unread"),
-            pixel_size = 16,
-            margin_right = 8
-        };
-        unplayed_badge = new Gtk.Revealer () {
-            transition_type = Gtk.RevealerTransitionType.NONE
-        };
-        unplayed_badge.add (unplayed_image);
+        //  var unplayed_image = new Gtk.Image () {
+        //      gicon = new ThemedIcon ("mail-unread"),
+        //      pixel_size = 16,
+        //      margin_right = 8
+        //  };
+        //  unplayed_badge = new Gtk.Revealer () {
+        //      transition_type = Gtk.RevealerTransitionType.NONE,
+        //      valign = Gtk.Align.START
+        //  };
+        //  unplayed_badge.add (unplayed_image);
 
         var label = new Gtk.Label (null) {
             wrap = true,
@@ -88,7 +100,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         };
         label.set_markup (@"<b>$title</b>");
 
-        label_grid.attach (unplayed_badge, 0, 0);
+        //  label_grid.attach (unplayed_badge, 0, 0);
         label_grid.attach (label, 1, 0);
 
         grid.add (overlay);
@@ -107,6 +119,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
 
     public void set_played (bool played) {
         // Only change the revealer if the desired state is different from the current
+        // TODO: Can we instead listen for a change to the property of the game?
         if (played == unplayed_badge.child_revealed) {
             unplayed_badge.set_reveal_child (!played);
         }

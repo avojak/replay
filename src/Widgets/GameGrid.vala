@@ -38,9 +38,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             margin = 12,
             valign = Gtk.Align.START
         };
-        flow_box.child_activated.connect ((child) => {
-            item_selected (child as Replay.Widgets.LibraryItem);
-        });
+        flow_box.child_activated.connect (on_item_activated);
         flow_box.button_press_event.connect (show_context_menu);
 
         var scrolled_window = new Gtk.ScrolledWindow (null, null) {
@@ -63,14 +61,16 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             var menu = new Gtk.Menu ();
             var run_item = create_image_menu_item (_("Run"), "media-playback-start");
             run_item.activate.connect (() => {
-                // TODO
+                on_item_activated (library_item);
             });
             var played_item = create_image_menu_item (_("Mark as Played"), "mail-read");
             played_item.activate.connect (() => {
+                library_item.set_played (true);
                 item_marked_played (library_item);
             });
             var unplayed_item = create_image_menu_item (_("Mark as Unplayed"), "mail-unread");
             unplayed_item.activate.connect (() => {
+                library_item.set_played (false);
                 item_marked_unplayed (library_item);
             });
             var favorite_item = create_image_menu_item (_("Add to Favorites"), "starred");
@@ -96,8 +96,8 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             // TODO: Support adding item to add to a custom category
             menu.add (run_item);
             menu.add (new Gtk.SeparatorMenuItem ());
-            menu.add (library_item.game.is_played ? unplayed_item : played_item);
             menu.add (library_item.game.is_favorite ? unfavorite_item : favorite_item);
+            menu.add (library_item.game.is_played ? unplayed_item : played_item);
             menu.add (new Gtk.SeparatorMenuItem ());
             menu.add (properties_item);
             //  menu.add (new Gtk.SeparatorMenuItem ());
@@ -127,6 +127,13 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         return item;
     }
 
+    private void on_item_activated (Gtk.FlowBoxChild child) {
+        unowned var library_item = child as Replay.Widgets.LibraryItem;
+        library_item.set_played (true);
+        item_run (library_item);
+        item_marked_played (library_item);
+    }
+
     public void set_filter_func (Replay.Models.LibraryItemFilterFunction? filter_func) {
         if (filter_func == null) {
             flow_box.set_filter_func (null);
@@ -137,8 +144,22 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         }
     }
 
-    public void refilter () {
+    public void set_sort_func (Replay.Models.LibraryItemSortFunction? sort_func) {
+        if (sort_func == null) {
+            flow_box.set_sort_func (null);
+        } else {
+            flow_box.set_sort_func ((child1, child2) => {
+                return sort_func.sort (child1 as Replay.Widgets.LibraryItem, child2 as Replay.Widgets.LibraryItem);
+            });
+        }
+    }
+
+    public void invalidate_filter () {
         flow_box.invalidate_filter ();
+    }
+
+    public void invalidate_sort () {
+        flow_box.invalidate_sort ();
     }
 
     public int count_visible_children (Replay.Models.LibraryItemFilterFunction? filter_func) {
@@ -178,7 +199,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
 
     //  public delegate bool FilterFunction (Replay.Widgets.LibraryItem library_item);
 
-    public signal void item_selected (Replay.Widgets.LibraryItem library_item);
+    public signal void item_run (Replay.Widgets.LibraryItem library_item);
     public signal void item_added_to_favorites (Replay.Widgets.LibraryItem library_item);
     public signal void item_removed_from_favorites (Replay.Widgets.LibraryItem library_item);
     public signal void item_marked_played (Replay.Widgets.LibraryItem library_item);

@@ -173,8 +173,13 @@ public class Replay.Services.Emulator : GLib.Object {
         }
     }
 
+    // TODO: Check memory size via get_memory_size() before saving a file so we don't get 0B files
     public void save_memory () {
         if (core != null) {
+            if (core.get_memory_size (Retro.MemoryType.SAVE_RAM) == 0) {
+                debug ("Save RAM is 0B - skipping creation of save memory file");
+                return;
+            }
             var memory_file = get_memory_file_for_rom (rom);
             debug ("Saving memory to file: %s", memory_file.get_path ());
             try {
@@ -189,11 +194,11 @@ public class Replay.Services.Emulator : GLib.Object {
         if (core != null && rom != null) {
             var memory_file = get_memory_file_for_rom (rom);
             if (memory_file.query_exists ()) {
-                debug ("Loading memory from file: %s", memory_file.get_path ());
+                debug ("Loading save memory from file: %s", memory_file.get_path ());
                 try {
                     core.load_memory (Retro.MemoryType.SAVE_RAM, memory_file.get_path ());
                 } catch (GLib.Error e) {
-                    warning ("Error while loading memory: %s", e.message);
+                    warning ("Error while loading save memory: %s", e.message);
                 }
             } else {
                 debug ("No memory file found");
@@ -201,19 +206,26 @@ public class Replay.Services.Emulator : GLib.Object {
         }
     }
 
+    // TODO: Need to handle the save files better for bundled games which will originate
+    //       in the sandbox, but we probably want all save data to be outside the sandbox
+    //       in the user's home directory.
+    //
+    //       Maybe always put the save files in the ROM directory regardless of where the
+    //       ROM actually goes? Or add a new preference for a save file directory?
+
     private GLib.File get_memory_file_for_rom (GLib.File rom_file) {
-        var rom_extension = Replay.Utils.FileUtils.get_extension (rom_file);
+        var rom_extension = Replay.Utils.FileUtils.get_extension (rom_file, false);
         var rom_filename = rom_file.get_basename ();
         var rom_directory = rom_file.get_parent ().get_path ();
-        var memory_filename = rom_filename.replace (rom_extension, SAVE_RAM_FILE_EXTENSION);
+        var memory_filename = rom_filename.substring (0, rom_filename.last_index_of (rom_extension, 0)) + SAVE_RAM_FILE_EXTENSION;
         return GLib.File.new_for_path ("%s/%s".printf (rom_directory, memory_filename));
     }
 
     private GLib.File get_state_file_for_rom (GLib.File rom_file) {
-        var rom_extension = Replay.Utils.FileUtils.get_extension (rom_file);
+        var rom_extension = Replay.Utils.FileUtils.get_extension (rom_file, false);
         var rom_filename = rom_file.get_basename ();
         var rom_directory = rom_file.get_parent ().get_path ();
-        var state_filename = rom_filename.replace (rom_extension, SAVE_STATE_FILE_EXTENSION);
+        var state_filename = rom_filename.substring (0, rom_filename.last_index_of (rom_extension, 0)) + SAVE_STATE_FILE_EXTENSION;
         return GLib.File.new_for_path ("%s/%s".printf (rom_directory, state_filename));
     }
 
