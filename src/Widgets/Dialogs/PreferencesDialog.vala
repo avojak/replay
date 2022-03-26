@@ -19,37 +19,55 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Widgets.Dialogs.PreferencesDialog : Hdy.Window {
+public class Replay.Widgets.Dialogs.PreferencesDialog : Granite.Dialog {
 
     public Replay.Windows.LibraryWindow library_window {get; construct; }
 
     public PreferencesDialog (Replay.Windows.LibraryWindow library_window) {
         Object (
             title: _("%s Preferences").printf (Constants.APP_NAME),
-            deletable: true,
-            resizable: true,
+            deletable: false,
+            resizable: false,
             transient_for: library_window,
-            library_window: library_window,
-            modal: false
+            modal: false,
+            library_window: library_window
         );
     }
 
     construct {
-        add (new Replay.Views.Settings.SettingsView ());
-        var width = 700;
-        var height = 500;
-        resize (width, height);
-        
-        int library_window_width;
-        int library_window_height;
-        int library_window_x;
-        int library_window_y;
-        library_window.get_size (out library_window_width, out library_window_height);
-        library_window.get_position (out library_window_x, out library_window_y);
+        var stack_grid = new Gtk.Grid () {
+            expand = true
+        };
 
-        var x = library_window_x + (library_window_width / 2) - (width / 2);
-        var y = library_window_y + (library_window_height / 2) - (height / 2);
-        move (x, y);
+        var stack_switcher = new Gtk.StackSwitcher () {
+            halign = Gtk.Align.CENTER
+        };
+        stack_grid.attach (stack_switcher, 0, 0, 1, 1);
+
+        var stack = new Gtk.Stack () {
+            expand = true
+        };
+        stack_switcher.stack = stack;
+
+        stack.add_titled (new Replay.Views.Settings.BehaviorSettingsView (), "behavior", _("Behavior"));
+        stack.add_titled (new Replay.Views.Settings.InterfaceSettingsView (), "interface", _("Interface"));
+        stack.add_titled (new Replay.Views.Settings.SystemsSettingsView (), "systems", _("Systems"));
+        stack_grid.attach (stack, 0, 1, 1, 1);
+
+        get_content_area ().add (stack_grid);
+
+        var close_button = new Gtk.Button.with_label (_("Close"));
+        close_button.clicked.connect (() => {
+            close ();
+        });
+
+        add_action_widget (close_button, 0);
+
+        load_settings ();
+    }
+
+    private void load_settings () {
+
     }
 
 }
