@@ -22,6 +22,8 @@
 public class Replay.Widgets.GameGrid : Gtk.Grid {
 
     public Gtk.FlowBox flow_box { get; construct; }
+    private Replay.Widgets.GameGridDetailsPanel game_details_panel;
+    private Gtk.Revealer revealer;
 
     public GameGrid () {
         Object (
@@ -31,15 +33,17 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
 
     construct {
         flow_box = new Gtk.FlowBox () {
-            activate_on_single_click = false,
+            activate_on_single_click = true,
             selection_mode = Gtk.SelectionMode.SINGLE,
             homogeneous = true,
             expand = true,
             margin = 12,
             valign = Gtk.Align.START
         };
-        flow_box.child_activated.connect (on_item_activated);
+        flow_box.child_activated.connect (on_item_selected);
+        //  flow_box.button_press_event.connect (launch_game);
         flow_box.button_press_event.connect (show_context_menu);
+        //  flow_box.button_press_event.connect (show_details_panel);
 
         var scrolled_window = new Gtk.ScrolledWindow (null, null) {
             expand = true
@@ -47,7 +51,31 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         scrolled_window.add (flow_box);
 
-        add (scrolled_window);
+        //  var event_box = new Gtk.EventBox ();
+        //  event_box.add (scrolled_window);
+        //  event_box.set_events (Gdk.EventMask.ENTER_NOTIFY_MASK);
+        //  event_box.set_events (Gdk.EventMask.LEAVE_NOTIFY_MASK);
+
+        //  event_box.enter_notify_event.connect (() => {
+        //      debug ("enter grid");
+        //  });
+        //  event_box.leave_notify_event.connect (() => {
+        //      debug ("leave grid");
+        //  });
+
+        game_details_panel = new Replay.Widgets.GameGridDetailsPanel ();
+        revealer = new Gtk.Revealer () {
+            transition_type = Gtk.RevealerTransitionType.SLIDE_UP
+        };
+        revealer.add (game_details_panel);
+
+        var grid = new Gtk.Grid () {
+            expand = true
+        };
+        grid.attach (scrolled_window, 0, 0);
+        grid.attach (revealer, 0, 1);
+
+        add (grid);
     }
 
     private bool show_context_menu (Gdk.EventButton event) {
@@ -61,7 +89,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             var menu = new Gtk.Menu ();
             var run_item = create_image_menu_item (_("Run"), "");
             run_item.activate.connect (() => {
-                on_item_activated (library_item);
+                on_item_run_selected (library_item);
             });
             var run_with_item = create_image_menu_item (_("Run with"), "");
             var run_with_submenu = new Gtk.Menu ();
@@ -69,7 +97,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
                 var item = new Gtk.MenuItem.with_label (core.info.core_name);
                 item.activate.connect (() => {
                     // TODO: Pass specific core
-                    on_item_activated (library_item);
+                    on_item_run_selected (library_item);
                 });
                 run_with_submenu.add (item);
             }
@@ -122,6 +150,22 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         return false;
     }
 
+    //  private bool show_details_panel (Gdk.EventButton event) {
+    //      if (event.type == Gdk.EventType.BUTTON_PRESS && event.button == Gdk.BUTTON_PRIMARY) {
+    //          unowned Gtk.FlowBoxChild? child = flow_box.get_child_at_pos ((int) event.x, (int) event.y);
+    //          if (child == null) {
+    //              //  revealer.set_reveal_child (false);
+    //              //  flow_box.unselect_all ();
+    //              return false;
+    //          }
+    //          unowned var library_item = child as Replay.Widgets.LibraryItem;
+    //          game_details_panel.update_title (library_item.game.display_name);
+    //          revealer.set_reveal_child (true);
+    //          return true;
+    //      }
+    //      return false;
+    //  }
+
     private Gtk.MenuItem create_image_menu_item (string str, string icon_name) {
         var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6);
         var icon = new Gtk.Image.from_icon_name (icon_name, Gtk.IconSize.MENU) {
@@ -139,7 +183,11 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         return item;
     }
 
-    private void on_item_activated (Gtk.FlowBoxChild child) {
+    private void on_item_selected (Gtk.FlowBoxChild child) {
+        item_selected (child as Replay.Widgets.LibraryItem);
+    }
+
+    private void on_item_run_selected (Gtk.FlowBoxChild child) {
         unowned var library_item = child as Replay.Widgets.LibraryItem;
         library_item.set_played (true);
         item_run (library_item);
@@ -211,6 +259,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
 
     //  public delegate bool FilterFunction (Replay.Widgets.LibraryItem library_item);
 
+    public signal void item_selected (Replay.Widgets.LibraryItem library_item);
     public signal void item_run (Replay.Widgets.LibraryItem library_item);
     public signal void item_added_to_favorites (Replay.Widgets.LibraryItem library_item);
     public signal void item_removed_from_favorites (Replay.Widgets.LibraryItem library_item);

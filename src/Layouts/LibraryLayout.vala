@@ -23,10 +23,12 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
 
     private static Gtk.CssProvider provider;
 
+    private Replay.Widgets.MainHeaderBar header_bar;
     private Replay.Widgets.LibrarySidePanel side_panel;
     private Gtk.Grid grid;
     private Replay.Widgets.GameGrid game_grid;
     private Granite.Widgets.AlertView alert_view;
+    private Replay.Views.GameDetailView detail_view;
     private Gtk.Stack stack;
 
     private Gee.Map<string, Replay.Models.LibraryItemFilterFunction> filter_mapping;
@@ -47,11 +49,29 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         filter_mapping = new Gee.HashMap<string, Replay.Models.LibraryItemFilterFunction> ();
         sort_mapping = new Gee.HashMap<string, Replay.Models.LibraryItemSortFunction> ();
 
-        var header_bar = new Replay.Widgets.MainHeaderBar ();
+        header_bar = new Replay.Widgets.MainHeaderBar ();
+        header_bar.view_return.connect (() => {
+            Idle.add (() => {
+                header_bar.set_return_button_visible (false);
+                stack.set_visible_child_full ("game-grid", Gtk.StackTransitionType.SLIDE_RIGHT);
+                invalidate_filter ();
+                //  update_visible_stack_child ();
+                return false;
+            });
+        });
+
         side_panel = new Replay.Widgets.LibrarySidePanel ();
         side_panel.item_selected.connect (on_side_panel_item_selected);
 
         game_grid = new Replay.Widgets.GameGrid ();
+        game_grid.item_selected.connect ((library_item) => {
+            Idle.add (() => {
+                detail_view.set_game (library_item.game);
+                stack.set_visible_child_full ("detail-view", Gtk.StackTransitionType.SLIDE_LEFT);
+                header_bar.set_return_button_visible (true);
+                return false;
+            });
+        });
         game_grid.item_run.connect ((library_item) => {
             game_selected (library_item.game);
             Idle.add (() => {
@@ -96,11 +116,23 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         alert_view = new Granite.Widgets.AlertView ("", "", "");
         alert_view.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
+        detail_view = new Replay.Views.GameDetailView ();
+        detail_view.play_button_clicked.connect ((game) => {
+            Replay.Core.Client.get_default ().game_library.set_game_played (game, true);
+            Idle.add (() => {
+                //  invalidate_filter ();
+                update_side_panel_badges ();
+                return false;
+            });
+            game_selected (game);
+        });
+
         stack = new Gtk.Stack () {
             expand = true
         };
         stack.add_named (game_grid, "game-grid");
         stack.add_named (alert_view, "alert-view");
+        stack.add_named (detail_view, "detail-view");
 
         grid = new Gtk.Grid () {
             expand = true
@@ -186,6 +218,10 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         var filter_func = filter_mapping.get (item.view_name);
         var sort_func = sort_mapping.get (item.view_name);
         Idle.add (() => {
+            header_bar.set_return_button_visible (false);
+            if (stack.get_visible_child_name () == "game-detail") {
+                stack.set_visible_child_full ("game-grid", Gtk.StackTransitionType.SLIDE_RIGHT);
+            }
             game_grid.set_sort_func (sort_func);
             game_grid.set_filter_func (filter_func);
             // Always update the alert view text in case a refilter occurs later without selecting a new side panel item
@@ -224,6 +260,10 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
             }
         //      return false;
         //  });
+    }
+
+    public void toggle_sidebar () {
+        side_panel.visible = !side_panel.visible;
     }
 
     public signal void game_selected (Replay.Models.Game game);

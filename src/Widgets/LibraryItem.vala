@@ -25,6 +25,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
     public string title { get; construct; }
 
     private Gtk.Revealer unplayed_badge;
+    private Gtk.Revealer play_button;
 
     public LibraryItem.for_game (Replay.Models.Game game) {
         Object (
@@ -65,12 +66,24 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             valign = Gtk.Align.START
         };
         unplayed_badge.add (unplayed_image);
+        var play_image = new Gtk.Image () {
+            gicon = new ThemedIcon ("media-playback-start"),
+            pixel_size = 32,
+            sensitive = false
+        };
+        play_button = new Gtk.Revealer () {
+            transition_type = Gtk.RevealerTransitionType.NONE,
+            halign = Gtk.Align.START,
+            valign = Gtk.Align.END
+        };
+        play_button.add (play_image);
         var overlay = new Gtk.Overlay () {
             halign = Gtk.Align.CENTER
         };
         //  overlay.add_overlay (badge); // TODO: Could use an icon here probably
         overlay.add (image);
         overlay.add_overlay (unplayed_badge);
+        overlay.add_overlay (play_button);
         //  overlay.set_tooltip_text ("Game could not be found");
 
         var label_grid = new Gtk.Grid () {
@@ -110,9 +123,33 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         //  style_context.add_class (Granite.STYLE_CLASS_CARD);
         //  style_context.add_class (Granite.STYLE_CLASS_ROUNDED);
 
+        //  var event_box = new Gtk.EventBox ();
+        //  event_box.add (grid);
+        //  event_box.set_events (Gdk.EventMask.ENTER_NOTIFY_MASK);
+        //  event_box.set_events (Gdk.EventMask.LEAVE_NOTIFY_MASK);
+
+        //  event_box.enter_notify_event.connect (() => {
+        //      debug ("enter event box");
+        //      play_button.set_reveal_child (true);
+        //  });
+        //  event_box.leave_notify_event.connect (() => {
+        //      debug ("leave event box");
+        //      play_button.set_reveal_child (false);
+        //  });
+
+        //  child = event_box;
         child = grid;
 
         set_played (game.is_played);
+
+        //  enter_notify_event.connect (() => {
+        //      debug ("enter");
+        //      
+        //  });
+        //  leave_notify_event.connect (() => {
+        //      debug ("leave");
+        //      
+        //  });
 
         show_all ();
     }

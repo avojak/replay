@@ -24,10 +24,12 @@ public class Replay.Services.LibraryWindowActionManager : GLib.Object {
     public const string ACTION_PREFIX = "win.";
     public const string ACTION_QUIT = "action_quit";
     public const string ACTION_PREFERENCES = "action_preferences";
+    public const string ACTION_TOGGLE_SIDEBAR = "action_toggle_sidebar";
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { ACTION_QUIT, action_quit },
-        { ACTION_PREFERENCES, action_preferences }
+        { ACTION_PREFERENCES, action_preferences },
+        { ACTION_TOGGLE_SIDEBAR, action_toggle_sidebar }
     };
 
     private static Gee.MultiMap<string, string> accelerators;
@@ -48,6 +50,7 @@ public class Replay.Services.LibraryWindowActionManager : GLib.Object {
         accelerators = new Gee.HashMultiMap<string, string> ();
         accelerators.set (ACTION_QUIT, "<Control>q");
         accelerators.set (ACTION_PREFERENCES, "<Control><Shift>p");
+        accelerators.set (ACTION_TOGGLE_SIDEBAR, "<Control>backslash");
     }
 
     construct {
@@ -72,6 +75,10 @@ public class Replay.Services.LibraryWindowActionManager : GLib.Object {
 
     private void action_preferences () {
         window.show_preferences_dialog ();
+    }
+
+    private void action_toggle_sidebar () {
+        window.toggle_sidebar ();
     }
 
 }

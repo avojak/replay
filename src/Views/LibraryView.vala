@@ -91,6 +91,10 @@ public class Replay.Views.LibraryView : Gtk.Grid {
         library_layout.add_game (game);
     }
 
+    public void toggle_sidebar () {
+        library_layout.toggle_sidebar ();
+    }
+
     public signal void game_selected (Replay.Models.Game game);
 
 }

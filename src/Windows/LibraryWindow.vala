@@ -137,6 +137,10 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
         preferences_dialog.present ();
     }
 
+    public void toggle_sidebar () {
+        view.toggle_sidebar ();
+    }
+
     private void launch_game (Replay.Models.Game game) {
         Replay.Core.Client.get_default ().emulator_manager.launch_game (GLib.File.new_for_path (game.rom_path).get_uri ());
         Replay.Core.Client.get_default ().game_library.update_last_run_date (game);

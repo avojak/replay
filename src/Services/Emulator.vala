@@ -86,7 +86,7 @@ public class Replay.Services.Emulator : GLib.Object {
 
         // Initialize the core and load memory and/or state
         core = new Retro.Core (core_model.path);
-        core.set_save_directory (GLib.Environment.get_home_dir ()); // TODO: Change this (does it even work...?)
+        core.set_save_directory (GLib.Environment.get_home_dir ()); // TODO: Change this (does it even work…?)
         core.set_medias ({ rom.get_uri () });
         try {
             debug ("Booting core %s…", core_model.info.core_name);

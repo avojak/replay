@@ -35,28 +35,33 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
     construct {
         get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
 
-        pause_button = new Gtk.Button ();
-        pause_button.image = new Gtk.Image.from_icon_name ("media-playback-pause", Gtk.IconSize.SMALL_TOOLBAR);
-        pause_button.tooltip_text = _("Pause");
-        pause_button.relief = Gtk.ReliefStyle.NONE;
-        pause_button.valign = Gtk.Align.CENTER;
+        pause_button = new Gtk.Button () {
+            image = new Gtk.Image.from_icon_name ("media-playback-pause", Gtk.IconSize.SMALL_TOOLBAR),
+            tooltip_text = _("Pause"),
+            relief = Gtk.ReliefStyle.NONE,
+            valign = Gtk.Align.CENTER
+        };
 
-        resume_button = new Gtk.Button ();
-        resume_button.image = new Gtk.Image.from_icon_name ("media-playback-start", Gtk.IconSize.SMALL_TOOLBAR);
-        resume_button.tooltip_text = _("Resume");
-        resume_button.relief = Gtk.ReliefStyle.NONE;
-        resume_button.valign = Gtk.Align.CENTER;
+        resume_button = new Gtk.Button () {
+            image = new Gtk.Image.from_icon_name ("media-playback-start", Gtk.IconSize.SMALL_TOOLBAR),
+            tooltip_text = _("Resume"),
+            relief = Gtk.ReliefStyle.NONE,
+            valign = Gtk.Align.CENTER
+        };
+        
+        var settings_button = new Gtk.MenuButton () {
+            image = new Gtk.Image.from_icon_name ("preferences-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR),
+            tooltip_text = _("Menu"),
+            relief = Gtk.ReliefStyle.NONE,
+            valign = Gtk.Align.CENTER
+        };
 
-        var settings_button = new Gtk.MenuButton ();
-        settings_button.image = new Gtk.Image.from_icon_name ("preferences-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
-        settings_button.tooltip_text = _("Menu");
-        settings_button.relief = Gtk.ReliefStyle.NONE;
-        settings_button.valign = Gtk.Align.CENTER;
-
-        var settings_popover_grid = new Gtk.Grid ();
-        settings_popover_grid.margin_bottom = 3;
-        settings_popover_grid.orientation = Gtk.Orientation.VERTICAL;
-        settings_popover_grid.width_request = 200;
+        var settings_popover_grid = new Gtk.Grid () {
+            margin_bottom = 3,
+            orientation = Gtk.Orientation.VERTICAL,
+            width_request = 200
+        };
+        
         // TODO: Add item for opening the library
         // TODO: Add item for video filter
         // TODO: Add item for core speed

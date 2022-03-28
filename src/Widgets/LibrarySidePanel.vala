@@ -45,7 +45,7 @@ public class Replay.Widgets.LibrarySidePanel : Gtk.Grid {
             item_selected (item as Replay.Widgets.LibrarySidePanelItem);
         });
 
-        collections_category = new Granite.Widgets.SourceList.ExpandableItem (_("Game Collections")) {
+        collections_category = new Granite.Widgets.SourceList.ExpandableItem (_("Library")) {
             selectable = false,
             expanded = true
         };

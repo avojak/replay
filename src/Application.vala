@@ -133,6 +133,10 @@ public class Replay.Application : Gtk.Application {
         //  ((Iridium.LibraryWindow) window).handle_uris (uris);
     }
 
+    // When launching a game without going through the library window, we should still load the library
+    // and then lookup the game object by the URI of the ROM or the checksum. That will allow us to load
+    // the full model and game data.
+
     protected override void activate () {
         // This must happen here because the main event loops will have started
         //  core_repository.sql_client = Replay.Services.SQLClient.get_default ();
