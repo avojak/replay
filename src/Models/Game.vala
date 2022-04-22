@@ -30,6 +30,7 @@ public class Replay.Models.Game : GLib.Object {
     public bool is_hidden { get; set; }
     public bool is_played { get; set; }
     public GLib.DateTime? last_played { get; set; }
+    public string? rom_md5 { get; set; }
 
     public Game.from_file (GLib.File file) {
         Object (
@@ -38,7 +39,8 @@ public class Replay.Models.Game : GLib.Object {
             is_favorite: false,
             is_hidden: false,
             is_played: false,
-            last_played: null
+            last_played: null,
+            rom_md5: Replay.Utils.DigestUtils.md5_for_file (file)
         );
     }
 

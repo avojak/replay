@@ -42,6 +42,9 @@ public class Replay.Widgets.LibrarySidePanel : Gtk.Grid {
 
         source_list = new Granite.Widgets.SourceList ();
         source_list.item_selected.connect ((item) => {
+            if (item == null) {
+                return;
+            }
             item_selected (item as Replay.Widgets.LibrarySidePanelItem);
         });
 
@@ -135,6 +138,14 @@ public class Replay.Widgets.LibrarySidePanel : Gtk.Grid {
             items.add (item as Replay.Widgets.LibrarySidePanelItem);
         }
         return items;
+    }
+
+    public void set_enabled (bool enabled) {
+        source_list.sensitive = enabled;
+    }
+
+    public void select_none () {
+        source_list.selected = null;
     }
 
     public signal void item_selected (Replay.Widgets.LibrarySidePanelItem item);

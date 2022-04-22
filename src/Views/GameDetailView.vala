@@ -21,9 +21,11 @@
 
 public class Replay.Views.GameDetailView : Gtk.Grid {
 
-    private Replay.Models.Game? game;
+    private unowned Replay.Widgets.LibraryItem? library_item;
 
     private Gtk.Label header_title_label;
+    private Gtk.MenuButton more_button;
+    private Gtk.Image favorite_image;
 
     public GameDetailView () {
         Object (
@@ -33,7 +35,6 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
     }
 
     construct {
-        // Create the header
         var header_grid = new Gtk.Grid () {
             margin_bottom = 10,
             column_spacing = 10,
@@ -49,26 +50,56 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         header_title_label = new Gtk.Label ("") {
             valign = Gtk.Align.END,
             halign = Gtk.Align.START,
-            hexpand = true
+            hexpand = true,
+            wrap = false,
+            ellipsize = Pango.EllipsizeMode.END
         };
         header_title_label.get_style_context ().add_class (Granite.STYLE_CLASS_H1_LABEL);
-        header_title_label.set_line_wrap (true);
 
         var play_button = new Gtk.Button () {
-            valign = Gtk.Align.START,
-            halign = Gtk.Align.START,
             always_show_image = true,
             image = new Gtk.Image.from_icon_name ("media-playback-start", Gtk.IconSize.SMALL_TOOLBAR),
             image_position = Gtk.PositionType.LEFT,
-            label = _("Play")
+            label = _("Play"),
+            tooltip_text = _("Play"),
+            width_request = 100 // Make the button a bit larger for emphasis
         };
         play_button.clicked.connect (() => {
-            play_button_clicked (game);
+            play_button_clicked (library_item);
+        });
+
+        more_button = new Gtk.MenuButton () {
+            image = new Gtk.Image.from_icon_name ("view-more", Gtk.IconSize.SMALL_TOOLBAR),
+            tooltip_text = _("Choose System…")
+        };
+
+        var play_button_grid = new Gtk.Grid () {
+            valign = Gtk.Align.START,
+            halign = Gtk.Align.START,
+        };
+        play_button_grid.get_style_context ().add_class (Gtk.STYLE_CLASS_LINKED);
+        play_button_grid.add (play_button);
+        play_button_grid.add (more_button);
+
+        var favorite_event_box = new Gtk.EventBox ();
+        favorite_image = new Gtk.Image.from_icon_name ("non-starred", Gtk.IconSize.DIALOG);
+        favorite_event_box.add (favorite_image);
+        favorite_event_box.button_press_event.connect (() => {
+            if (library_item.game.is_favorite) {
+                favorite_image.icon_name = "non-starred";
+                favorite_image.tooltip_text = _("Add to favorites");
+                item_removed_from_favorites (library_item);
+            } else {
+                favorite_image.icon_name = "starred";
+                favorite_image.tooltip_text = _("Remove from favorites");
+                item_added_to_favorites (library_item);
+            }
         });
 
         header_grid.attach (header_image, 0, 0, 1, 2);
         header_grid.attach (header_title_label, 1, 0, 1, 1);
-        header_grid.attach (play_button, 1, 1, 1, 1);
+        header_grid.attach (play_button_grid, 1, 1, 1, 1);
+        header_grid.attach (favorite_event_box, 2, 0, 1, 1);
 
         var body_grid = new Gtk.Grid () {
             expand = true
@@ -78,11 +109,34 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         attach (body_grid, 0, 1);
     }
 
-    public void set_game (Replay.Models.Game game) {
-        this.game = game;
-        header_title_label.set_text (game.display_name);
+    public void set_library_item (Replay.Widgets.LibraryItem library_item) {
+        this.library_item = library_item;
+        // Update the header label
+        header_title_label.set_text (library_item.game.display_name);
+        header_title_label.set_tooltip_text (library_item.game.display_name);
+        // Update the favorite icon
+        favorite_image.icon_name = library_item.game.is_favorite ? "starred" : "non-starred";
+        favorite_image.tooltip_text = library_item.game.is_favorite ? _("Remove from favorites") : _("Add to favorites");
+        // Update the "play with" popover menu
+        more_button.popup = create_run_with_menu ();
     }
 
-    public signal void play_button_clicked (Replay.Models.Game game);
+    private Gtk.Menu create_run_with_menu () {
+        var menu = new Gtk.Menu ();
+        foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores_for_rom (GLib.File.new_for_path (library_item.game.rom_path))) {
+            var item = new Gtk.MenuItem.with_label (_("Play with %s").printf (core.info.core_name));
+            item.activate.connect (() => {
+                // TODO: Pass specific core
+                play_button_clicked (library_item);
+            });
+            menu.add (item);
+        }
+        menu.show_all ();
+        return menu;
+    }
+
+    public signal void play_button_clicked (Replay.Widgets.LibraryItem library_item);
+    public signal void item_added_to_favorites (Replay.Widgets.LibraryItem library_item);
+    public signal void item_removed_from_favorites (Replay.Widgets.LibraryItem library_item);
 
 }

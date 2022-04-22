@@ -74,6 +74,18 @@ modules:
       - install -m 644 mgba_libretro.info /app/lib/libretro/mgba_libretro.info
       # - install -m 644 quicknes_libretro.info /app/lib/libretro/quicknes_libretro.info
       # - install -m 644 bnes_libretro.info /app/lib/libretro/bnes_libretro.info
+  # Libretro database
+  - name: libretro-database
+    buildsystem: simple
+    no-autogen: true
+    sources:
+      - type: archive
+        url: https://github.com/avojak/libretrodb-sqlite/releases/download/1.0.0/libretrodb.sqlite.tgz
+        sha256: 6a9bdd5222d00e5286ce39ae6f663f3ba30dd465180c16a3b54bb5fe4fe5669d
+        strip-components: 1
+    build-commands:
+      - install -d /app/lib/database
+      - install -m 644 -t /app/lib/database libretrodb.sqlite
   # ROMs
   # - name: ROMs
   #   buildsystem: simple
@@ -103,6 +115,23 @@ modules:
     post-install:
       - install -d /app/lib/roms
       - install -m 644 -t /app/lib/roms build/gb/GBWORDYL.gb
+  - name: flooder
+    no-autogen: true
+    sources:
+      - type: git
+        url: https://github.com/Obalfour/Flooder
+        branch: 'main'
+      - type: archive
+        url: https://github.com/gbdk-2020/gbdk-2020/releases/download/4.0.6/gbdk-linux64.tar.gz
+        sha256: fecdadbeb5dcab5ceebff67ff4a7630bf6f572880d4e86ac600585d8064dc7c1
+        strip-components: 0
+    subdir: src
+    make-args:
+      - GBDK_HOME=../gbdk/
+    no-make-install: true
+    post-install:
+      - install -d /app/lib/roms
+      - install -m 644 -t /app/lib/roms flooder.gb
   - name: replay
     buildsystem: meson
     sources:

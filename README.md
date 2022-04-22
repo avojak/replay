@@ -32,10 +32,13 @@ Additional cores can be easily imported.
 
 Replay ships with several games that are licensed in such a way which permits redistribution under the GPLv3 license:
 
-| Name | System | License |  |
-| ---- | ------ | ------- | --- |
+| Name | System | License |
+| ---- | ------ | ------- |
+| [Game Boy Wordyl](https://github.com/bbbbbr/gb-wordle) | Game Boy | GPLv3 | 
+| [Flooder](https://github.com/Obalfour/Flooder) | Game Boy | MIT |
+
 <!-- | Varooom 3D | Game Boy Advance | ZLib | [Source](https://github.com/GValiente/butano) | -->
-| Game Boy Wordyl | Game Boy | GPLv3 | [Source](https://github.com/bbbbbr/gb-wordle) | 
+
 
 Additional games can be easily added to the library.
 

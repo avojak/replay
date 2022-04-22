@@ -23,15 +23,28 @@ public class Replay.Utils.DigestUtils : GLib.Object {
 
     private const int BUFFER_SIZE = 256;
 
-    public static string sha256_for_file (GLib.File file) throws GLib.Error {
-        GLib.Checksum checksum = new GLib.Checksum (GLib.ChecksumType.SHA256);
-        uint8 buffer[BUFFER_SIZE];
-        size_t bytes_read;
-        GLib.FileInputStream stream = file.read ();
-        while ((bytes_read = stream.read (buffer)) > 0) {
-            checksum.update (buffer, bytes_read);
+    public static string? sha256_for_file (GLib.File file) {
+        return checksum_for_file (file, GLib.ChecksumType.SHA256);
+    }
+
+    public static string? md5_for_file (GLib.File file) {
+        return checksum_for_file (file, GLib.ChecksumType.MD5);
+    }
+
+    private static string? checksum_for_file (GLib.File file, GLib.ChecksumType checksum_type) {
+        try {
+            GLib.Checksum checksum = new GLib.Checksum (checksum_type);
+            uint8 buffer[BUFFER_SIZE];
+            size_t bytes_read;
+            GLib.FileInputStream stream = file.read ();
+            while ((bytes_read = stream.read (buffer)) > 0) {
+                checksum.update (buffer, bytes_read);
+            }
+            return checksum.get_string ().up ();
+        } catch (GLib.Error e) {
+            warning ("Error while computing checksum for %s: %s", file.get_path (), e.message);
+            return null;
         }
-        return checksum.get_string ();
     }
 
 }

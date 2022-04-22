@@ -23,6 +23,7 @@ public class Replay.Views.LibraryView : Gtk.Grid {
 
     private const int RECENTLY_PLAYED_THRESHOLD_DAYS = 30;
 
+    private const string ALL_VIEW_NAME = "collection:all";
     private const string FAVORITES_VIEW_NAME = "collection:favorites";
     private const string RECENT_VIEW_NAME = "collection:recent";
     private const string UNPLAYED_VIEW_NAME = "collection:unplayed";
@@ -37,6 +38,17 @@ public class Replay.Views.LibraryView : Gtk.Grid {
 
     construct {
         library_layout = new Replay.Layouts.LibraryLayout ();
+        library_layout.add_collection (_("All Games"), "folder-saved-search", ALL_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
+            _("No Games"),
+            _("Games which have been added to your library will appear here"),
+            "folder-saved-search",
+            (library_item) => {
+                return true;
+            }),
+            new Replay.Models.LibraryItemSortFunction ((library_item_1, library_item_2) => {
+                return library_item_1.game.display_name.ascii_casecmp (library_item_2.game.display_name);
+            })
+        );
         library_layout.add_collection (_("Favorites"), "starred", FAVORITES_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
             _("No Favorite Games"),
             _("Games which have been starred will appear here"),
@@ -84,7 +96,7 @@ public class Replay.Views.LibraryView : Gtk.Grid {
         show_all ();
 
         // TODO: Load last-shown view, or show welcome view
-        library_layout.select_view (FAVORITES_VIEW_NAME);
+        library_layout.select_view (ALL_VIEW_NAME);
     }
 
     public void add_game (Replay.Models.Game game) {
@@ -93,6 +105,10 @@ public class Replay.Views.LibraryView : Gtk.Grid {
 
     public void toggle_sidebar () {
         library_layout.toggle_sidebar ();
+    }
+
+    public void set_searchbar_visible (bool visible) {
+        library_layout.set_searchbar_visible (visible);
     }
 
     public signal void game_selected (Replay.Models.Game game);

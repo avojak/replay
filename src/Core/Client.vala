@@ -91,6 +91,9 @@ public class Replay.Core.Client : GLib.Object {
         foreach (var library_source in library_sources) {
             games.add_all (library_source.scan ());
         }
+        foreach (var game in games) {
+            debug ("Found game %s (MD5: %s)", game.display_name, game.rom_md5);
+        }
         // TODO: Store stuff in database if necessary
         game_library.set_games (games);
         return games;

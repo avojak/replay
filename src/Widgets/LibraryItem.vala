@@ -84,6 +84,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         overlay.add (image);
         overlay.add_overlay (unplayed_badge);
         overlay.add_overlay (play_button);
+        // TODO: Add favorites icon badge? Or would that be too busy?
         //  overlay.set_tooltip_text ("Game could not be found");
 
         var label_grid = new Gtk.Grid () {

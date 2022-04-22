@@ -53,11 +53,18 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
 
         restore_window_position ();
 
+        this.key_press_event.connect ((event) => {
+            if (event.keyval == Gdk.Key.Escape) {
+                //  Replay.Services.LibraryWindowActionManager.set_action_state (Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND, false);
+                set_searchbar_visible (false);
+            }
+            return false;
+        });
+
         this.destroy.connect (() => {
             // Do stuff before closing the library
             //  GLib.Process.exit (0);
         });
-
         this.delete_event.connect (before_destroy);
 
         show_app ();
@@ -99,7 +106,7 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
             foreach (var core in cores) {
                 core_names.add (core.info.core_name);
             }
-            debug ("Adding game %s", game.display_name);
+            //  debug ("Adding game %s", game.display_name);
             view.add_game (game);
             //  layout.add_game (game, core_names);
         }
@@ -139,6 +146,10 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
 
     public void toggle_sidebar () {
         view.toggle_sidebar ();
+    }
+
+    public void set_searchbar_visible (bool visible) {
+        view.set_searchbar_visible (visible);
     }
 
     private void launch_game (Replay.Models.Game game) {

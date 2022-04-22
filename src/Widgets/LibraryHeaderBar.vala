@@ -21,8 +21,10 @@
 
 public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
 
+    private Gtk.ToggleButton find_button;
     private Gtk.Button return_button;
     private Gtk.Separator return_button_separator;
+    private Gtk.SearchEntry search_entry;
 
     public MainHeaderBar () {
         Object (
@@ -48,17 +50,27 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         return_button_separator = new Gtk.Separator (Gtk.Orientation.VERTICAL);
         return_button_separator.no_show_all = true;
 
-        // TODO: Add search entry
-
         // TODO: Add ability to open a ROM file not in the library
 
         // TODO: Allow changing the icon size for the icons in the view
 
-        var settings_button = new Gtk.MenuButton ();
-        settings_button.image = new Gtk.Image.from_icon_name ("preferences-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
-        settings_button.tooltip_text = _("Menu");
-        settings_button.relief = Gtk.ReliefStyle.NONE;
-        settings_button.valign = Gtk.Align.CENTER;
+        find_button = new Gtk.ToggleButton () {
+            action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND,
+            image = new Gtk.Image.from_icon_name ("edit-find-symbolic", Gtk.IconSize.SMALL_TOOLBAR),
+            tooltip_markup = Granite.markup_accel_tooltip (
+                Replay.Application.get_instance ().get_accels_for_action (Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND),
+                _("Find…")
+            ),
+            relief = Gtk.ReliefStyle.NONE,
+            valign = Gtk.Align.CENTER
+        };
+
+        var settings_button = new Gtk.MenuButton () {
+            image = new Gtk.Image.from_icon_name ("preferences-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR),
+            tooltip_text = _("Menu"),
+            relief = Gtk.ReliefStyle.NONE,
+            valign = Gtk.Align.CENTER
+        };
 
         var toggle_sidebar_accellabel = new Granite.AccelLabel.from_action_name (
             _("Toggle Sidebar"),
@@ -90,11 +102,12 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         quit_menu_item.get_child ().destroy ();
         quit_menu_item.add (quit_accellabel);
 
-        var settings_popover_grid = new Gtk.Grid ();
-        settings_popover_grid.margin_top = 3;
-        settings_popover_grid.margin_bottom = 3;
-        settings_popover_grid.orientation = Gtk.Orientation.VERTICAL;
-        settings_popover_grid.width_request = 200;
+        var settings_popover_grid = new Gtk.Grid () {
+            margin_top = 3,
+            margin_bottom = 3,
+            orientation = Gtk.Orientation.VERTICAL,
+            width_request = 200
+        };
         settings_popover_grid.attach (toggle_sidebar_menu_item, 0, 0);
         settings_popover_grid.attach (preferences_menu_item, 0, 1);
         settings_popover_grid.attach (create_menu_separator (), 0, 2);
@@ -106,10 +119,20 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
 
         settings_button.popover = settings_popover;
 
+        search_entry = new Gtk.SearchEntry () {
+            placeholder_text = _("Search Games")
+        };
+        search_entry.search_changed.connect (() => {
+            search_changed (search_entry.get_text ());
+        });
+
         pack_start (return_button);
         pack_start (return_button_separator);
 
         pack_end (settings_button);
+        //  pack_end (new Gtk.Separator (Gtk.Orientation.VERTICAL));
+        //  pack_end (find_button);
+        pack_end (search_entry);
     }
 
     private Gtk.Separator create_menu_separator (int margin_top = 0) {
@@ -125,6 +148,24 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         return_button_separator.visible = visible;
     }
 
+    public void update_find_button_state (bool new_state) {
+        find_button.active = new_state;
+        if (new_state) {
+            find_button.action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_HIDE_FIND;
+            find_button.tooltip_markup = Granite.markup_accel_tooltip (
+                {"Escape"},
+                _("Hide search bar")
+            );
+        } else {
+            find_button.action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND;
+            find_button.tooltip_markup = Granite.markup_accel_tooltip (
+                Replay.Application.get_instance ().get_accels_for_action (Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND),
+                _("Find…")
+            );
+        }
+    }
+
     public signal void view_return ();
+    public signal void search_changed (string search_text);
 
 }

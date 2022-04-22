@@ -46,6 +46,8 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
 
         // TODO: Automatically pause/resume when the window loses/gains focus?
 
+        // TODO: Somewhere should show which core is being used
+
         restore_window_position ();
 
         this.delete_event.connect (before_destroy);
