@@ -56,6 +56,11 @@
       <summary>Whether or not to boot emulators with the BIOS.</summary>
       <description>Whether or not to boot emulators with the BIOS.</description>
     </key>
+    <key name="emu-default-filter" type="s">
+      <default>"SHARP"</default>
+      <summary>The default emulator video filter.</summary>
+      <description>The default emulator video filter.</description>
+    </key>
     <key name="user-core-directory" type="s">
       <default>""</default>
       <summary>The directory where user-installed libretro cores are stored.</summary>
@@ -66,11 +71,11 @@
       <summary>The directory where user-installed ROMs are stored.</summary>
       <description>The directory where user-installed ROMs are stored.</description>
     </key>
-    <!-- <key name="download-game-info" type="b">
+    <key name="download-boxart" type="b">
       <default>true</default>
-      <summary>Whether or not to automatically download game information for ROM files.</summary>
-      <description>Whether or not to automatically download game information for ROM files.</description>
-    </key> -->
+      <summary>Whether or not to automatically attempt to download box art for games in the library.</summary>
+      <description>Whether or not to automatically attempt to download box art for games in the library.</description>
+    </key>
     <key name="handle-window-focus-change" type="b">
       <default>true</default>
       <summary>Whether or not to automatically resume and pause a game when the window goes in and out of focus</summary>

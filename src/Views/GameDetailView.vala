@@ -70,7 +70,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
 
         more_button = new Gtk.MenuButton () {
             image = new Gtk.Image.from_icon_name ("view-more", Gtk.IconSize.SMALL_TOOLBAR),
-            tooltip_text = _("Choose System…")
+            tooltip_text = _("Choose system…")
         };
 
         var play_button_grid = new Gtk.Grid () {

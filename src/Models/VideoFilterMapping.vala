@@ -43,4 +43,30 @@ public class Replay.Models.VideoFilterMapping : GLib.Object {
         });
     }
 
+    public static string get_short_name (Retro.VideoFilter filter) {
+        switch (filter) {
+            case SHARP:
+                return "SHARP";
+            case SMOOTH:
+                return "SMOOTH";
+            case CRT:
+                return "CRT";
+            default:
+                assert_not_reached ();
+        }
+    }
+
+    public static Retro.VideoFilter from_short_name (string short_name) {
+        switch (short_name) {
+            case "SHARP":
+                return SHARP;
+            case "SMOOTH":
+                return SMOOTH;
+            case "CRT":
+                return CRT;
+            default:
+                assert_not_reached ();
+        }
+    }
+
 }

@@ -42,8 +42,6 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         });
         add (layout);
 
-        // TODO: Fix window not properly grabbing all keyboard input (e.g. some arrow keys move focus to headerbar)
-
         // TODO: Automatically pause/resume when the window loses/gains focus?
 
         // TODO: Somewhere should show which core is being used
@@ -77,7 +75,6 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         Replay.Application.settings.set_int ("emu-window-width", width);
         Replay.Application.settings.set_int ("emu-window-height", height);
     }
-
 
     private void show_emulator () {
         show_all ();

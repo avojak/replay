@@ -34,7 +34,7 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
     construct {
         var emulator_windows_header_label = new Granite.HeaderLabel (_("Emulator Windows"));
         
-        var video_filter_label = new Gtk.Label (_("Default Video Filter:")) {
+        var video_filter_label = new Gtk.Label (_("Default video filter:")) {
             halign = Gtk.Align.END
         };
 
@@ -61,10 +61,11 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
         video_filter_combo.pack_start (video_filter_cell, false);
         video_filter_combo.set_attributes (video_filter_cell, "text", 0);
         video_filter_combo.changed.connect (() => {
-            // TODO
+            var short_name = Replay.Models.VideoFilterMapping.get_short_name (video_filters.get (video_filter_combo.get_active ()));
+            Replay.Application.settings.set_string ("emu-default-filter", short_name);
         });
 
-        var screen_size_label = new Gtk.Label (_("Default Size:")) {
+        var screen_size_label = new Gtk.Label (_("Default size:")) {
             halign = Gtk.Align.END
         };
 
@@ -77,7 +78,7 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
         screen_size_grid.attach (create_spin_button_label (_("H")), 2, 0);
         screen_size_grid.attach (screen_size_height_entry, 3, 0);
 
-        var fullscreen_label = new Gtk.Label (_("Open in Fullscreen:")) {
+        var fullscreen_label = new Gtk.Label (_("Open in fullscreen:")) {
             halign = Gtk.Align.END
         };
 
@@ -94,6 +95,8 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
         attach (screen_size_grid, 1, 2);
         attach (fullscreen_label, 0, 3);
         attach (fullscreen_switch, 1, 3);
+
+        load_settings ();
     }
 
     private Gtk.Label create_spin_button_label (string str) {
@@ -115,6 +118,23 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
         };
         button.set_value (default_value);
         return button;
+    }
+
+    private void load_settings () {
+        var default_video_filter = Replay.Models.VideoFilterMapping.from_short_name (Replay.Application.settings.get_string ("emu-default-filter"));
+        switch (default_video_filter) {
+            case Retro.VideoFilter.SHARP:
+                video_filter_combo.set_active (0);
+                return;
+            case Retro.VideoFilter.SMOOTH:
+                video_filter_combo.set_active (1);
+                return;
+            case Retro.VideoFilter.CRT:
+                video_filter_combo.set_active (2);
+                return;
+            default:
+                assert_not_reached ();
+        }
     }
 
 }
