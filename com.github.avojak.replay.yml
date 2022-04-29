@@ -7,6 +7,7 @@ sdk: io.elementary.Sdk
 command: com.github.avojak.replay
 
 finish-args:
+  - '--allow=bluetooth' # For Bluetooth gamepads
   - '--device=dri' # For RetroGTK
   - '--share=ipc'
   - '--share=network' # Used for retrieving game artwork
@@ -18,12 +19,20 @@ finish-args:
   # TODO: Will probably need Bluetooth and USB device access here for controllers
 
 modules:
+  # Dependencies
   - name: retro-gtk
     buildsystem: meson
     sources:
       - type: git
         url: https://gitlab.gnome.org/GNOME/retro-gtk.git
         tag: '1.0.2'
+  - name: libmanette
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/libmanette.git
+        tag: '0.2.6'
+
   # TODO: Might make sense to maintain a fork of the cores and ROMs to ensure availability
   # LibRetro Cores
   - name: libretro-mgba
@@ -62,6 +71,7 @@ modules:
   #   no-make-install: true
   #   post-install:
   #     - install -m 644 bsnes_mercury_performance_libretro.so /app/lib/libretro/bsnes_mercury_performance_libretro.so
+
   # Install the LibRetro info files for only the bundled cores
   - name: libretro-core-info
     buildsystem: simple
@@ -74,6 +84,7 @@ modules:
       - install -m 644 mgba_libretro.info /app/lib/libretro/mgba_libretro.info
       # - install -m 644 quicknes_libretro.info /app/lib/libretro/quicknes_libretro.info
       # - install -m 644 bnes_libretro.info /app/lib/libretro/bnes_libretro.info
+
   # Libretro database
   - name: libretro-database
     buildsystem: simple
@@ -86,6 +97,7 @@ modules:
     build-commands:
       - install -d /app/lib/database
       - install -m 644 -t /app/lib/database libretrodb.sqlite
+
   # ROMs
   # - name: ROMs
   #   buildsystem: simple
@@ -132,6 +144,7 @@ modules:
     post-install:
       - install -d /app/lib/roms
       - install -m 644 -t /app/lib/roms flooder.gb
+
   - name: replay
     buildsystem: meson
     sources:

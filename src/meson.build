@@ -85,6 +85,7 @@ executable(
         dependency('granite', version: '>= 6.2.0'),
         dependency('libhandy-1', version: '>= 1.2.0'),
         dependency('retro-gtk-1', version: '>= 1.0.2'),
+        dependency('manette-0.2', version: '>= 0.2.6'),
         dependency('sqlite3', version: '>= 3.31.1'),
         dependency('libsoup-2.4')
     ],
