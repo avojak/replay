@@ -24,6 +24,8 @@ public class Replay.Views.Settings.BehaviorSettingsView : Replay.Views.Settings.
     private Gtk.FileChooserButton user_rom_dir_entry;
     private Gtk.FileChooserButton save_data_dir_entry;
 
+    // TODO: Add option for copying ROMs to ROM directory if not present (i.e. auto import?)
+
     construct {
         var general_header_label = new Granite.HeaderLabel (_("General"));
 

@@ -5,6 +5,7 @@ conf_data.set('VERSION', meson.project_version())
 conf_data.set('PKG_DATA_DIR', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name()))
 conf_data.set('BUNDLED_LIBRETRO_CORE_DIR', join_paths(get_option('prefix'), get_option('libdir'), 'libretro'))
 conf_data.set('BUNDLED_ROM_DIR', join_paths(get_option('prefix'), get_option('libdir'), 'roms'))
+conf_data.set('LIBRETRODB_DIR', join_paths(get_option('prefix'), get_option('libdir'), 'database'))
 conf_data.set('SYSTEM_LIBRETRO_CORE_DIR', '/var/run/host/usr/lib/x86_64-linux-gnu/libretro')
 conf_data.set('SYSTEM_LIBRETRO_INFO_DIR', '/var/run/host/usr/share/libretro/info')
 
@@ -26,9 +27,10 @@ application_files = files(
     join_paths('Models', 'Game.vala'),
     join_paths('Models', 'LibraryItemFilterFunction.vala'),
     join_paths('Models', 'LibraryItemSortFunction.vala'),
+    join_paths('Models', 'LibretroArtType.vala'),
     join_paths('Models', 'LibretroCore.vala'),
     join_paths('Models', 'LibretroCoreInfo.vala'),
-    join_paths('Models', 'LibretroGame.vala'),
+    join_paths('Models', 'LibretroGameDetails.vala'),
     join_paths('Models', 'VideoFilterMapping.vala'),
     # join_paths('Models', 'System.vala'),
     join_paths('Services', 'Emulator.vala'),
@@ -36,10 +38,12 @@ application_files = files(
     join_paths('Services', 'GameLibrary.vala'),
     join_paths('Services', 'LibraryWindowActionManager.vala'),
     join_paths('Services', 'LibretroCoreRepository.vala'),
+    join_paths('Services', 'LibretroGameArtRepository.vala'),
     join_paths('Services', 'LibretroGameRepository.vala'),
     join_paths('Services', 'SQLClient.vala'),
     join_paths('Utils', 'DigestUtils.vala'),
     join_paths('Utils', 'FileUtils.vala'),
+    join_paths('Utils', 'HttpUtils.vala'),
     join_paths('Views', 'Settings', 'AbstractSettingsView.vala'),
     join_paths('Views', 'Settings', 'BehaviorSettingsView.vala'),
     join_paths('Views', 'Settings', 'InterfaceSettingsView.vala'),
@@ -82,7 +86,8 @@ executable(
         dependency('granite', version: '>= 6.2.0'),
         dependency('libhandy-1', version: '>= 1.2.0'),
         dependency('retro-gtk-1', version: '>= 1.0.2'),
-        dependency('sqlite3', version: '>= 3.31.1')
+        dependency('sqlite3', version: '>= 3.31.1'),
+        dependency('libsoup-2.4')
     ],
     vala_args: vala_args,
     install: true

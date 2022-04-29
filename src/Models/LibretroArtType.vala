@@ -19,26 +19,36 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Views.Settings.CoresSettingsView : Granite.SimpleSettingsPage {
+public enum Replay.Models.LibretroArtType {
 
-    public CoresSettingsView () {
-        Object (
-            activatable: false,
-            description: "Preferences for installed systems",
-            header: null,
-            icon_name: "application-x-firmware",
-            title: "Systems"
-        );
+    BOX,
+    SCREENSHOT,
+    TITLESCREEN;
+
+    public string to_string () {
+        switch (this) {
+            case BOX:
+                return "BOX";
+            case SCREENSHOT:
+                return "SCREENSHOT";
+            case TITLESCREEN:
+                return "TITLESCREEN";
+            default:
+                assert_not_reached ();
+        }
     }
 
-    construct {
-        content_area.attach (new Gtk.Label ("Hello!") {
-            hexpand = true
-        }, 0, 0);
-
-        //  var button = new Gtk.Button.with_label ("Test Button");
-
-        //  action_area.add (button);
+    public string get_url_parameter () {
+        switch (this) {
+            case BOX:
+                return "Named_Boxarts";
+            case SCREENSHOT:
+                return "Named_Snaps";
+            case TITLESCREEN:
+                return "Named_Titles";
+            default:
+                assert_not_reached ();
+        }
     }
 
 }

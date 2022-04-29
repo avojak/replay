@@ -27,6 +27,8 @@ public class Replay.Core.Client : GLib.Object {
     }
 
     public Replay.Services.LibretroCoreRepository core_repository;
+    public Replay.Services.LibretroGameRepository game_repository;
+    public Replay.Services.LibretroGameArtRepository game_art_repository;
     public Replay.Services.GameLibrary game_library;
     public Replay.Services.EmulatorManager emulator_manager;
 
@@ -35,6 +37,8 @@ public class Replay.Core.Client : GLib.Object {
 
     construct {
         core_repository = Replay.Services.LibretroCoreRepository.get_default ();
+        game_repository = Replay.Services.LibretroGameRepository.get_default ();
+        game_art_repository = Replay.Services.LibretroGameArtRepository.get_default ();
         game_library = Replay.Services.GameLibrary.get_default ();
         emulator_manager = new Replay.Services.EmulatorManager (Replay.Application.get_instance ());
         
@@ -90,6 +94,23 @@ public class Replay.Core.Client : GLib.Object {
         var games = new Gee.ArrayList<Replay.Models.Game> ();
         foreach (var library_source in library_sources) {
             games.add_all (library_source.scan ());
+        }
+        foreach (var game in games) {
+            var game_details = game_repository.lookup_for_md5 (game.rom_md5);
+            if (game_details.size == 0) {
+                debug ("No LibretroDB entry found for %s (MD5: %s)", game.display_name, game.rom_md5);
+                continue;
+            }
+            if (game_details.size > 1) {
+                debug ("Multiple LibretroDB entries found for %s, using first entry", game.display_name);
+            }
+            game.libretro_details = game_details.get (0);
+            if (game.libretro_details.display_name != null) {
+                game.display_name = game.libretro_details.display_name;
+            }
+        }
+        foreach (var game in games) {
+            game_art_repository.download_box_art (game);
         }
         foreach (var game in games) {
             debug ("Found game %s (MD5: %s)", game.display_name, game.rom_md5);

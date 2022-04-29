@@ -5,6 +5,7 @@ namespace Constants {
     public const string PKG_DATA_DIR = "@PKG_DATA_DIR@";
     public const string BUNDLED_LIBRETRO_CORE_DIR = "@BUNDLED_LIBRETRO_CORE_DIR@";
     public const string BUNDLED_ROM_DIR = "@BUNDLED_ROM_DIR@";
+    public const string LIBRETRODB_DIR = "@LIBRETRODB_DIR@";
     public const string SYSTEM_LIBRETRO_CORE_DIR = "@SYSTEM_LIBRETRO_CORE_DIR@";
     public const string SYSTEM_LIBRETRO_INFO_DIR = "@SYSTEM_LIBRETRO_INFO_DIR@";
 }

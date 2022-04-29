@@ -35,6 +35,8 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
     }
 
     construct {
+        get_style_context ().add_class ("library-item");
+        
         // TODO: Fix alignment when the labels spans multiple lines - the images won't currently lineup
         var grid = new Gtk.Grid () {
             orientation = Gtk.Orientation.VERTICAL,
@@ -44,11 +46,30 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             valign = Gtk.Align.START,
             margin = 8
         };
-        var image = new Gtk.Image () {
-            gicon = new ThemedIcon ("application-default-icon"),
-            pixel_size = 128,
-            margin_bottom = 8
-        };
+        Gtk.Image? image;
+        try {
+            string? box_art_file_path = Replay.Core.Client.get_default ().game_art_repository.get_box_art_file_path (game);
+            if (box_art_file_path == null) {
+                image = new Gtk.Image () {
+                    gicon = new ThemedIcon ("application-default-icon"),
+                    pixel_size = 128,
+                    margin_bottom = 8
+                };
+            } else {
+                image = new Gtk.Image.from_pixbuf (new Gdk.Pixbuf.from_file_at_size (box_art_file_path, 100, 100)) {
+                    margin_top = 16,
+                    margin_start = 16,
+                    margin_end = 16,
+                    margin_bottom = 20
+                };
+            }
+        } catch (GLib.Error e) {
+            image = new Gtk.Image () {
+                gicon = new ThemedIcon ("application-default-icon"),
+                pixel_size = 128,
+                margin_bottom = 8
+            };
+        }
         var badge = new Gtk.Label (null) {
             halign = Gtk.Align.END,
             valign = Gtk.Align.START,

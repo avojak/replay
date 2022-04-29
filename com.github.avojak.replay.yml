@@ -9,7 +9,7 @@ command: com.github.avojak.replay
 finish-args:
   - '--device=dri' # For RetroGTK
   - '--share=ipc'
-  # - '--share=network' # Might be needed for a user to select a ROM directory on a network drive, but I don't think this should be a default
+  - '--share=network' # Used for retrieving game artwork
   - '--socket=fallback-x11'
   - '--socket=wayland'
   - '--socket=pulseaudio' # For RetroGTK audio
@@ -80,8 +80,8 @@ modules:
     no-autogen: true
     sources:
       - type: archive
-        url: https://github.com/avojak/libretrodb-sqlite/releases/download/1.0.0/libretrodb.sqlite.tgz
-        sha256: 6a9bdd5222d00e5286ce39ae6f663f3ba30dd465180c16a3b54bb5fe4fe5669d
+        url: https://github.com/avojak/libretrodb-sqlite/releases/download/1.0.1/libretrodb.sqlite.tgz
+        sha256: 347d84231cf72a4867299d9583c97d0887bf65ce4769fc2c7127aba7e4ea24b5
         strip-components: 1
     build-commands:
       - install -d /app/lib/database

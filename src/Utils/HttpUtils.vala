@@ -19,8 +19,18 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Models.LibretroGame : GLib.Object {
+public class Replay.Utils.HttpUtils : GLib.Object {
 
-    
+    public static void download_file (string url, GLib.File file) throws GLib.Error {
+        debug (url);
+        var session = new Soup.Session ();
+        var input_stream = new DataInputStream (session.send (new Soup.Message.from_uri ("GET", new Soup.URI (url)), null));
+        var output_stream = file.replace (null, false, GLib.FileCreateFlags.NONE, null);
+        size_t bytes_read;
+        uint8[] buffer = new uint8[256];
+        while ((bytes_read = input_stream.read (buffer, null)) != 0) {
+            output_stream.write (buffer, null);
+        }
+    }
 
 }

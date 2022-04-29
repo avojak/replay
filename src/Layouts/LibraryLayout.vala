@@ -202,7 +202,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         Idle.add (() => {
             header_bar.set_return_button_visible (false);
             stack.set_visible_child_full ("game-grid", Gtk.StackTransitionType.SLIDE_RIGHT);
-            //  invalidate_filter ();
+            invalidate_filter (); // This is necessary for some reason…
             //  update_visible_stack_child (); // Already handled in invalidate_filter()
             return false;
         });
@@ -318,7 +318,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
      * Force the game grid to be refiltered. For example, in the case where the state of an item has changed
      * and we need to ensure the change in visibility.
      */
-     private void invalidate_filter () {
+    private void invalidate_filter () {
         //  Idle.add (() => {
         game_grid.invalidate_filter ();
         update_visible_stack_child ();
