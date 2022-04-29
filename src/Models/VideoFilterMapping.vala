@@ -28,7 +28,7 @@ public class Replay.Models.VideoFilterMapping : GLib.Object {
             _display_strings.set (Retro.VideoFilter.SHARP, _("Sharp"));
             _display_strings.set (Retro.VideoFilter.SMOOTH, _("Smooth"));
             _display_strings.set (Retro.VideoFilter.CRT, _("CRT"));
-            return _display_strings; 
+            return _display_strings;
         });
     }
 
@@ -39,7 +39,7 @@ public class Replay.Models.VideoFilterMapping : GLib.Object {
             _descriptions.set (Retro.VideoFilter.SHARP, _("Shows every pixel"));
             _descriptions.set (Retro.VideoFilter.SMOOTH, _("Smooth but blurry"));
             _descriptions.set (Retro.VideoFilter.CRT, _("Mimicks CRT screens"));
-            return _descriptions; 
+            return _descriptions;
         });
     }
 

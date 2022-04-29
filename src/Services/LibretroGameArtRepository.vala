@@ -38,7 +38,6 @@
         initialize_directory (GLib.File.new_for_path (cache_dir_path + "/" + Replay.Models.LibretroArtType.BOX.to_string ()));
         initialize_directory (GLib.File.new_for_path (cache_dir_path + "/" + Replay.Models.LibretroArtType.SCREENSHOT.to_string ()));
         initialize_directory (GLib.File.new_for_path (cache_dir_path + "/" + Replay.Models.LibretroArtType.TITLESCREEN.to_string ()));
-        
     }
 
     private void initialize_directory (GLib.File dir) {

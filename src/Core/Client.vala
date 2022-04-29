@@ -41,7 +41,7 @@ public class Replay.Core.Client : GLib.Object {
         game_art_repository = Replay.Services.LibretroGameArtRepository.get_default ();
         game_library = Replay.Services.GameLibrary.get_default ();
         emulator_manager = new Replay.Services.EmulatorManager (Replay.Application.get_instance ());
-        
+
         // Add the default sources for bundled cores and ROMs
         core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.BUNDLED_LIBRETRO_CORE_DIR));
         core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.SYSTEM_LIBRETRO_CORE_DIR));

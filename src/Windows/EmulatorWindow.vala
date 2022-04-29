@@ -42,9 +42,7 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         });
         add (layout);
 
-        // TODO: Automatically pause/resume when the window loses/gains focus?
-
-        // TODO: Somewhere should show which core is being used
+        // TODO: Somewhere should show which core is being used? Could toggle a little info bar at the bottom to show framerate, core name, etc.
 
         restore_window_position ();
 
@@ -83,6 +81,14 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
 
     public unowned Retro.CoreView get_core_view () {
         return layout.view;
+    }
+
+    public void show_pause_button () {
+        layout.show_pause_button ();
+    }
+
+    public void show_resume_button () {
+        layout.show_resume_button ();
     }
 
     public signal void pause_button_clicked ();

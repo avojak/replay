@@ -33,7 +33,7 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
 
     construct {
         var emulator_windows_header_label = new Granite.HeaderLabel (_("Emulator Windows"));
-        
+
         var video_filter_label = new Gtk.Label (_("Default video filter:")) {
             halign = Gtk.Align.END
         };

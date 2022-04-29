@@ -10,8 +10,6 @@ BUILD_DIR        := build
 NINJA_BUILD_FILE := $(BUILD_DIR)/build.ninja
 
 FLATPAK_BUILDER_FLAGS := --user --install --force-clean
-
-# OFFLINE_BUILD = 0
 ifdef OFFLINE_BUILD
 FLATPAK_BUILDER_FLAGS += --disable-download
 endif
@@ -21,33 +19,37 @@ EXECUTABLES = flatpak flatpak-builder
 K := $(foreach exec,$(EXECUTABLES),\
         $(if $(shell which $(exec)),some string,$(error "No $(exec) in PATH")))
 
-.PHONY: all flatpak lint translations clean
 .DEFAULT_GOAL := flatpak
 
+.PHONY: all
 all: translations flatpak
 
+.PHONY: flatpak-init
 flatpak-init:
 	flatpak remote-add --if-not-exists --system $(FLATPAK_REMOTE_NAME) $(FLATPAK_REMOTE_URL)
 	flatpak install -y --user $(FLATPAK_REMOTE_NAME) io.elementary.Platform//$(PLATFORM_VERSION) 
 	flatpak install -y --user $(FLATPAK_REMOTE_NAME) io.elementary.Sdk//$(PLATFORM_VERSION)
 
+.PHONY: init
 init: flatpak-init
 
-# TODO: Add offline option to add --disable-download flag
+.PHONY: flatpak
 flatpak:
-#	flatpak-builder build $(APP_ID).yml --user --install --force-clean --disable-download
 	flatpak-builder build $(APP_ID).yml $(FLATPAK_BUILDER_FLAGS)
 
+.PHONY: lint
 lint:
 	io.elementary.vala-lint ./src
 
 $(NINJA_BUILD_FILE):
 	meson build --prefix=/user
 
+.PHONY: translations
 translations: $(NINJA_BUILD_FILE)
 	ninja -C build $(APP_ID)-pot
 	ninja -C build $(APP_ID)-update-po
 
+.PHONY: clean
 clean:
 	rm -rf ./.flatpak-builder/
 	rm -rf ./build/

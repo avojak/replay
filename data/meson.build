@@ -18,6 +18,10 @@ install_data(
     join_paths('assets', 'icons', '16x16', 'input-pixel-symbolic.svg'),
     install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', 'symbolic', 'apps')
 )
+install_data(
+    join_paths('assets', 'icons', '48x48', 'unplayed-game.svg'),
+    install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', 'symbolic', 'apps')
+)
 
 # Install the ROM files
 # install_data (

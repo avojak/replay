@@ -19,6 +19,9 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
+/**
+ * Models details about a game as provided by the Libretro Retroarch database.
+ */
 public class Replay.Models.LibretroGameDetails : GLib.Object {
 
     public string? serial_id { get; set; }

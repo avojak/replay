@@ -57,7 +57,6 @@ application_files = files(
     join_paths('Widgets', 'Dialogs', 'LibraryItemPropertiesDialog.vala'),
     join_paths('Widgets', 'EmulatorHeaderBar.vala'),
     join_paths('Widgets', 'GameGrid.vala'),
-    join_paths('Widgets', 'GameGridDetailsPanel.vala'),
     join_paths('Widgets', 'LibraryItem.vala'),
     join_paths('Widgets', 'LibrarySidePanel.vala'),
     join_paths('Widgets', 'LibrarySidePanelItem.vala'),

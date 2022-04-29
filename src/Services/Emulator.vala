@@ -30,6 +30,8 @@ public class Replay.Services.Emulator : GLib.Object {
     private Retro.Core? core = null;
     private GLib.File? rom = null;
 
+    private bool manually_paused = false;
+
     public Emulator (Replay.Application application) {
         Object (
             application: application
@@ -48,8 +50,38 @@ public class Replay.Services.Emulator : GLib.Object {
     public void open () {
         if (window == null) {
             window = new Replay.Windows.EmulatorWindow (application);
-            window.pause_button_clicked.connect (pause);
-            window.resume_button_clicked.connect (resume);
+            window.pause_button_clicked.connect (() => {
+                manually_paused = true;
+                pause ();
+            });
+            window.resume_button_clicked.connect (() => {
+                manually_paused = false;
+                resume ();
+            });
+            window.focus_out_event.connect (() => {
+                // Don't do anything if the emulator is already manually paused
+                if (manually_paused) {
+                    return false;
+                }
+                if (Replay.Application.settings.get_boolean ("handle-window-focus-change")) {
+                    manually_paused = false;
+                    window.show_resume_button ();
+                    pause ();
+                }
+                return false;
+            });
+            window.focus_in_event.connect (() => {
+                // Don't do anything if the emulator was manually paused
+                if (manually_paused) {
+                    return false;
+                }
+                if (Replay.Application.settings.get_boolean ("handle-window-focus-change") && !manually_paused) {
+                    manually_paused = false;
+                    window.show_pause_button ();
+                    resume ();
+                }
+                return false;
+            });
             window.destroy.connect (() => {
                 save_memory ();
                 stop ();

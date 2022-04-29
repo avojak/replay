@@ -78,7 +78,7 @@ public class Replay.Views.LibraryView : Gtk.Grid {
         library_layout.add_collection (_("Unplayed"), "mail-unread", UNPLAYED_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
             _("No Unplayed Games"),
             _("Games which have not yet been played will appear here"),
-            "mail-unread", // TODO: Find a suitable icon of the right size
+            "unplayed-game", // TODO: Find a suitable icon of the right size
             (library_item) => {
                 return !library_item.game.is_played;
             }),

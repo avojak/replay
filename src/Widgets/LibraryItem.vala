@@ -36,7 +36,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
 
     construct {
         get_style_context ().add_class ("library-item");
-        
+
         // TODO: Fix alignment when the labels spans multiple lines - the images won't currently lineup
         var grid = new Gtk.Grid () {
             orientation = Gtk.Orientation.VERTICAL,

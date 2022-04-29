@@ -59,6 +59,16 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
         view.grab_focus ();
     }
 
+    public void show_pause_button () {
+        header_bar.set_resume_button_visible (false);
+        header_bar.set_pause_button_visible (true);
+    }
+
+    public void show_resume_button () {
+        header_bar.set_pause_button_visible (false);
+        header_bar.set_resume_button_visible (true);
+    }
+
     public signal void pause_button_clicked ();
     public signal void resume_button_clicked ();
 

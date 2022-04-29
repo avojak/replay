@@ -53,7 +53,7 @@ public class Replay.Application : Gtk.Application {
     }
 
     construct {
-        settings = new GLib.Settings (Constants.APP_ID);
+        settings = new GLib.Settings (Constants.APP_ID); // TODO: Wrap this with a class that handles reading/writing values so that we don't need to know the string keys everywhere
         //  core_repository = Replay.Services.LibretroCoreRepository.get_default ();
         //  game_library = Replay.Services.GameLibrary.get_default ();
         //  emulator_manager = new Replay.Services.EmulatorManager (this);

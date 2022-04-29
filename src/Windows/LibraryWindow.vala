@@ -99,7 +99,7 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
     }
 
     public void reload_library () {
-        debug ("Reloading library...");
+        debug ("Reloading library…");
         foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
             var cores = Replay.Core.Client.get_default ().core_repository.get_cores_for_rom (GLib.File.new_for_path (game.rom_path));
             var core_names = new Gee.ArrayList<string> ();
@@ -123,7 +123,7 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
     }
 
     public void reload_systems () {
-        debug ("Reloading systems...");
+        debug ("Reloading systems…");
         foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores ()) {
             //  layout.add_view_for_core (core);
         }

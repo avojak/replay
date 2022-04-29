@@ -19,8 +19,17 @@
  * Authored by: Andrew Vojak <andrew.vojak@gmail.com>
  */
 
+/**
+ * Collection of utilities for performing HTTP operations.
+ */
 public class Replay.Utils.HttpUtils : GLib.Object {
 
+    /**
+     * Downloads the file at the given URL.
+     *
+     * @param url pointing to the file to download
+     * @param file where the downloaded content will be saved
+     */
     public static void download_file (string url, GLib.File file) throws GLib.Error {
         debug (url);
         var session = new Soup.Session ();
