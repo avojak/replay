@@ -139,6 +139,7 @@ modules:
         strip-components: 0
     subdir: src
     make-args:
+      - flooder.gb
       - GBDK_HOME=../gbdk/
     no-make-install: true
     post-install:

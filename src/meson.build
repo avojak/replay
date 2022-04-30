@@ -16,6 +16,7 @@ config_header = configure_file(
 )
 
 application_files = files(
+    join_paths('Core', 'Device', 'RetroGamepad.vala'),
     join_paths('Core', 'Client.vala'),
     join_paths('Core', 'DatabaseLibretroCoreSource.vala'),
     join_paths('Core', 'FileSystemLibrarySource.vala'),
@@ -87,7 +88,11 @@ executable(
         dependency('retro-gtk-1', version: '>= 1.0.2'),
         dependency('manette-0.2', version: '>= 0.2.6'),
         dependency('sqlite3', version: '>= 3.31.1'),
-        dependency('libsoup-2.4')
+        dependency('libsoup-2.4'),
+
+        valac.find_library ('linux'),
+        valac.find_library ('posix'),
+        valac.find_library ('event-codes', dirs: join_paths(meson.source_root (), 'src'))
     ],
     vala_args: vala_args,
     install: true

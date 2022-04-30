@@ -4,6 +4,8 @@ project('com.github.avojak.replay', 'vala', 'c', version: '1.0.0')
 i18n = import('i18n')
 gnome = import('gnome')
 
+valac = meson.get_compiler ('vala')
+
 vala_args = ['--pkg', 'posix']
 
 application_id = meson.project_name()
