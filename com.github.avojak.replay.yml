@@ -17,6 +17,7 @@ finish-args:
   - '--filesystem=host' # For loading additional libretro cores
   #- '--filesystem=home' # For loading additional ROMs and save data (Don't need this because 'host' provides sufficient home directory access)
   # TODO: Will probably need Bluetooth and USB device access here for controllers
+  # - '--device=all' Maybe?
 
 modules:
   # Dependencies
@@ -91,8 +92,8 @@ modules:
     no-autogen: true
     sources:
       - type: archive
-        url: https://github.com/avojak/libretrodb-sqlite/releases/download/1.0.1/libretrodb.sqlite.tgz
-        sha256: 347d84231cf72a4867299d9583c97d0887bf65ce4769fc2c7127aba7e4ea24b5
+        url: https://github.com/avojak/libretrodb-sqlite/releases/download/2.0.0/libretrodb.sqlite.tgz
+        sha256: d9cbe0cc60b0d3890344c639ad4982a5db7690f44a82137e33b6d945785bcb90
         strip-components: 1
     build-commands:
       - install -d /app/lib/database
