@@ -41,6 +41,7 @@ application_files = files(
     join_paths('Services', 'LibretroCoreRepository.vala'),
     join_paths('Services', 'LibretroGameArtRepository.vala'),
     join_paths('Services', 'LibretroGameRepository.vala'),
+    join_paths('Services', 'Settings.vala'),
     join_paths('Services', 'SQLClient.vala'),
     join_paths('Utils', 'DigestUtils.vala'),
     join_paths('Utils', 'FileUtils.vala'),

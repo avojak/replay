@@ -31,10 +31,11 @@ public class Replay.Views.Settings.BehaviorSettingsView : Replay.Views.Settings.
             //  hexpand = true
             halign = Gtk.Align.START
         };
-        user_rom_dir_entry.set_uri (GLib.File.new_for_path (GLib.Environment.get_home_dir ()).get_uri ());
+        user_rom_dir_entry.set_uri (GLib.File.new_for_path (Replay.Application.settings.user_rom_directory).get_uri ());
         user_rom_dir_entry.file_set.connect (() => {
             debug (user_rom_dir_entry.get_uri ());
-            // TODO
+            Replay.Application.settings.user_rom_directory = GLib.File.new_for_uri (user_rom_dir_entry.get_uri ()).get_path ();
+            // TODO: Notify that this was changed so we can reload the library
         });
 
         var save_data_dir_label = new Gtk.Label (_("Save data directory:")) {
@@ -44,9 +45,10 @@ public class Replay.Views.Settings.BehaviorSettingsView : Replay.Views.Settings.
             //  hexpand = true
             halign = Gtk.Align.START
         };
-        save_data_dir_entry.set_uri (GLib.File.new_for_path (GLib.Environment.get_home_dir ()).get_uri ());
+        save_data_dir_entry.set_uri (GLib.File.new_for_path (Replay.Application.settings.user_save_directory).get_uri ());
         save_data_dir_entry.file_set.connect (() => {
             debug (save_data_dir_entry.get_uri ());
+            Replay.Application.settings.user_save_directory = GLib.File.new_for_uri (save_data_dir_entry.get_uri ()).get_path ();
             // TODO
         });
 

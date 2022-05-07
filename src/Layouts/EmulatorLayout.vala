@@ -28,7 +28,7 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
         view = new Retro.CoreView () {
             expand = true
         };
-        view.set_filter (Replay.Models.VideoFilterMapping.from_short_name (Replay.Application.settings.get_string ("emu-default-filter")));
+        view.set_filter (Replay.Models.VideoFilterMapping.from_short_name (Replay.Application.settings.emu_default_filter));
         // Prevent loss of focus when using arrow keys within a game
         view.key_press_event.connect (() => {
             return true;

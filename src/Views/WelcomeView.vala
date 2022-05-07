@@ -27,8 +27,7 @@ public class Replay.Views.WelcomeView : Granite.Widgets.Welcome {
     construct {
         get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-        append ("text-x-vala", "Visit Valadoc", "The canonical source for Vala API references.");
-        append ("text-x-source", "Get Granite Source", "Granite's source code is hosted on GitHub.");
+        append ("folder-saved-search", "Choose Game Directory", "Select the directory where your ROM file are located.");
 
         activated.connect (index => {
             switch (index) {

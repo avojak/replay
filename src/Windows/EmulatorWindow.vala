@@ -36,8 +36,8 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
     }
 
     private void restore_window_position () {
-        move (Replay.Application.settings.get_int ("emu-pos-x"), Replay.Application.settings.get_int ("emu-pos-y"));
-        resize (Replay.Application.settings.get_int ("emu-window-width"), Replay.Application.settings.get_int ("emu-window-height"));
+        move (Replay.Application.settings.emu_pos_x, Replay.Application.settings.emu_pos_y);
+        resize (Replay.Application.settings.emu_window_width, Replay.Application.settings.emu_window_height);
     }
 
     public bool before_destroy () {
@@ -52,10 +52,10 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         get_size (out width, out height);
         get_position (out x, out y);
 
-        Replay.Application.settings.set_int ("emu-pos-x", x);
-        Replay.Application.settings.set_int ("emu-pos-y", y);
-        Replay.Application.settings.set_int ("emu-window-width", width);
-        Replay.Application.settings.set_int ("emu-window-height", height);
+        Replay.Application.settings.emu_pos_x = x;
+        Replay.Application.settings.emu_pos_y = y;
+        Replay.Application.settings.emu_window_width = width;
+        Replay.Application.settings.emu_window_height = height;
     }
 
     private void show_emulator () {

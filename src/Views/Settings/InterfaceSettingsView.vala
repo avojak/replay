@@ -105,7 +105,7 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
     }
 
     private void load_settings () {
-        var default_video_filter = Replay.Models.VideoFilterMapping.from_short_name (Replay.Application.settings.get_string ("emu-default-filter"));
+        var default_video_filter = Replay.Models.VideoFilterMapping.from_short_name (Replay.Application.settings.emu_default_filter);
         switch (default_video_filter) {
             case Retro.VideoFilter.SHARP:
                 video_filter_combo.set_active (0);

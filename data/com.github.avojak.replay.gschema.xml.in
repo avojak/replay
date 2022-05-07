@@ -61,15 +61,20 @@
       <summary>The default emulator video filter.</summary>
       <description>The default emulator video filter.</description>
     </key>
-    <key name="user-core-directory" type="s">
+    <!-- <key name="user-core-directory" type="s">
       <default>""</default>
       <summary>The directory where user-installed libretro cores are stored.</summary>
       <description>The directory where user-installed libretro cores are stored.</description>
-    </key>
+    </key> -->
     <key name="user-rom-directory" type="s">
       <default>""</default>
       <summary>The directory where user-installed ROMs are stored.</summary>
       <description>The directory where user-installed ROMs are stored.</description>
+    </key>
+    <key name="user-save-directory" type="s">
+      <default>""</default>
+      <summary>The directory where ROM save data is stored.</summary>
+      <description>The directory where ROM save data is stored.</description>
     </key>
     <key name="download-boxart" type="b">
       <default>true</default>

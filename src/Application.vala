@@ -10,7 +10,7 @@ public class Replay.Application : Gtk.Application {
         return instance.once (() => { return new Replay.Application (); });
     }
 
-    public static GLib.Settings settings;
+    public static Replay.Services.Settings settings;
     //  public static Replay.Services.LibretroCoreRepository core_repository;
     //  public static Replay.Services.GameLibrary game_library;
     //  public static Replay.Services.EmulatorManager emulator_manager;
@@ -37,7 +37,7 @@ public class Replay.Application : Gtk.Application {
     }
 
     construct {
-        settings = new GLib.Settings (Constants.APP_ID); // TODO: Wrap this with a class that handles reading/writing values so that we don't need to know the string keys everywhere
+        settings = new Replay.Services.Settings (); // TODO: Wrap this with a class that handles reading/writing values so that we don't need to know the string keys everywhere
         //  core_repository = Replay.Services.LibretroCoreRepository.get_default ();
         //  game_library = Replay.Services.GameLibrary.get_default ();
         //  emulator_manager = new Replay.Services.EmulatorManager (this);

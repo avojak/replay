@@ -47,7 +47,7 @@ public class Replay.Services.Emulator : GLib.Object {
                 if (manually_paused) {
                     return false;
                 }
-                if (Replay.Application.settings.get_boolean ("handle-window-focus-change")) {
+                if (Replay.Application.settings.handle_window_focus_change) {
                     manually_paused = false;
                     window.show_resume_button ();
                     pause ();
@@ -59,7 +59,7 @@ public class Replay.Services.Emulator : GLib.Object {
                 if (manually_paused) {
                     return false;
                 }
-                if (Replay.Application.settings.get_boolean ("handle-window-focus-change") && !manually_paused) {
+                if (Replay.Application.settings.handle_window_focus_change && !manually_paused) {
                     manually_paused = false;
                     window.show_pause_button ();
                     resume ();

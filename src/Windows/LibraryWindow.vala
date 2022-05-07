@@ -55,8 +55,8 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
     }
 
     private void restore_window_position () {
-        move (Replay.Application.settings.get_int ("pos-x"), Replay.Application.settings.get_int ("pos-y"));
-        resize (Replay.Application.settings.get_int ("window-width"), Replay.Application.settings.get_int ("window-height"));
+        move (Replay.Application.settings.pos_x, Replay.Application.settings.pos_y);
+        resize (Replay.Application.settings.window_width, Replay.Application.settings.window_height);
     }
 
     private void show_app () {
