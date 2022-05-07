@@ -73,51 +73,72 @@ public class Replay.Core.Client : GLib.Object {
     //  }
 
     public async Gee.Collection<Replay.Models.LibretroCore> scan_core_sources () {
-        var cores = new Gee.HashMap<string, Replay.Models.LibretroCore> ();
-        foreach (var core_source in core_sources) {
-            foreach (var core in core_source.scan ()) {
-                if (!cores.has_key (core.info.core_name)) {
-                    cores.set (core.info.core_name, core);
+        GLib.SourceFunc callback = scan_core_sources.callback;
+        var result = new Gee.HashMap<string, Replay.Models.LibretroCore> ();
+
+        new GLib.Thread<bool> ("scan-core-sources", () => {
+            var cores = new Gee.HashMap<string, Replay.Models.LibretroCore> ();
+            foreach (var core_source in core_sources) {
+                foreach (var core in core_source.scan ()) {
+                    if (!cores.has_key (core.info.core_name)) {
+                        cores.set (core.info.core_name, core);
+                    }
                 }
             }
-        }
-        foreach (var core in cores.values) {
+            result = cores;
+            Idle.add ((owned) callback);
+            return true;
+        });
+        yield;
+
+        foreach (var core in result.values) {
             debug ("Found core %s for %s", core.info.core_name, core.info.system_name);
         }
         // TODO: Store stuff in database if necessary
-        core_repository.set_cores (cores.values);
-        return cores.values;
+        core_repository.set_cores (result.values);
+        return result.values;
         //  core_sources_scanned (cores);
     }
 
     public async Gee.List<Replay.Models.Game> scan_library_sources () {
-        var games = new Gee.ArrayList<Replay.Models.Game> ();
-        foreach (var library_source in library_sources) {
-            games.add_all (library_source.scan ());
-        }
-        foreach (var game in games) {
-            var game_details = game_repository.lookup_for_md5 (game.rom_md5);
-            if (game_details.size == 0) {
-                debug ("No LibretroDB entry found for %s (MD5: %s)", game.display_name, game.rom_md5);
-                continue;
+        GLib.SourceFunc callback = scan_library_sources.callback;
+        var result = new Gee.ArrayList<Replay.Models.Game> ();
+
+        new GLib.Thread<bool> ("scan-library-sources", () => {
+            var games = new Gee.ArrayList<Replay.Models.Game> ();
+            foreach (var library_source in library_sources) {
+                games.add_all (library_source.scan ());
             }
-            if (game_details.size > 1) {
-                debug ("Multiple LibretroDB entries found for %s, using first entry", game.display_name);
+            foreach (var game in games) {
+                var game_details = game_repository.lookup_for_md5 (game.rom_md5);
+                if (game_details.size == 0) {
+                    debug ("No LibretroDB entry found for %s (MD5: %s)", game.display_name, game.rom_md5);
+                    continue;
+                }
+                if (game_details.size > 1) {
+                    debug ("Multiple LibretroDB entries found for %s, using first entry", game.display_name);
+                }
+                game.libretro_details = game_details.get (0);
+                if (game.libretro_details.display_name != null) {
+                    game.display_name = game.libretro_details.display_name;
+                }
             }
-            game.libretro_details = game_details.get (0);
-            if (game.libretro_details.display_name != null) {
-                game.display_name = game.libretro_details.display_name;
+            // TODO: Maybe do this somewhere else since it could take an even longer time?
+            foreach (var game in games) {
+                game_art_repository.download_box_art (game);
             }
-        }
-        foreach (var game in games) {
-            game_art_repository.download_box_art (game);
-        }
-        foreach (var game in games) {
+            result = games;
+            Idle.add ((owned) callback);
+            return true;
+        });
+        yield;
+        
+        foreach (var game in result) {
             debug ("Found game %s (MD5: %s)", game.display_name, game.rom_md5);
         }
         // TODO: Store stuff in database if necessary
-        game_library.set_games (games);
-        return games;
+        game_library.set_games (result);
+        return result;
         //  library_sources_scanned (games);
     }
 

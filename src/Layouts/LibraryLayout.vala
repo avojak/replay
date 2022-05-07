@@ -36,6 +36,8 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     private Gee.Map<string, Replay.Models.LibraryItemFilterFunction> filter_mapping;
     private Gee.Map<string, Replay.Models.LibraryItemSortFunction> sort_mapping;
 
+    private string? current_search_text;
+
     public LibraryLayout () {
         Object (
             expand: true
@@ -209,6 +211,9 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     }
 
     private void on_search_changed (string search_text) {
+        // Need to hold an instance of this string for the filter function
+        current_search_text = search_text;
+        
         if (stack.get_visible_child_name () == "detail-view") {
             on_return_button_clicked ();
         }
@@ -220,7 +225,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
             //  update_visible_stack_child ();
         } else {
             var filter_func = new Models.LibraryItemFilterFunction (_("No Games Found"), _("Try changing search terms."), "system-search", (library_item) => {
-                return library_item.game.display_name.down ().contains (search_text.down ());
+                return library_item.game.display_name.down ().contains (current_search_text.down ());
             });
             //  alert_view.title = filter_func.placeholder_title;
             //  alert_view.description = filter_func.placeholder_description;
@@ -252,6 +257,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         game_grid.add_game (game);
         Idle.add (() => {
             update_side_panel_badges ();
+            invalidate_filter ();
             return false;
         });
     }
@@ -260,6 +266,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         game_grid.remove_game (game);
         Idle.add (() => {
             update_side_panel_badges ();
+            invalidate_filter ();
             return false;
         });
     }

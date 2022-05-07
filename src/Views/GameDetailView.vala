@@ -24,6 +24,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
     private unowned Replay.Widgets.LibraryItem? library_item;
 
     private Gtk.Label header_title_label;
+    private Gtk.Label region_label;
     private Gtk.Label genre_year_publisher_label;
     private Gtk.Label platform_label;
     private Gtk.MenuButton more_button;
@@ -59,6 +60,11 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
             ellipsize = Pango.EllipsizeMode.END
         };
         header_title_label.get_style_context ().add_class (Granite.STYLE_CLASS_H1_LABEL);
+
+        //  region_label = new Gtk.Label ("USA") {
+
+        //  };
+        //  region_label.get_style_context ().add_class ("region-label");
 
         genre_year_publisher_label = new Gtk.Label ("") {
             valign = Gtk.Align.START,
@@ -126,6 +132,12 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         };
         metadata_grid.attach (genre_year_publisher_label, 0, 0);
         metadata_grid.attach (platform_label, 0, 1);
+
+        //  var header_title_grid = new Gtk.Grid () {
+        //      hexpand = true
+        //  };
+        //  header_title_grid.attach (header_title_label, 0, 0);
+        //  header_title_grid.attach (region_label, 1, 0);
 
         header_grid.attach (header_image, 0, 0, 1, 2);
         header_grid.attach (header_title_label, 1, 0, 1, 1);

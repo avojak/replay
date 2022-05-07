@@ -4,7 +4,7 @@ APP_ID := com.github.avojak.replay
 
 FLATPAK_REMOTE_URL  := https://flatpak.elementary.io/repo.flatpakrepo
 FLATPAK_REMOTE_NAME := appcenter
-PLATFORM_VERSION    := 6.1
+PLATFORM_VERSION    := 7
 
 BUILD_DIR        := build
 NINJA_BUILD_FILE := $(BUILD_DIR)/build.ninja

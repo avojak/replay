@@ -1,7 +1,7 @@
 app-id: com.github.avojak.replay
 
 runtime: io.elementary.Platform
-runtime-version: '6.1'
+runtime-version: '7'
 sdk: io.elementary.Sdk
 
 command: com.github.avojak.replay
@@ -98,6 +98,8 @@ modules:
     build-commands:
       - install -d /app/lib/database
       - install -m 644 -t /app/lib/database libretrodb.sqlite
+    # TODO: In a post-install step we could insert the data for the homebrew games using the sqlite CLI,
+    #       and also copy over screenshots, etc.
 
   # ROMs
   # - name: ROMs
