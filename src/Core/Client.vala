@@ -132,7 +132,7 @@ public class Replay.Core.Client : GLib.Object {
             return true;
         });
         yield;
-        
+
         foreach (var game in result) {
             debug ("Found game %s (MD5: %s)", game.display_name, game.rom_md5);
         }

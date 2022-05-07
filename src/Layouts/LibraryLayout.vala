@@ -213,7 +213,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     private void on_search_changed (string search_text) {
         // Need to hold an instance of this string for the filter function
         current_search_text = search_text;
-        
+
         if (stack.get_visible_child_name () == "detail-view") {
             on_return_button_clicked ();
         }
