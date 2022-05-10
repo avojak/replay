@@ -20,7 +20,7 @@ Replay is a native Linux multi-system emulator built in Vala and GTK for [elemen
 
 ### Included Cores
 
-Replay ships with several [libretro](https://www.libretro.com) cores that are licensed in such a way which permit redistribution under the GPLv3 license:
+Replay ships with several [libretro](https://www.libretro.com) cores:
 
 | Name | System(s) | License |
 | ---- | ------------------ | ------- |
@@ -30,7 +30,7 @@ Additional cores can be easily imported.
 
 ### Included Games
 
-Replay ships with several games that are licensed in such a way which permits redistribution under the GPLv3 license:
+Replay also ships with several games:
 
 | Name | System | License |
 | ---- | ------ | ------- |
