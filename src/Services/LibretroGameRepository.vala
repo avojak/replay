@@ -37,6 +37,7 @@ public class Replay.Services.LibretroGameRepository : GLib.Object {
                 games.release_year,
                 games.release_month,
                 games.display_name,
+                games.full_name,
                 developers.name as developer_name,
                 franchises.name as franchise_name,
                 regions.name as region_name,
@@ -80,6 +81,7 @@ public class Replay.Services.LibretroGameRepository : GLib.Object {
                 games.release_year,
                 games.release_month,
                 games.display_name,
+                games.full_name,
                 developers.name as developer_name,
                 franchises.name as franchise_name,
                 regions.name as region_name,
@@ -139,6 +141,9 @@ public class Replay.Services.LibretroGameRepository : GLib.Object {
                     break;
                 case "display_name":
                     game.display_name = statement.column_text (i);
+                    break;
+                case "full_name":
+                    game.full_name = statement.column_text (i);
                     break;
                 case "developer_name":
                     game.developer_name = statement.column_text (i);

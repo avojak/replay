@@ -12,6 +12,7 @@ public class Replay.Models.LibretroGameDetails : GLib.Object {
     public int? release_year { get; set; }
     public int? release_month { get; set; }
     public string? display_name { get; set; }
+    public string? full_name { get; set; }
     public string? description { get; set; }
     public string? developer_name { get; set; }
     public string? franchise_name { get; set; }

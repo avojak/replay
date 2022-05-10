@@ -10,20 +10,19 @@ then
 fi
 
 APP_ID=com.github.avojak.replay
-GSETTINGS_ID=$APP_ID
 GSETTINGS_PATH=$APP_ID
 
 print_setting () {
-    echo -e "  $1 = $(flatpak run --command=gsettings $GSETTINGS_ID get $GSETTINGS_PATH $1)"
+    echo -e "  $1 = $(flatpak run --command=gsettings $APP_ID get $GSETTINGS_PATH $1)"
 }
 
 set_setting () {
-    flatpak run --command=gsettings $GSETTINGS_ID set $GSETTINGS_PATH $1 "$2"
+    flatpak run --command=gsettings $APP_ID set $GSETTINGS_PATH $1 "$2"
     print_setting $1
 }
 
 echo
-echo "Resetting GSettings..."
+echo "Resetting GSettings…"
 
 set_setting pos-x 360
 set_setting pos-y 360
@@ -34,9 +33,17 @@ set_setting emu-pos-y 360
 set_setting emu-window-width 500
 set_setting emu-window-height 500
 set_setting emu-window-fullscreen false
-set_setting user-core-directory ""
+set_setting emu-boot-bios false
+set_setting emu-default-filter "SHARP"
 set_setting user-rom-directory ""
+set_setting user-save-directory ""
+set_setting download-boxart true
 set_setting handle-window-focus-change true
+
+echo
+echo "Deleting art cache…"
+
+flatpak run --command=rm $APP_ID -rf /var/config/libretro_art
 
 echo
 echo -e "\033[1;32mDone\033[0m"

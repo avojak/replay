@@ -8,21 +8,21 @@
  */
 public class Replay.Utils.HttpUtils : GLib.Object {
 
+    private const int BUFFER_SIZE = 256;
+
     /**
      * Downloads the file at the given URL.
      *
      * @param url pointing to the file to download
      * @param file where the downloaded content will be saved
      */
-    public static void download_file (string url, GLib.File file) throws GLib.Error {
-        debug (url);
+    public static void download_file (string url, GLib.File file, GLib.Cancellable? cancellable = null) throws GLib.Error {
         var session = new Soup.Session ();
-        var input_stream = new DataInputStream (session.send (new Soup.Message.from_uri ("GET", new Soup.URI (url)), null));
-        var output_stream = file.replace (null, false, GLib.FileCreateFlags.NONE, null);
-        size_t bytes_read;
-        uint8[] buffer = new uint8[256];
-        while ((bytes_read = input_stream.read (buffer, null)) != 0) {
-            output_stream.write (buffer, null);
+        var input_stream = new DataInputStream (session.send (new Soup.Message.from_uri ("GET", new Soup.URI (url)), cancellable));
+        var output_stream = file.replace (null, false, GLib.FileCreateFlags.NONE, cancellable);
+        GLib.Bytes bytes;
+        while ((bytes = input_stream.read_bytes (BUFFER_SIZE, cancellable)).length > 0) {
+            output_stream.write_bytes (bytes, cancellable);
         }
     }
 

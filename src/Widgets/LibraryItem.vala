@@ -30,30 +30,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             valign = Gtk.Align.START,
             margin = 8
         };
-        Gtk.Image? image;
-        try {
-            string? box_art_file_path = Replay.Core.Client.get_default ().game_art_repository.get_box_art_file_path (game);
-            if (box_art_file_path == null) {
-                image = new Gtk.Image () {
-                    gicon = new ThemedIcon ("application-default-icon"),
-                    pixel_size = 128,
-                    margin_bottom = 8
-                };
-            } else {
-                image = new Gtk.Image.from_pixbuf (new Gdk.Pixbuf.from_file_at_size (box_art_file_path, 100, 100)) {
-                    margin_top = 16,
-                    margin_start = 16,
-                    margin_end = 16,
-                    margin_bottom = 20
-                };
-            }
-        } catch (GLib.Error e) {
-            image = new Gtk.Image () {
-                gicon = new ThemedIcon ("application-default-icon"),
-                pixel_size = 128,
-                margin_bottom = 8
-            };
-        }
+        
         var badge = new Gtk.Label (null) {
             halign = Gtk.Align.END,
             valign = Gtk.Align.START,
@@ -86,7 +63,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             halign = Gtk.Align.CENTER
         };
         //  overlay.add_overlay (badge); // TODO: Could use an icon here probably
-        overlay.add (image);
+        overlay.add (load_image ());
         overlay.add_overlay (unplayed_badge);
         overlay.add_overlay (play_button);
         // TODO: Add favorites icon badge? Or would that be too busy?
@@ -158,6 +135,33 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         //  });
 
         show_all ();
+    }
+
+    private Gtk.Image load_image () {
+        try {
+            string? box_art_file_path = Replay.Core.Client.get_default ().game_art_repository.get_box_art_file_path (game);
+            if (box_art_file_path == null) {
+                return create_default_image ();
+            } else {
+                return new Gtk.Image.from_pixbuf (new Gdk.Pixbuf.from_file_at_size (box_art_file_path, 100, 100)) {
+                    margin_top = 16,
+                    margin_start = 16,
+                    margin_end = 16,
+                    margin_bottom = 20
+                };
+            }
+        } catch (GLib.Error e) {
+            warning (e.message);
+            return create_default_image ();
+        }
+    }
+
+    private Gtk.Image create_default_image () {
+        return new Gtk.Image () {
+            gicon = new ThemedIcon ("application-default-icon"),
+            pixel_size = 128,
+            margin_bottom = 8
+        };
     }
 
     public void set_played (bool played) {

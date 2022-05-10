@@ -10,9 +10,10 @@
         return instance.once (() => { return new Replay.Services.LibretroGameArtRepository (); });
     }
 
-    private string cache_dir_path = GLib.Environment.get_user_config_dir () + "/" + Constants.APP_ID + "/libretro_art";
+    private string cache_dir_path = GLib.Environment.get_user_config_dir () + "/libretro_art";
 
     private LibretroGameArtRepository () {
+        info ("Game art cache: %s", cache_dir_path);
         initialize_cache_directories ();
     }
 
@@ -43,7 +44,7 @@
 
     public Gtk.Image? download_box_art (Replay.Models.Game game) {
         var image_file = get_file (game, Replay.Models.LibretroArtType.BOX);
-        debug (image_file.get_path ());
+        //  debug (image_file.get_path ());
         if (image_file.query_exists ()) {
             return new Gtk.Image.from_file (image_file.get_path ());
         }
@@ -55,8 +56,8 @@
             manufacturer += " - %s".printf (game.libretro_details.platform_name);
         }
         manufacturer = Soup.URI.encode (manufacturer, null);
-        var display_name = Soup.URI.encode (game.display_name, null);
-        var url = @"http://thumbnails.libretro.com/$manufacturer/Named_Boxarts/$display_name.png";
+        var filename = Soup.URI.encode (game.libretro_details.full_name, null);
+        var url = @"http://thumbnails.libretro.com/$manufacturer/Named_Boxarts/$filename.png";
         debug (url);
         var session = new Soup.Session ();
         try {
