@@ -84,6 +84,9 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         pack_start (pause_button);
         pack_start (resume_button);
         pack_end (menu_button);
+        //  pack_end (new Gtk.VolumeButton () {
+        //      use_symbolic = true
+        //  });
 
         set_pause_button_visible (true);
         set_resume_button_visible (false);

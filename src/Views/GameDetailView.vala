@@ -131,9 +131,19 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         header_grid.attach (play_button_grid, 2, 1, 1, 1);
 
         var body_grid = new Gtk.Grid () {
-            expand = true,
-            vexpand = false
+            expand = true
         };
+
+        var franchise_games_grid = new Gtk.Grid () {
+            hexpand = true
+        };
+
+        var genre_games_grid = new Gtk.Grid () {
+            hexpand = true
+        };
+
+        body_grid.attach (franchise_games_grid, 0, 0);
+        body_grid.attach (genre_games_grid, 0, 1);
 
         //  var activity_header_label = new Granite.HeaderLabel (_("Activity"));
         //  var last_played_label = new Gtk.Label (_("Last played:")) {
