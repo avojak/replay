@@ -69,19 +69,24 @@ public class Replay.Widgets.LibrarySidePanel : Gtk.Grid {
                 return;
             }
         }
+        foreach (var item in systems_category.children) {
+            var side_panel_item = item as Replay.Widgets.LibrarySidePanelItem;
+            if (side_panel_item.view_name == view_name) {
+                source_list.selected = side_panel_item;
+                return;
+            }
+        }
     }
 
     public void add_collection (string display_name, string icon_name, string view_name) {
-        var item = new Replay.Widgets.LibrarySidePanelItem (display_name, icon_name, view_name);
+        //  var item = new Replay.Widgets.LibrarySidePanelItem (display_name, icon_name, view_name);
         //  item.filter_func = filter_func;
-        collections_category.add (item);
+        collections_category.add (new Replay.Widgets.LibrarySidePanelItem (display_name, icon_name, view_name));
     }
 
-    //  public void add_system (string display_name, string view_name, string icon_name) {
-    //      systems_category.add (new Replay.Widgets.LibrarySidePanelItem (display_name, view_name) {
-    //          icon = new GLib.ThemedIcon (icon_name)
-    //      });
-    //  }
+    public void add_system (string display_name, string icon_name, string view_name) {
+        systems_category.add (new Replay.Widgets.LibrarySidePanelItem (display_name, icon_name, view_name));
+    }
 
     //  public void increment_badge (string view_name) {
     //      foreach (var item in collections_category.children) {

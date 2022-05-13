@@ -175,9 +175,9 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
     public void set_favorite (bool favorite) {
     }
 
-    public void set_visible (bool visible) {
-        //  this.hide ();
-        this.visible = visible;
-    }
+    //  public void set_visible (bool visible) {
+    //      //  this.hide ();
+    //      this.visible = visible;
+    //  }
 
 }

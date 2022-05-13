@@ -17,8 +17,8 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     //  private Gtk.SearchEntry search_entry;
     private Gtk.Stack stack;
 
-    private Gee.Map<string, Replay.Models.LibraryItemFilterFunction> filter_mapping;
-    private Gee.Map<string, Replay.Models.LibraryItemSortFunction> sort_mapping;
+    private Gee.Map<string, Replay.Models.Functions.LibraryItemFilterFunction> filter_mapping;
+    private Gee.Map<string, Replay.Models.Functions.LibraryItemSortFunction> sort_mapping;
 
     private string? current_search_text;
 
@@ -34,8 +34,8 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     }
 
     construct {
-        filter_mapping = new Gee.HashMap<string, Replay.Models.LibraryItemFilterFunction> ();
-        sort_mapping = new Gee.HashMap<string, Replay.Models.LibraryItemSortFunction> ();
+        filter_mapping = new Gee.HashMap<string, Replay.Models.Functions.LibraryItemFilterFunction> ();
+        sort_mapping = new Gee.HashMap<string, Replay.Models.Functions.LibraryItemSortFunction> ();
 
         header_bar = new Replay.Widgets.MainHeaderBar ();
         header_bar.view_return.connect (on_return_button_clicked);
@@ -196,37 +196,45 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
 
     private void on_search_changed (string search_text) {
         // Need to hold an instance of this string for the filter function
+        // TODO: May not be needed anymore with new function object
         current_search_text = search_text;
 
         if (stack.get_visible_child_name () == "detail-view") {
             on_return_button_clicked ();
         }
         if (search_text.length == 0) {
-            game_grid.set_filter_func (new Models.LibraryItemFilterFunction (_("No Games Found"), _("Try changing search terms."), "system-search", (library_item) => {
-                return true;
-            }));
+            game_grid.set_filter_func (new Replay.Models.Functions.SearchResultsFilterFunction (search_text));
             side_panel.set_enabled (true);
             //  update_visible_stack_child ();
         } else {
-            var filter_func = new Models.LibraryItemFilterFunction (_("No Games Found"), _("Try changing search terms."), "system-search", (library_item) => {
-                return library_item.game.display_name.down ().contains (current_search_text.down ());
-            });
+            var filter_func = new Replay.Models.Functions.SearchResultsFilterFunction (search_text);
             //  alert_view.title = filter_func.placeholder_title;
             //  alert_view.description = filter_func.placeholder_description;
             //  alert_view.icon_name = filter_func.placeholder_icon_name;
             game_grid.set_filter_func (filter_func);
-            game_grid.set_sort_func (new Models.LibraryItemSortFunction ((item_a, item_b) => {
-                return item_a.game.display_name.ascii_casecmp (item_b.game.display_name);
-            }));
+            game_grid.set_sort_func (new Replay.Models.Functions.AlphabeticalSortFunction ());
             side_panel.select_none ();
             side_panel.set_enabled (false);
             //  update_visible_stack_child ();
         }
     }
 
-    public void add_collection (string display_name, string icon_name, string view_name, Replay.Models.LibraryItemFilterFunction filter_func, Replay.Models.LibraryItemSortFunction sort_func) {
+    public void add_collection (string display_name, string icon_name, string view_name, Replay.Models.Functions.LibraryItemFilterFunction filter_func, Replay.Models.Functions.LibraryItemSortFunction sort_func) {
         // Add to the side panel
         side_panel.add_collection (display_name, icon_name, view_name);
+        // Register the filter
+        filter_mapping.set (view_name, filter_func);
+        sort_mapping.set (view_name, sort_func);
+        // Update badges
+        Idle.add (() => {
+            update_side_panel_badges ();
+            return false;
+        });
+    }
+
+    public void add_system (string display_name, string icon_name, string view_name, Replay.Models.Functions.LibraryItemFilterFunction filter_func, Replay.Models.Functions.LibraryItemSortFunction sort_func) {
+        // Add to the side panel
+        side_panel.add_system (display_name, icon_name, view_name);
         // Register the filter
         filter_mapping.set (view_name, filter_func);
         sort_mapping.set (view_name, sort_func);
@@ -318,6 +326,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     }
 
     private void on_side_panel_item_selected (Replay.Widgets.LibrarySidePanelItem item) {
+        debug (item.view_name);
         var filter_func = filter_mapping.get (item.view_name);
         var sort_func = sort_mapping.get (item.view_name);
         Idle.add (() => {

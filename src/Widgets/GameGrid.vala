@@ -10,7 +10,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
     public Gtk.FlowBox flow_box { get; construct; }
     //  private Replay.Widgets.GameGridDetailsPanel game_details_panel;
 
-    private Replay.Models.LibraryItemFilterFunction? filter_func;
+    private Replay.Models.Functions.LibraryItemFilterFunction? filter_func;
 
     private Granite.Widgets.AlertView alert_view;
     private Gtk.Stack stack;
@@ -194,7 +194,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         item_marked_played (library_item);
     }
 
-    public void set_filter_func (Replay.Models.LibraryItemFilterFunction? filter_func) {
+    public void set_filter_func (Replay.Models.Functions.LibraryItemFilterFunction? filter_func) {
         this.filter_func = filter_func;
         if (filter_func == null) {
             flow_box.set_filter_func (null);
@@ -210,7 +210,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         }
     }
 
-    public void set_sort_func (Replay.Models.LibraryItemSortFunction? sort_func) {
+    public void set_sort_func (Replay.Models.Functions.LibraryItemSortFunction? sort_func) {
         if (sort_func == null) {
             flow_box.set_sort_func (null);
         } else {
@@ -240,7 +240,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         //  });
     }
 
-    public int count_visible_children (Replay.Models.LibraryItemFilterFunction? filter_func) {
+    public int count_visible_children (Replay.Models.Functions.LibraryItemFilterFunction? filter_func) {
         int num_visible = 0;
         flow_box.foreach ((widget) => {
             if (filter_func == null || filter_func.filter (widget as Replay.Widgets.LibraryItem)) {

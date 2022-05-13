@@ -22,54 +22,46 @@ public class Replay.Views.LibraryView : Gtk.Grid {
 
     construct {
         library_layout = new Replay.Layouts.LibraryLayout ();
-        library_layout.add_collection (_("All Games"), "folder-saved-search", ALL_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
-            _("No Games"),
-            _("Games which have been added to your library will appear here"),
+        library_layout.add_collection (
+            _("All Games"),
             "folder-saved-search",
-            (library_item) => {
-                return true;
-            }),
-            new Replay.Models.LibraryItemSortFunction ((library_item_1, library_item_2) => {
-                return library_item_1.game.display_name.ascii_casecmp (library_item_2.game.display_name);
-            })
+            ALL_VIEW_NAME, 
+            new Replay.Models.Functions.AllGamesFilterFunction (),
+            new Replay.Models.Functions.AlphabeticalSortFunction ()
         );
-        library_layout.add_collection (_("Favorites"), "starred", FAVORITES_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
-            _("No Favorite Games"),
-            _("Games which have been starred will appear here"),
-            "user-bookmarks",
-            (library_item) => {
-                return library_item.game.is_favorite;
-            }),
-            new Replay.Models.LibraryItemSortFunction ((library_item_1, library_item_2) => {
-                return library_item_1.game.display_name.ascii_casecmp (library_item_2.game.display_name);
-            })
+        library_layout.add_collection (
+            _("Favorites"),
+            "starred",
+            FAVORITES_VIEW_NAME,
+            new Replay.Models.Functions.FavoritesFilterFunction (),
+            new Replay.Models.Functions.AlphabeticalSortFunction ()
         );
-        library_layout.add_collection (_("Recently Played"), "document-open-recent", RECENT_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
-            _("No Recent Games"),
-            _("Games which have been recently played will appear here"),
+        library_layout.add_collection (
+            _("Recently Played"),
             "document-open-recent",
-            (library_item) => {
-                return (library_item.game.last_played != null) && (library_item.game.last_played.difference (new GLib.DateTime.now_utc ()) <= (RECENTLY_PLAYED_THRESHOLD_DAYS * GLib.TimeSpan.DAY));
-            }),
-            new Replay.Models.LibraryItemSortFunction ((library_item_1, library_item_2) => {
-                if (library_item_1.game.last_played == null || library_item_2.game.last_played == null) {
-                    // Don't need to get fancy here - if one or both are null, the visual filter will take care of it anyway
-                    return 0;
-                }
-                return -1 * library_item_1.game.last_played.compare (library_item_2.game.last_played);
-            })
+            RECENT_VIEW_NAME,
+            new Replay.Models.Functions.RecentsFilterFunction (),
+            new Replay.Models.Functions.LastPlayedSortFunction ()
         );
-        library_layout.add_collection (_("Unplayed"), "mail-unread", UNPLAYED_VIEW_NAME, new Replay.Models.LibraryItemFilterFunction (
-            _("No Unplayed Games"),
-            _("Games which have not yet been played will appear here"),
-            "unplayed-game", // TODO: Find a suitable icon of the right size
-            (library_item) => {
-                return !library_item.game.is_played;
-            }),
-            new Replay.Models.LibraryItemSortFunction ((library_item_1, library_item_2) => {
-                return library_item_1.game.display_name.ascii_casecmp (library_item_2.game.display_name);
-            })
+        library_layout.add_collection (
+            _("Unplayed"),
+            "mail-unread",
+            UNPLAYED_VIEW_NAME,
+            new Replay.Models.Functions.UnplayedFilterFunction (),
+            new Replay.Models.Functions.AlphabeticalSortFunction ()
         );
+
+        //  foreach (var platform in Replay.Core.Client.get_default ().game_repository.get_platforms ()) {
+        //      library_layout.add_system (
+        //          platform, 
+        //          "input-gaming", 
+        //          "platform:%s".printf (platform), 
+        //          new Replay.Models.Functions.PlatformFilterFunction (platform), 
+        //          new Replay.Models.LibraryItemSortFunction ((library_item_1, library_item_2) => {
+        //              return library_item_1.game.display_name.ascii_casecmp (library_item_2.game.display_name);
+        //          })
+        //      );
+        //  }
 
         library_layout.game_selected.connect ((game) => {
             game_selected (game);

@@ -117,6 +117,24 @@ public class Replay.Services.LibretroGameRepository : GLib.Object {
         return games;
     }
 
+    public Gee.List<string> get_platforms () {
+        var platforms = new Gee.ArrayList<string> ();
+
+        var sql = "SELECT name FROM platforms;";
+        Sqlite.Statement statement;
+        if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
+            log_database_error (database.errcode (), database.errmsg ());
+            return platforms;
+        }
+
+        while (statement.step () == Sqlite.ROW) {
+            platforms.add (statement.column_text (0));
+        }
+        statement.reset ();
+
+        return platforms;
+    }
+
     private Replay.Models.LibretroGameDetails parse_game_row (Sqlite.Statement statement) {
         var num_columns = statement.column_count ();
         var game = new Replay.Models.LibretroGameDetails ();
