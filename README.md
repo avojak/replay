@@ -55,15 +55,7 @@ dependencies required:
 - `meson`
 - `valac (>= 0.28.0)`
 
-An `install-dev-dependencies.sh` script is available to help developers get up and running.
-
 ## Building and Running
-
-```
-$ meson build --prefix=/usr
-$ sudo ninja -C build install
-$ com.github.avojak.replay
-```
 
 ### Flatpak
 
