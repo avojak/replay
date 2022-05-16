@@ -26,7 +26,7 @@ Replay ships with several [libretro](https://www.libretro.com) cores:
 | ---- | ------------------ | ------- |
 | mGBA | Game Boy<br>Game Boy Color<br>Game Boy Advance | MPLv2.0 |
 
-Additional cores can be easily imported.
+Additional cores can be easily imported (See: <a href="#installing-additional-cores">Installing Additional Cores</a>).
 
 ### Included Games
 
@@ -40,7 +40,7 @@ Replay also ships with several games:
 <!-- | Varooom 3D | Game Boy Advance | ZLib | [Source](https://github.com/GValiente/butano) | -->
 
 
-Additional games can be easily added to the library.
+Additional games can be easily added to the library (See: <a href="#installing-additional-games">Installing Additional Games</a>).
 
 ## Install from Source
 
