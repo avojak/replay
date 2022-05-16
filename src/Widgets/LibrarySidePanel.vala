@@ -25,6 +25,18 @@ public class Replay.Widgets.LibrarySidePanel : Gtk.Grid {
         header_bar.get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
 
         source_list = new Granite.Widgets.SourceList ();
+        source_list.set_filter_func ((item) => {
+            // Always show the expandable (category) items
+            if (item.parent == source_list.root) {
+                return true;
+            }
+            // Always show all collections items
+            if (item.parent == collections_category) {
+                return true;
+            }
+            // Only show platform/system items for which there are games in the library
+            return int.parse (item.badge) > 0;
+        }, false);
         source_list.item_selected.connect ((item) => {
             if (item == null) {
                 return;
@@ -86,6 +98,10 @@ public class Replay.Widgets.LibrarySidePanel : Gtk.Grid {
 
     public void add_system (string display_name, string icon_name, string view_name) {
         systems_category.add (new Replay.Widgets.LibrarySidePanelItem (display_name, icon_name, view_name));
+    }
+
+    public void expand_systems_category () {
+        systems_category.expand_all ();
     }
 
     //  public void increment_badge (string view_name) {

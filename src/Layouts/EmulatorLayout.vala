@@ -7,17 +7,19 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
 
     public unowned Replay.Windows.EmulatorWindow window { get; construct; }
     public Retro.CoreView view { get; construct; }
+    public string title { get; construct; }
 
     private Replay.Widgets.EmulatorHeaderBar header_bar;
 
-    public EmulatorLayout (Replay.Windows.EmulatorWindow window) {
+    public EmulatorLayout (Replay.Windows.EmulatorWindow window, string title) {
         Object (
-            window: window
+            window: window,
+            title: title
         );
     }
 
     construct {
-        header_bar = new Replay.Widgets.EmulatorHeaderBar ();
+        header_bar = new Replay.Widgets.EmulatorHeaderBar (title);
         header_bar.pause_button_clicked.connect (() => {
             pause_button_clicked ();
         });

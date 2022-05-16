@@ -8,9 +8,9 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
     private Gtk.Button pause_button;
     private Gtk.Button resume_button;
 
-    public EmulatorHeaderBar () {
+    public EmulatorHeaderBar (string title) {
         Object (
-            title: Constants.APP_NAME,
+            title: title,
             show_close_button: true,
             has_subtitle: false
         );

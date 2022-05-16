@@ -7,6 +7,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
 
     private unowned Replay.Widgets.LibraryItem? library_item;
 
+    private Gtk.Image header_image;
     private Gtk.Label header_title_label;
     private Gtk.Label region_label;
     private Gtk.Label genre_year_publisher_label;
@@ -30,7 +31,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
             vexpand = false
         };
 
-        var header_image = new Gtk.Image () {
+        header_image = new Gtk.Image () {
             gicon = new ThemedIcon ("application-default-icon"),
             pixel_size = 128
         };
@@ -165,6 +166,8 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
 
     public void set_library_item (Replay.Widgets.LibraryItem library_item) {
         this.library_item = library_item;
+        // Update the game image
+        load_image ();
         // Update the header label
         header_title_label.set_text (library_item.game.display_name);
         header_title_label.set_tooltip_text (library_item.game.display_name);
@@ -195,6 +198,45 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         }
         // Update the "play with" popover menu
         more_button.popup = create_run_with_menu ();
+        this.queue_draw ();
+    }
+
+    private void load_image () {
+        try {
+            string? box_art_file_path = Replay.Core.Client.get_default ().game_art_repository.get_box_art_file_path (library_item.game);
+            if (box_art_file_path == null) {
+                load_default_image ();
+            } else {
+                debug (box_art_file_path);
+                header_image.set_from_pixbuf (new Gdk.Pixbuf.from_file_at_size (box_art_file_path, 100, 100));
+                header_image.margin = 12;
+                //  header_image.set_margin_top (16);
+                //  header_image.set_margin_start (16);
+                //  header_image.set_margin_end (16);
+                //  header_image.set_margin_bottom (20);
+                //  new Gtk.Image.from_pixbuf (new Gdk.Pixbuf.from_file_at_size (box_art_file_path, 100, 100)) {
+                //      margin_top = 16,
+                //      margin_start = 16,
+                //      margin_end = 16,
+                //      margin_bottom = 20
+                //  };
+            }
+        } catch (GLib.Error e) {
+            warning (e.message);
+            load_default_image ();
+        }
+    }
+
+    private void load_default_image () {
+        header_image.gicon = new ThemedIcon ("application-default-icon");
+        header_image.set_pixel_size (128);
+        header_image.margin = 8;
+        //  header_image.set_margin_bottom (8);
+        //  return new Gtk.Image () {
+        //      gicon = new ThemedIcon ("application-default-icon"),
+        //      pixel_size = 128,
+        //      margin_bottom = 8
+        //  };
     }
 
     private Gtk.Menu create_run_with_menu () {

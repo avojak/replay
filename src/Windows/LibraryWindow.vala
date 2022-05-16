@@ -94,6 +94,7 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
             view.add_game (game);
             //  layout.add_game (game, core_names);
         }
+        view.expand_systems_category ();
         //  var games_by_system = new Gee.HashMap<string, Gee.List<Replay.Models.Game>> ();
         //  foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
         //      Replay.Models.LibretroCore? core = Replay.Core.Client.get_default ().core_repository.get_core_for_rom (GLib.File.new_for_path (game.rom_path));
@@ -137,7 +138,7 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
     }
 
     private void launch_game (Replay.Models.Game game) {
-        Replay.Core.Client.get_default ().emulator_manager.launch_game (GLib.File.new_for_path (game.rom_path).get_uri ());
+        Replay.Core.Client.get_default ().emulator_manager.launch_game (game);
         Replay.Core.Client.get_default ().game_library.update_last_run_date (game);
     }
 

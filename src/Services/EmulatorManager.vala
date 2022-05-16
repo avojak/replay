@@ -15,13 +15,13 @@ public class Replay.Services.EmulatorManager : GLib.Object {
         );
     }
 
-    public void launch_game (string rom_uri) {
+    public void launch_game (Replay.Models.Game game) {
         // TODO: Validate rom_uri
         var emulator = new Replay.Services.Emulator (application);
         emulator.started.connect (on_emulator_started);
         emulator.closed.connect (on_emulator_closed);
         emulator.crashed.connect (on_emulator_crashed);
-        emulator.load_rom (rom_uri);
+        emulator.load_game (game);
         emulator.open ();
         emulator.start ();
         emulators.add (emulator);

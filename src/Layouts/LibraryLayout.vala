@@ -267,6 +267,13 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         side_panel.select_view (view_name);
     }
 
+    public void expand_systems_category () {
+        Idle.add (() => {
+            side_panel.expand_systems_category ();
+            return false;
+        });
+    }
+
     public void set_searchbar_visible (bool visible) {
         //  if (visible) {
         //      if (stack.get_visible_child_name () == "detail-view") {

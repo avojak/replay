@@ -12,6 +12,7 @@ public class Replay.Services.Emulator : GLib.Object {
 
     private Replay.Windows.EmulatorWindow? window = null;
     private Retro.Core? core = null;
+    private Replay.Models.Game? game = null;
     private GLib.File? rom = null;
 
     private bool manually_paused = false;
@@ -22,18 +23,28 @@ public class Replay.Services.Emulator : GLib.Object {
         );
     }
 
-    public void load_rom (string uri) {
-        var file = GLib.File.new_for_uri (uri);
-        if (!GLib.File.new_for_uri (uri).query_exists ()) {
-            critical ("ROM file not found: %s", uri);
+    //  public void load_rom (string uri) {
+    //      var file = GLib.File.new_for_uri (uri);
+    //      if (!GLib.File.new_for_uri (uri).query_exists ()) {
+    //          critical ("ROM file not found: %s", uri);
+    //          return;
+    //      }
+    //      rom = file;
+    //  }
+
+    public void load_game (Replay.Models.Game game) {
+        var file = GLib.File.new_for_path (game.rom_path);
+        if (!file.query_exists ()) {
+            critical ("ROM file not found: %s", file.get_path ());
             return;
         }
-        rom = file;
+        this.game = game;
+        this.rom = file;
     }
 
     public void open () {
         if (window == null) {
-            window = new Replay.Windows.EmulatorWindow (application);
+            window = new Replay.Windows.EmulatorWindow (application, game.display_name);
             window.pause_button_clicked.connect (() => {
                 manually_paused = true;
                 pause ();

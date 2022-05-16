@@ -115,26 +115,28 @@ modules:
     no-autogen: true
     sources:
       - type: git
-        url: https://github.com/Replay-Project/gb-wordle
-        tag: 'v0.75'
+        url: https://github.com/bbbbbr/gb-wordle.git
+        tag: 'v0.85'
       - type: archive
         url: https://github.com/gbdk-2020/gbdk-2020/releases/download/4.0.6/gbdk-linux64.tar.gz
         sha256: fecdadbeb5dcab5ceebff67ff4a7630bf6f572880d4e86ac600585d8064dc7c1
         strip-components: 0
     make-args:
       - GBDK_HOME=./gbdk/
+      - gbc
     build-options:
       cflags: ""
       cflags-override: true
     no-make-install: true
     post-install:
       - install -d /app/lib/roms
-      - install -m 644 -t /app/lib/roms build/gb/GBWORDYL.gb
+      - install -m 644 -t /app/lib/roms build/gbc/GBWORDYL_0.85_en.gbc
+      # - md5sum build/gbc/GBWORDYL_0.85_en.gbc | cut -d' ' -f1 | xargs | tr '[:lower:]' '[:upper:]'
   - name: flooder
     no-autogen: true
     sources:
       - type: git
-        url: https://github.com/Obalfour/Flooder
+        url: https://github.com/Obalfour/Flooder.git
         branch: 'main'
       - type: archive
         url: https://github.com/gbdk-2020/gbdk-2020/releases/download/4.0.6/gbdk-linux64.tar.gz

@@ -51,17 +51,17 @@ public class Replay.Views.LibraryView : Gtk.Grid {
             new Replay.Models.Functions.AlphabeticalSortFunction ()
         );
 
-        //  foreach (var platform in Replay.Core.Client.get_default ().game_repository.get_platforms ()) {
-        //      library_layout.add_system (
-        //          platform, 
-        //          "input-gaming", 
-        //          "platform:%s".printf (platform), 
-        //          new Replay.Models.Functions.PlatformFilterFunction (platform), 
-        //          new Replay.Models.LibraryItemSortFunction ((library_item_1, library_item_2) => {
-        //              return library_item_1.game.display_name.ascii_casecmp (library_item_2.game.display_name);
-        //          })
-        //      );
-        //  }
+        var platforms = Replay.Core.Client.get_default ().game_repository.get_platforms ();
+        platforms.sort ((a, b) => { return a.ascii_casecmp (b); });
+        foreach (var platform in platforms) {
+            library_layout.add_system (
+                platform, 
+                "input-gaming", 
+                "platform:%s".printf (platform), 
+                new Replay.Models.Functions.PlatformFilterFunction (platform), 
+                new Replay.Models.Functions.AlphabeticalSortFunction ()
+            );
+        }
 
         library_layout.game_selected.connect ((game) => {
             game_selected (game);
@@ -85,6 +85,10 @@ public class Replay.Views.LibraryView : Gtk.Grid {
 
     public void set_searchbar_visible (bool visible) {
         library_layout.set_searchbar_visible (visible);
+    }
+
+    public void expand_systems_category () {
+        library_layout.expand_systems_category ();
     }
 
     public signal void game_selected (Replay.Models.Game game);

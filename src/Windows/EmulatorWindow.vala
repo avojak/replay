@@ -5,10 +5,14 @@
 
 public class Replay.Windows.EmulatorWindow : Hdy.Window {
 
+    public string game_display_name { get; construct; }
+
     private Replay.Layouts.EmulatorLayout layout;
 
-    public EmulatorWindow (Replay.Application application) {
+    public EmulatorWindow (Replay.Application application, string title) {
         Object (
+            title: title,
+            game_display_name: title,
             application: application,
             border_width: 0,
             resizable: true,
@@ -17,7 +21,7 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
     }
 
     construct {
-        layout = new Replay.Layouts.EmulatorLayout (this);
+        layout = new Replay.Layouts.EmulatorLayout (this, game_display_name);
         layout.pause_button_clicked.connect (() => {
             pause_button_clicked ();
         });
