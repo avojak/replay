@@ -30,7 +30,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             valign = Gtk.Align.START,
             margin = 8
         };
-        
+
         var badge = new Gtk.Label (null) {
             halign = Gtk.Align.END,
             valign = Gtk.Align.START,

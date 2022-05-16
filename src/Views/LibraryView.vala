@@ -25,7 +25,7 @@ public class Replay.Views.LibraryView : Gtk.Grid {
         library_layout.add_collection (
             _("All Games"),
             "folder-saved-search",
-            ALL_VIEW_NAME, 
+            ALL_VIEW_NAME,
             new Replay.Models.Functions.AllGamesFilterFunction (),
             new Replay.Models.Functions.AlphabeticalSortFunction ()
         );
@@ -55,10 +55,10 @@ public class Replay.Views.LibraryView : Gtk.Grid {
         platforms.sort ((a, b) => { return a.ascii_casecmp (b); });
         foreach (var platform in platforms) {
             library_layout.add_system (
-                platform, 
-                "input-gaming", 
-                "platform:%s".printf (platform), 
-                new Replay.Models.Functions.PlatformFilterFunction (platform), 
+                platform,
+                "input-gaming",
+                "platform:%s".printf (platform),
+                new Replay.Models.Functions.PlatformFilterFunction (platform),
                 new Replay.Models.Functions.AlphabeticalSortFunction ()
             );
         }

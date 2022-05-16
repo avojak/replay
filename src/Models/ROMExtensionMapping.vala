@@ -4,5 +4,5 @@
  */
 
 public class Replay.Models.ROMExtensionMapping : GLib.Object {
-    
+
 }

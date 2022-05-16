@@ -79,7 +79,7 @@ public class Replay.Models.Functions.RecentsFilterFunction : Replay.Models.Funct
  * Filter function for showing unplayed games.
  */
 public class Replay.Models.Functions.UnplayedFilterFunction : Replay.Models.Functions.LibraryItemFilterFunction {
-    
+
     public UnplayedFilterFunction () {
         Object (
             placeholder_title: _("No Unplayed Games"),
@@ -100,7 +100,7 @@ public class Replay.Models.Functions.UnplayedFilterFunction : Replay.Models.Func
 public class Replay.Models.Functions.SearchResultsFilterFunction : Replay.Models.Functions.LibraryItemFilterFunction {
 
     public string search_text { get; construct; }
-    
+
     public SearchResultsFilterFunction (string search_text) {
         Object (
             search_text: search_text,
