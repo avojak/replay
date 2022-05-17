@@ -26,11 +26,16 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
         header_bar.resume_button_clicked.connect (() => {
             resume_button_clicked ();
         });
+        header_bar.video_filter_changed.connect ((filter) => {
+            view.set_filter (filter);
+        });
 
         view = new Retro.CoreView () {
             expand = true
         };
-        view.set_filter (Replay.Models.VideoFilterMapping.from_short_name (Replay.Application.settings.emu_default_filter));
+        var video_filter = Replay.Models.VideoFilterMapping.from_short_name (Replay.Application.settings.emu_default_filter);
+        view.set_filter (video_filter);
+        header_bar.set_filter_mode (video_filter);
         // Prevent loss of focus when using arrow keys within a game
         view.key_press_event.connect (() => {
             return true;

@@ -8,6 +8,10 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
     private Gtk.Button pause_button;
     private Gtk.Button resume_button;
 
+    private Granite.Widgets.ModeButton video_filter_button;
+
+    private Gee.Map<int, Retro.VideoFilter> video_filter_button_map;
+
     public EmulatorHeaderBar (string title) {
         Object (
             title: title,
@@ -40,27 +44,23 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
             valign = Gtk.Align.CENTER
         };
 
-        var video_filter_button = new Granite.Widgets.ModeButton () {
+        video_filter_button_map = new Gee.HashMap<int, Retro.VideoFilter> ();
+        video_filter_button_map.set (0, Retro.VideoFilter.SHARP);
+        video_filter_button_map.set (1, Retro.VideoFilter.SMOOTH);
+        video_filter_button_map.set (2, Retro.VideoFilter.CRT);
+
+        video_filter_button = new Granite.Widgets.ModeButton () {
             margin = 12
         };
         video_filter_button.mode_added.connect ((index, widget) => {
-            switch (index) {
-                case 0:
-                    widget.set_tooltip_markup (Replay.Models.VideoFilterMapping.get_descriptions ().get (Retro.VideoFilter.SHARP));
-                    break;
-                case 1:
-                    widget.set_tooltip_markup (Replay.Models.VideoFilterMapping.get_descriptions ().get (Retro.VideoFilter.SMOOTH));
-                    break;
-                case 2:
-                    widget.set_tooltip_markup (Replay.Models.VideoFilterMapping.get_descriptions ().get (Retro.VideoFilter.CRT));
-                    break;
-                default:
-                    assert_not_reached ();
-            }
+            widget.set_tooltip_markup (Replay.Models.VideoFilterMapping.get_descriptions ().get (video_filter_button_map.get (index)));
         });
-        video_filter_button.append_text (Replay.Models.VideoFilterMapping.get_display_strings ().get (Retro.VideoFilter.SHARP));
-        video_filter_button.append_text (Replay.Models.VideoFilterMapping.get_display_strings ().get (Retro.VideoFilter.SMOOTH));
-        video_filter_button.append_text (Replay.Models.VideoFilterMapping.get_display_strings ().get (Retro.VideoFilter.CRT));
+        video_filter_button.mode_changed.connect (() => {
+            video_filter_changed (video_filter_button_map.get (video_filter_button.selected));
+        });
+        foreach (var entry in video_filter_button_map.entries) {
+            video_filter_button.append_text (Replay.Models.VideoFilterMapping.get_display_strings ().get (entry.value));
+        }
 
         // TODO: Add item for core speed
         // TODO: Add item for snapshot savestate?
@@ -115,7 +115,17 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         resume_button.visible = visible;
     }
 
+    public void set_filter_mode (Retro.VideoFilter filter) {
+        foreach (var entry in video_filter_button_map.entries) {
+            if (filter == entry.value) {
+                video_filter_button.set_active (entry.key);
+                return;
+            }
+        }
+    }
+
     public signal void pause_button_clicked ();
     public signal void resume_button_clicked ();
+    public signal void video_filter_changed (Retro.VideoFilter filter);
 
 }
