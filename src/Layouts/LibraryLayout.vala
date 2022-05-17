@@ -54,8 +54,8 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
                 return false;
             });
         });
-        game_grid.item_run.connect ((library_item) => {
-            game_selected (library_item.game);
+        game_grid.item_run.connect ((library_item, core_name) => {
+            game_selected (library_item.game, core_name);
             Idle.add (() => {
                 library_item.set_played (true);
                 invalidate_sort ();
@@ -102,7 +102,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         //  alert_view.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
         detail_view = new Replay.Views.GameDetailView ();
-        detail_view.play_button_clicked.connect ((library_item) => {
+        detail_view.play_button_clicked.connect ((library_item, core_name) => {
             Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, true);
             Idle.add (() => {
                 //  invalidate_filter ();
@@ -110,7 +110,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
                 update_side_panel_badges ();
                 return false;
             });
-            game_selected (library_item.game);
+            game_selected (library_item.game, core_name);
         });
         detail_view.item_added_to_favorites.connect ((library_item) => {
             Replay.Core.Client.get_default ().game_library.set_game_favorite (library_item.game, true);
@@ -388,6 +388,6 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         side_panel.visible = !side_panel.visible;
     }
 
-    public signal void game_selected (Replay.Models.Game game);
+    public signal void game_selected (Replay.Models.Game game, string? core_name);
 
 }

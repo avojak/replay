@@ -172,6 +172,13 @@ public class Replay.Services.LibretroCoreRepository : GLib.Object {
         return extensions;
     }
 
+    public Replay.Models.LibretroCore? get_core_by_name (string core_name) {
+        if (!known_cores.has_key (core_name)) {
+            return null;
+        }
+        return known_cores.get (core_name);
+    }
+
     //  public signal void core_found (Replay.Models.LibretroCore core);
 
 }

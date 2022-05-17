@@ -15,7 +15,7 @@ public class Replay.Services.EmulatorManager : GLib.Object {
         );
     }
 
-    public void launch_game (Replay.Models.Game game) {
+    public void launch_game (Replay.Models.Game game, Replay.Models.LibretroCore? core) {
         // TODO: Validate rom_uri
         var emulator = new Replay.Services.Emulator (application);
         emulator.started.connect (on_emulator_started);
@@ -23,7 +23,7 @@ public class Replay.Services.EmulatorManager : GLib.Object {
         emulator.crashed.connect (on_emulator_crashed);
         emulator.load_game (game);
         emulator.open ();
-        emulator.start ();
+        emulator.start (core);
         emulators.add (emulator);
     }
 

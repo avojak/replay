@@ -63,8 +63,8 @@ public class Replay.Views.LibraryView : Gtk.Grid {
             );
         }
 
-        library_layout.game_selected.connect ((game) => {
-            game_selected (game);
+        library_layout.game_selected.connect ((game, core_name) => {
+            game_selected (game, core_name);
         });
 
         attach (library_layout, 0, 0);
@@ -91,6 +91,6 @@ public class Replay.Views.LibraryView : Gtk.Grid {
         library_layout.expand_systems_category ();
     }
 
-    public signal void game_selected (Replay.Models.Game game);
+    public signal void game_selected (Replay.Models.Game game, string? core_name);
 
 }

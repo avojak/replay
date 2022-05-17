@@ -242,10 +242,10 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
     private Gtk.Menu create_run_with_menu () {
         var menu = new Gtk.Menu ();
         foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores_for_rom (GLib.File.new_for_path (library_item.game.rom_path))) {
-            var item = new Gtk.MenuItem.with_label (_("Play with %s").printf (core.info.core_name));
+            var core_name = core.info.core_name;
+            var item = new Gtk.MenuItem.with_label (_("Play with %s").printf (core_name));
             item.activate.connect (() => {
-                // TODO: Pass specific core
-                play_button_clicked (library_item);
+                play_button_clicked (library_item, core_name);
             });
             menu.add (item);
         }
@@ -253,7 +253,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         return menu;
     }
 
-    public signal void play_button_clicked (Replay.Widgets.LibraryItem library_item);
+    public signal void play_button_clicked (Replay.Widgets.LibraryItem library_item, string? core_name = null);
     public signal void item_added_to_favorites (Replay.Widgets.LibraryItem library_item);
     public signal void item_removed_from_favorites (Replay.Widgets.LibraryItem library_item);
 

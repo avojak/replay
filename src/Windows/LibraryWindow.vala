@@ -137,8 +137,9 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
         view.set_searchbar_visible (visible);
     }
 
-    private void launch_game (Replay.Models.Game game) {
-        Replay.Core.Client.get_default ().emulator_manager.launch_game (game);
+    private void launch_game (Replay.Models.Game game, string? specified_core_name) {
+        Replay.Models.LibretroCore? specified_core = specified_core_name == null ? null : Replay.Core.Client.get_default ().core_repository.get_core_by_name (specified_core_name);
+        Replay.Core.Client.get_default ().emulator_manager.launch_game (game, specified_core);
         Replay.Core.Client.get_default ().game_library.update_last_run_date (game);
     }
 

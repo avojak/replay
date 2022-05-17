@@ -97,10 +97,10 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             var run_with_item = create_image_menu_item (_("Play with"), "");
             var run_with_submenu = new Gtk.Menu ();
             foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores_for_rom (GLib.File.new_for_path (library_item.game.rom_path))) {
-                var item = new Gtk.MenuItem.with_label (core.info.core_name);
+                var core_name = core.info.core_name;
+                var item = new Gtk.MenuItem.with_label (core_name);
                 item.activate.connect (() => {
-                    // TODO: Pass specific core
-                    on_item_run_selected (library_item);
+                    on_item_run_selected (library_item, core_name);
                 });
                 run_with_submenu.add (item);
             }
@@ -188,9 +188,9 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         item_selected (child as Replay.Widgets.LibraryItem);
     }
 
-    private void on_item_run_selected (Gtk.FlowBoxChild child) {
+    private void on_item_run_selected (Gtk.FlowBoxChild child, string? core_name = null) {
         unowned var library_item = child as Replay.Widgets.LibraryItem;
-        item_run (library_item);
+        item_run (library_item, core_name);
         item_marked_played (library_item);
     }
 
@@ -278,7 +278,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
     //  public delegate bool FilterFunction (Replay.Widgets.LibraryItem library_item);
 
     public signal void item_selected (Replay.Widgets.LibraryItem library_item);
-    public signal void item_run (Replay.Widgets.LibraryItem library_item);
+    public signal void item_run (Replay.Widgets.LibraryItem library_item, string? core_name = null);
     public signal void item_added_to_favorites (Replay.Widgets.LibraryItem library_item);
     public signal void item_removed_from_favorites (Replay.Widgets.LibraryItem library_item);
     public signal void item_marked_played (Replay.Widgets.LibraryItem library_item);
