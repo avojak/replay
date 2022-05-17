@@ -8,6 +8,13 @@
   <summary>Multi-System Emulator</summary>
   <description>
     <p>Replay the classics!</p>
+    <ul>
+      <li>Play virtually any classic video game</li>
+      <li>Built-in database will automatically display information for over 200,000 games</li>
+      <li>Automatically download box artwork</li>
+      <li>Pause your game automatically if you switch windows</li>
+      <li>Install additional Libretro cores onto your system to support even more games</li>
+    </ul>
   </description>
   <provides>
     <binary>@appid@</binary>
