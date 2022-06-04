@@ -239,7 +239,7 @@ public class Replay.Services.SQLClient : GLib.Object {
         } else {
             statement.bind_int64 (4, game.last_played.to_unix ());
         }
-        
+
         string err_msg;
         int ec = database.exec (statement.expanded_sql (), null, out err_msg);
         if (ec != Sqlite.OK) {

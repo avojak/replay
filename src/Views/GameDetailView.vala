@@ -31,7 +31,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
 
     construct {
         // TODO: This entire view should be in a scrolled window
-        
+
         var header_grid = new Gtk.Grid () {
             margin_bottom = 10,
             column_spacing = 10,
@@ -314,13 +314,13 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
                 if (library_item.game == game || game.libretro_details == null) {
                     continue;
                 }
-                
+
                 string? other_genre = game.libretro_details.genre_name;
                 if ((this_genre != null) && (other_genre != null) && (this_genre == other_genre)) {
                     genre_games.set_visible (true);
                     genre_games_grid.add_game (game);
                 }
-                
+
                 string? other_franchise = game.libretro_details.franchise_name;
                 if ((this_franchise != null) && (other_franchise != null) && (this_franchise == other_franchise)) {
                     franchise_games.set_visible (true);
