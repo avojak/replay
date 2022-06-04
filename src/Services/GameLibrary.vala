@@ -10,7 +10,7 @@ public class Replay.Services.GameLibrary : GLib.Object {
         return instance.once (() => { return new Replay.Services.GameLibrary (); });
     }
 
-    public Replay.Services.SQLClient sql_client { get; set; }
+    //  public Replay.Services.SQLClient sql_client { get; set; }
 
     // ROM path to game model mapping
     private Gee.Map<string, Replay.Models.Game> known_games = new Gee.HashMap<string, Replay.Models.Game> ();
@@ -18,6 +18,9 @@ public class Replay.Services.GameLibrary : GLib.Object {
     private GameLibrary () {
     }
 
+    /**
+     * Set the games in the library after scanning sources.
+     */
     public void set_games (Gee.List<Replay.Models.Game> games) {
         known_games.clear ();
         foreach (var game in games) {
@@ -38,7 +41,8 @@ public class Replay.Services.GameLibrary : GLib.Object {
                 if (!played) {
                     entry.value.last_played = null;
                 }
-                // TODO: Persist this change
+                // Persist the update
+                Replay.Core.Client.get_default ().sql_client.update_game (entry.value);
                 return;
             }
         }
@@ -48,7 +52,8 @@ public class Replay.Services.GameLibrary : GLib.Object {
         foreach (var entry in known_games.entries) {
             if (entry.value == game) {
                 entry.value.is_favorite = favorite;
-                // TODO: Persist this change
+                // Persist the update
+                Replay.Core.Client.get_default ().sql_client.update_game (entry.value);
                 return;
             }
         }
@@ -58,7 +63,8 @@ public class Replay.Services.GameLibrary : GLib.Object {
         foreach (var entry in known_games.entries) {
             if (entry.value == game) {
                 entry.value.last_played = new GLib.DateTime.now_utc ();
-                // TODO: Persist this change
+                // Persist the update
+                Replay.Core.Client.get_default ().sql_client.update_game (entry.value);
                 return;
             }
         }

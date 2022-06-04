@@ -102,6 +102,15 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         //  alert_view.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
         detail_view = new Replay.Views.GameDetailView ();
+        detail_view.item_selected.connect ((library_item) => {
+            Idle.add (() => {
+                //  set_searchbar_visible (false);
+                detail_view.set_library_item (library_item);
+                stack.set_visible_child_full ("detail-view", Gtk.StackTransitionType.SLIDE_LEFT);
+                header_bar.set_return_button_visible (true);
+                return false;
+            });
+        });
         detail_view.play_button_clicked.connect ((library_item, core_name) => {
             Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, true);
             Idle.add (() => {
@@ -115,6 +124,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         detail_view.item_added_to_favorites.connect ((library_item) => {
             Replay.Core.Client.get_default ().game_library.set_game_favorite (library_item.game, true);
             Idle.add (() => {
+                //  invalidate_filter ();
                 update_side_panel_badges ();
                 return false;
             });
@@ -122,6 +132,25 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         detail_view.item_removed_from_favorites.connect ((library_item) => {
             Replay.Core.Client.get_default ().game_library.set_game_favorite (library_item.game, false);
             Idle.add (() => {
+                //  invalidate_filter ();
+                update_side_panel_badges ();
+                return false;
+            });
+        });
+        detail_view.item_marked_played.connect ((library_item) => {
+            Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, true);
+            Idle.add (() => {
+                library_item.set_played (true);
+                //  invalidate_filter ();
+                update_side_panel_badges ();
+                return false;
+            });
+        });
+        detail_view.item_marked_unplayed.connect ((library_item) => {
+            Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, false);
+            Idle.add (() => {
+                library_item.set_played (false);
+                //  invalidate_filter ();
                 update_side_panel_badges ();
                 return false;
             });

@@ -15,6 +15,7 @@ public class Replay.Core.Client : GLib.Object {
     public Replay.Services.LibretroGameArtRepository game_art_repository;
     public Replay.Services.GameLibrary game_library;
     public Replay.Services.EmulatorManager emulator_manager;
+    public Replay.Services.SQLClient sql_client;
 
     private Gee.List<Replay.Core.LibretroCoreSource> core_sources = new Gee.ArrayList<Replay.Core.LibretroCoreSource> ();
     private Gee.List<Replay.Core.LibrarySource> library_sources = new Gee.ArrayList<Replay.Core.LibrarySource> ();
@@ -25,6 +26,7 @@ public class Replay.Core.Client : GLib.Object {
         game_art_repository = Replay.Services.LibretroGameArtRepository.get_default ();
         game_library = Replay.Services.GameLibrary.get_default ();
         emulator_manager = new Replay.Services.EmulatorManager (Replay.Application.get_instance ());
+        sql_client = Replay.Services.SQLClient.get_default ();
 
         // Add the default sources for bundled cores and ROMs
         core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.BUNDLED_LIBRETRO_CORE_DIR));
@@ -92,6 +94,7 @@ public class Replay.Core.Client : GLib.Object {
             foreach (var library_source in library_sources) {
                 games.add_all (library_source.scan ());
             }
+            // Lookup the game in the Libretro database
             foreach (var game in games) {
                 var game_details = game_repository.lookup_for_md5 (game.rom_md5);
                 if (game_details.size == 0) {
@@ -104,6 +107,18 @@ public class Replay.Core.Client : GLib.Object {
                 game.libretro_details = game_details.get (0);
                 if (game.libretro_details.display_name != null) {
                     game.display_name = game.libretro_details.display_name;
+                }
+            }
+            // Lookup the game in the Replay database
+            foreach (var game in games) {
+                // If the game is already known in the database, fetch the metadata. If not, add it.
+                Replay.Models.Game.MetadataDAO? metadata = sql_client.get_game (game.rom_md5);
+                if (metadata != null) {
+                    game.is_favorite = metadata.is_favorite;
+                    game.is_played = metadata.is_played;
+                    game.last_played = metadata.last_played == null ? null : new GLib.DateTime.from_unix_local (metadata.last_played);
+                } else {
+                    sql_client.insert_game (game);
                 }
             }
             // TODO: Maybe do this somewhere else since it could take an even longer time?

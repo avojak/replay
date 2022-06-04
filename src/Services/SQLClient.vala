@@ -58,6 +58,13 @@ public class Replay.Services.SQLClient : GLib.Object {
                 "display_version" TEXT,
                 "description" TEXT
             );
+            CREATE TABLE IF NOT EXISTS "games" (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "rom_md5" TEXT NOT NULL,
+                "is_favorite" BOOL NOT NULL,
+                "is_played" BOOL NOT NULL,
+                "last_played" INTEGER
+            );
             """;
         database.exec (sql);
 
@@ -210,6 +217,119 @@ public class Replay.Services.SQLClient : GLib.Object {
         }
         core.info = core_info;
         return core;
+    }
+
+    public void insert_game (Replay.Models.Game game) {
+        var sql = """
+            INSERT INTO games (rom_md5, is_favorite, is_played, last_played) 
+            VALUES ($ROM_MD5, $IS_FAVORITE, $IS_PLAYED, $LAST_PLAYED);
+            """;
+
+        Sqlite.Statement statement;
+        if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
+            log_database_error (database.errcode (), database.errmsg ());
+            return;
+        }
+
+        statement.bind_text (1, game.rom_md5);
+        statement.bind_int (2, bool_to_int (game.is_favorite));
+        statement.bind_int (3, bool_to_int (game.is_played));
+        if (game.last_played == null) {
+            statement.bind_null (4);
+        } else {
+            statement.bind_int64 (4, game.last_played.to_unix ());
+        }
+        
+        string err_msg;
+        int ec = database.exec (statement.expanded_sql (), null, out err_msg);
+        if (ec != Sqlite.OK) {
+            log_database_error (ec, err_msg);
+            debug ("SQL statement: %s", statement.expanded_sql ());
+        }
+        statement.reset ();
+    }
+
+    public Replay.Models.Game.MetadataDAO? get_game (string rom_md5) {
+        var sql = "SELECT * FROM games WHERE rom_md5 = $ROM_MD5;";
+        Sqlite.Statement statement;
+        if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
+            log_database_error (database.errcode (), database.errmsg ());
+            return null;
+        }
+        statement.bind_text (1, rom_md5);
+
+        if (statement.step () != Sqlite.ROW) {
+            return null;
+        }
+        var metadata = parse_game_row (statement);
+        statement.reset ();
+        return metadata;
+    }
+
+    public void update_game (Replay.Models.Game game) {
+        var sql = """
+            UPDATE games
+            SET is_favorite = $IS_FAVORITE, is_played = $IS_PLAYED, last_played = $LAST_PLAYED
+            WHERE rom_md5 = $ROM_MD5;
+            """;
+
+        Sqlite.Statement statement;
+        if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
+            log_database_error (database.errcode (), database.errmsg ());
+            return;
+        }
+        statement.bind_int (1, bool_to_int (game.is_favorite));
+        statement.bind_int (2, bool_to_int (game.is_played));
+        if (game.last_played == null) {
+            statement.bind_null (3);
+        } else {
+            statement.bind_int64 (3, game.last_played.to_unix ());
+        }
+        statement.bind_text (4, game.rom_md5);
+
+        string err_msg;
+        int ec = database.exec (statement.expanded_sql (), null, out err_msg);
+        if (ec != Sqlite.OK) {
+            log_database_error (ec, err_msg);
+            debug ("SQL statement: %s", statement.expanded_sql ());
+        }
+        statement.reset ();
+    }
+
+    public Replay.Models.Game.MetadataDAO parse_game_row (Sqlite.Statement statement) {
+        var num_columns = statement.column_count ();
+        var metadata = new Replay.Models.Game.MetadataDAO ();
+        for (int i = 0; i < num_columns; i++) {
+            switch (statement.column_name (i)) {
+                case "rom_md5":
+                    metadata.rom_md5 = statement.column_text (i);
+                    break;
+                case "is_favorite":
+                    metadata.is_favorite = int_to_bool (statement.column_int (i));
+                    break;
+                case "is_played":
+                    metadata.is_played = int_to_bool (statement.column_int (i));
+                    break;
+                case "last_played":
+                    if (statement.column_type (i) == Sqlite.NULL) {
+                        metadata.last_played = null;
+                    } else {
+                        metadata.last_played = statement.column_int64 (i);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return metadata;
+    }
+
+    private static int bool_to_int (bool val) {
+        return val ? 1 : 0;
+    }
+
+    private static bool int_to_bool (int val) {
+        return val == 1;
     }
 
     private static void log_database_error (int errcode, string errmsg) {

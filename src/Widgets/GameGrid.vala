@@ -275,6 +275,12 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         return true;
     }
 
+    public void clear () {
+        foreach (var child in flow_box.get_children ()) {
+            flow_box.remove (child);
+        }
+    }
+
     //  public delegate bool FilterFunction (Replay.Widgets.LibraryItem library_item);
 
     public signal void item_selected (Replay.Widgets.LibraryItem library_item);

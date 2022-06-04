@@ -5,6 +5,14 @@
 
 public class Replay.Models.Game : GLib.Object {
 
+    public class MetadataDAO : GLib.Object {
+        public int id { get; set; }
+        public string rom_md5 { get; set; }
+        public bool is_favorite { get; set; }
+        public bool is_played { get; set; }
+        public int64? last_played { get; set; }
+    }
+
     public int id { get; set; }
     public string rom_path { get; set; }
     public string display_name { get; set; }

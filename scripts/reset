@@ -13,12 +13,22 @@ APP_ID=com.github.avojak.replay
 GSETTINGS_PATH=$APP_ID
 
 print_setting () {
-    echo -e "  $1 = $(flatpak run --command=gsettings $APP_ID get $GSETTINGS_PATH $1)"
+    echo -e "  \u2714 $1 = $(flatpak run --command=gsettings $APP_ID get $GSETTINGS_PATH $1)"
 }
 
 set_setting () {
     flatpak run --command=gsettings $APP_ID set $GSETTINGS_PATH $1 "$2"
     print_setting $1
+}
+
+clear_sqlite_table () {
+    sqlite3 $DATABASE_PATH "DROP TABLE IF EXISTS $1;"
+    echo -e "  \u2714 Cleared $1"
+}
+
+delete_files () {
+    flatpak run --command=rm $APP_ID -rf $1
+    echo -e "  \u2714 Removed $1"
 }
 
 echo
@@ -43,7 +53,14 @@ set_setting handle-window-focus-change true
 echo
 echo "Deleting art cache…"
 
-flatpak run --command=rm $APP_ID -rf /var/config/libretro_art
+delete_files /var/config/libretro_art
+
+echo
+echo "Resetting database…"
+
+DATABASE_PATH=~/.var/app/$APP_ID/config/$APP_ID/replay.db
+
+clear_sqlite_table games
 
 echo
 echo -e "\033[1;32mDone\033[0m"
