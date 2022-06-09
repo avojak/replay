@@ -1,35 +1,47 @@
-<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0)">
-<path d="M2.25 1.5C2.25 0.947715 2.69772 0.5 3.25 0.5H13C13.5523 0.5 14 0.947715 14 1.5V12.25C14 13.9069 12.6569 15.25 11 15.25H3.25C2.69772 15.25 2.25 14.8023 2.25 14.25V1.5Z" fill="url(#paint0_linear)"/>
-<path d="M2.5 2.25C2.5 1.42157 3.17157 0.75 4 0.75H12.25C13.0784 0.75 13.75 1.42157 13.75 2.25V11.5C13.75 13.433 12.183 15 10.25 15H4C3.17157 15 2.5 14.3284 2.5 13.5V2.25Z" stroke="#AD5F00"/>
-<path d="M3.16669 1.66666C3.16669 1.39051 3.39055 1.16666 3.66669 1.16666H12.3334C12.6095 1.16666 12.8334 1.39051 12.8334 1.66666V12.3333C12.8334 13.714 11.7141 14.8333 10.3334 14.8333H3.66669C3.39054 14.8333 3.16669 14.6095 3.16669 14.3333V1.66666Z" stroke="url(#paint1_linear)"/>
-<path d="M7.33331 10.0601H6.06059V11.3333H4.60604V10.0601H3.33331V8.60663H4.60604V7.33334H6.06059V8.60663H7.33331V10.0601Z" fill="url(#paint2_linear)"/>
-<path opacity="0.1" d="M5.5 9.25C5.5 9.11193 5.38807 9 5.25 9C5.11193 9 5 9.11193 5 9.25C5 9.38807 5.11193 9.5 5.25 9.5C5.38807 9.5 5.5 9.38807 5.5 9.25Z" fill="url(#paint3_linear)"/>
-<circle cx="9.5" cy="10.5" r="1.5" fill="#D93C40"/>
-<circle cx="12.5" cy="9.5" r="1.5" fill="#D93C40"/>
-<rect x="4" y="2" width="8" height="4" fill="#8CC449"/>
-</g>
-<defs>
-<linearGradient id="paint0_linear" x1="8.125" y1="0.5" x2="8.125" y2="15.25" gradientUnits="userSpaceOnUse">
-<stop stop-color="#C4C4C4"/>
-<stop offset="0.0001" stop-color="#FFF394"/>
-<stop offset="1" stop-color="#F9C440"/>
-</linearGradient>
-<linearGradient id="paint1_linear" x1="8.00002" y1="0.666656" x2="8.00002" y2="15.3333" gradientUnits="userSpaceOnUse">
-<stop stop-color="white"/>
-<stop offset="0.9999" stop-color="white" stop-opacity="0.302083"/>
-<stop offset="1" stop-color="white" stop-opacity="0"/>
-</linearGradient>
-<linearGradient id="paint2_linear" x1="5.33331" y1="10.9731" x2="5.33331" y2="7.69363" gradientUnits="userSpaceOnUse">
-<stop stop-color="#4D4D4D"/>
-<stop offset="1" stop-color="#252525"/>
-</linearGradient>
-<linearGradient id="paint3_linear" x1="5.25" y1="9.5" x2="5.25" y2="9" gradientUnits="userSpaceOnUse">
-<stop stop-color="white"/>
-<stop offset="1" stop-color="white" stop-opacity="0"/>
-</linearGradient>
-<clipPath id="clip0">
-<rect width="16" height="16" fill="white"/>
-</clipPath>
-</defs>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>16x16/com.github.avojak.replay</title>
+    <defs>
+        <radialGradient cx="50.0002688%" cy="82.0000154%" fx="50.0002688%" fy="82.0000154%" r="119.845587%" gradientTransform="translate(0.500003,0.820000),scale(0.785714,1.000000),rotate(90.000000),translate(-0.500003,-0.820000)" id="radialGradient-1">
+            <stop stop-color="#F4F4F4" offset="0%"></stop>
+            <stop stop-color="#D0D0D0" offset="100%"></stop>
+        </radialGradient>
+        <linearGradient x1="49.9999794%" y1="-1.35135823%" x2="49.9999794%" y2="101.351374%" id="linearGradient-2">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.23529412" offset="6.316455%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.15686275" offset="95.056331%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.39215687" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="74.630289%" y1="1.74963098%" x2="74.630289%" y2="98.2502786%" id="linearGradient-3">
+            <stop stop-color="#E7C591" offset="0%"></stop>
+            <stop stop-color="#CFA25E" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#FFFFFF" stop-opacity="0.353802448" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.15" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-5" x="2" y="8.86161423" width="12" height="6"></rect>
+    </defs>
+    <g id="16x16/com.github.avojak.replay" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="input-gaming-3" transform="translate(2.267855, 2.000000)">
+            <rect id="rect5505" fill="url(#radialGradient-1)" fill-rule="nonzero" transform="translate(5.625000, 4.500000) scale(-1, 1) rotate(-180.000000) translate(-5.625000, -4.500000) " x="0.375" y="0.375000225" width="10.5" height="8.25" rx="0.5"></rect>
+            <rect id="rect5505-21" stroke="#000000" stroke-width="0.99999988" opacity="0.4" stroke-linecap="round" stroke-linejoin="round" x="0" y="0" width="11.25" height="9" rx="1"></rect>
+            <rect id="rect4439" fill="#FFFFFF" fill-rule="nonzero" opacity="0.3" x="1.125" y="2.64942173" width="9" height="6" rx="1"></rect>
+            <rect id="rect6741-2" stroke="url(#linearGradient-2)" stroke-linecap="round" stroke-linejoin="round" x="0.75" y="0.7500015" width="9.75" height="7.5" rx="0.5"></rect>
+            <rect id="rect4263" fill="#575757" fill-rule="nonzero" x="1.125" y="1.89942173" width="9" height="6" rx="0.99999988"></rect>
+            <rect id="rect4265" stroke="#000000" opacity="0.1" stroke-linecap="round" x="1.49999985" y="2.27442173" width="8.25" height="5.25" rx="0.5"></rect>
+            <line x1="1.125" y1="2.27442173" x2="10.125" y2="2.27442173" id="path4441" stroke="#000000" opacity="0.2"></line>
+            <g id="g6799" transform="translate(6.375000, 4.149422)" fill-rule="nonzero">
+                <rect id="rect6623" fill="#C3C3C3" x="0" y="0" width="3" height="3" rx="0.33333334"></rect>
+                <circle id="circle6625" stroke="#BC0000" stroke-width="0.5" fill="#FF0000" stroke-linecap="round" transform="translate(1.500000, 1.500000) scale(-1, 1) rotate(-90.000000) translate(-1.500000, -1.500000) " cx="1.5" cy="1.5" r="1"></circle>
+            </g>
+            <polygon id="rect6879" stroke="#A4A4A4" fill="#1A1A1A" fill-rule="nonzero" stroke-linecap="round" stroke-linejoin="round" points="3.375 4.14942173 3.375 4.89942173 2.625 4.89942173 2.625 5.64942173 3.375 5.64942173 3.375 6.39942173 4.125 6.39942173 4.125 5.64942173 4.875 5.64942173 4.875 4.89942173 4.125 4.89942173 4.125 4.14942173"></polygon>
+            <polygon id="path6884" fill="#272727" fill-rule="nonzero" points="3.375 4.14942173 3.375 4.89942173 2.625 4.89942173 2.625 5.64942173 3.375 5.64942173 3.375 6.39942173 4.125 6.39942173 4.125 5.64942173 4.875 5.64942173 4.875 4.89942173 4.125 4.89942173 4.125 4.14942173"></polygon>
+        </g>
+        <g id="Rectangle" fill-rule="nonzero">
+            <use fill="url(#linearGradient-3)" xlink:href="#path-5"></use>
+            <rect stroke-opacity="0.65" stroke="#804B00" stroke-width="1" x="1.5" y="8.36161423" width="13" height="7"></rect>
+            <rect stroke="url(#linearGradient-4)" stroke-width="1" stroke-linejoin="square" x="2.5" y="9.36161423" width="11" height="5"></rect>
+        </g>
+    </g>
 </svg>
