@@ -123,7 +123,10 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         //  child = event_box;
         child = grid;
 
-        set_played (game.is_played);
+        //  set_played (game.is_played);
+
+        update_played_badge ();
+        game.notify["is-played"].connect (update_played_badge);
 
         //  enter_notify_event.connect (() => {
         //      debug ("enter");
@@ -164,15 +167,8 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         };
     }
 
-    public void set_played (bool played) {
-        // Only change the revealer if the desired state is different from the current
-        // TODO: Can we instead listen for a change to the property of the game?
-        if (played == unplayed_badge.child_revealed) {
-            unplayed_badge.set_reveal_child (!played);
-        }
-    }
-
-    public void set_favorite (bool favorite) {
+    private void update_played_badge () {
+        unplayed_badge.set_reveal_child (!game.is_played);
     }
 
     //  public void set_visible (bool visible) {

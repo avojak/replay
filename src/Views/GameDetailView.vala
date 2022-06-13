@@ -5,27 +5,15 @@
 
 public class Replay.Views.GameDetailView : Gtk.Grid {
 
-    private unowned Replay.Widgets.LibraryItem? library_item;
+    public unowned Replay.Widgets.LibraryItem library_item { get; construct; }
 
-    private Gtk.Image header_image;
-    private Gtk.Label header_title_label;
-    private Gtk.Label region_label;
-    private Gtk.Label genre_year_publisher_label;
-    private Gtk.Label platform_label;
-    private Gtk.MenuButton more_button;
     private Gtk.Image favorite_image;
 
-    private Gtk.Grid genre_games;
-    private Gtk.Grid franchise_games;
-    private Granite.HeaderLabel genre_games_label;
-    private Granite.HeaderLabel franchise_games_label;
-    private Replay.Widgets.GameGrid genre_games_grid;
-    private Replay.Widgets.GameGrid franchise_games_grid;
-
-    public GameDetailView () {
+    public GameDetailView.for_library_item (Replay.Widgets.LibraryItem library_item) {
         Object (
             expand: true,
-            margin: 30
+            margin: 30,
+            library_item: library_item
         );
     }
 
@@ -40,12 +28,10 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
             vexpand = false
         };
 
-        header_image = new Gtk.Image () {
-            gicon = new ThemedIcon ("application-default-icon"),
-            pixel_size = 128
-        };
+        var header_image = get_image ();
 
-        header_title_label = new Gtk.Label ("") {
+        var header_title_label = new Gtk.Label (library_item.game.display_name) {
+            tooltip_text = library_item.game.display_name,
             valign = Gtk.Align.END,
             halign = Gtk.Align.START,
             hexpand = true,
@@ -60,7 +46,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         //  };
         //  region_label.get_style_context ().add_class ("region-label");
 
-        genre_year_publisher_label = new Gtk.Label ("") {
+        var genre_year_publisher_label = new Gtk.Label (library_item.game.libretro_details == null ? "" : build_genre_year_publisher_text ()) {
             valign = Gtk.Align.START,
             halign = Gtk.Align.START,
             hexpand = true,
@@ -69,7 +55,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         };
         genre_year_publisher_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
 
-        platform_label = new Gtk.Label ("") {
+        var platform_label = new Gtk.Label (library_item.game.libretro_details == null ? "" : library_item.game.libretro_details.platform_name) {
             valign = Gtk.Align.START,
             halign = Gtk.Align.START,
             hexpand = true,
@@ -90,10 +76,11 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
             play_button_clicked (library_item);
         });
 
-        more_button = new Gtk.MenuButton () {
+        var more_button = new Gtk.MenuButton () {
             image = new Gtk.Image.from_icon_name ("view-more", Gtk.IconSize.SMALL_TOOLBAR),
             tooltip_text = _("Choose system…")
         };
+        more_button.popup = create_run_with_menu ();
 
         var play_button_grid = new Gtk.Grid () {
             valign = Gtk.Align.CENTER,
@@ -156,14 +143,15 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
             margin_start = 8
         }, 1, 0);
 
-        franchise_games = new Gtk.Grid () {
+        string? franchise = library_item.game.libretro_details == null ? null : library_item.game.libretro_details.franchise_name;
+        var franchise_games = new Gtk.Grid () {
             hexpand = true,
             column_homogeneous = false
         };
-        franchise_games_label = new Granite.HeaderLabel ("") {
+        var franchise_games_label = new Granite.HeaderLabel (franchise == null ? "" : _("Other Games in the %s Franchise").printf (franchise)) {
             hexpand = false
         };
-        franchise_games_grid = new Replay.Widgets.GameGrid ();
+        var franchise_games_grid = new Replay.Widgets.GameGrid ();
         franchise_games.attach (franchise_games_label, 0, 0);
         franchise_games.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
             hexpand = true,
@@ -173,14 +161,15 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         franchise_games.attach (franchise_games_grid, 0, 1, 2, 1);
         franchise_games.set_visible (false);
 
-        genre_games = new Gtk.Grid () {
+        string? genre = library_item.game.libretro_details == null ? null : library_item.game.libretro_details.genre_name;
+        var genre_games = new Gtk.Grid () {
             hexpand = true,
             column_homogeneous = false
         };
-        genre_games_label = new Granite.HeaderLabel ("") {
+        var genre_games_label = new Granite.HeaderLabel (genre == null ? "" : _("Other %s Games").printf (genre)) {
             hexpand = false
         };
-        genre_games_grid = new Replay.Widgets.GameGrid ();
+        var genre_games_grid = new Replay.Widgets.GameGrid ();
         genre_games.attach (genre_games_label, 0, 0);
         genre_games.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
             hexpand = true,
@@ -210,8 +199,28 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
 
         attach (header_grid, 0, 0);
         attach (body_grid, 0, 1);
+        show_all ();
 
-        // TODO: These events are causing the app to crash!
+        // Populate the franchise and genre game grids
+        franchise_games.set_visible (false);
+        genre_games.set_visible (false);
+        foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
+            if (library_item.game == game || game.libretro_details == null) {
+                continue;
+            }
+            string? other_franchise = game.libretro_details.franchise_name;
+            if ((franchise != null) && (other_franchise != null) && (franchise == other_franchise)) {
+                franchise_games.set_visible (true);
+                franchise_games_grid.add_game (game);
+                // Don't duplicate a game in both the franchise and the genre section, but prefer franchise over genre
+                continue;
+            }
+            string? other_genre = game.libretro_details.genre_name;
+            if ((genre != null) && (other_genre != null) && (genre == other_genre)) {
+                genre_games.set_visible (true);
+                genre_games_grid.add_game (game);
+            }
+        }
 
         // Connect to signals for the franchise games grid
         franchise_games_grid.item_selected.connect ((library_item) => {
@@ -252,122 +261,56 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         genre_games_grid.item_marked_unplayed.connect ((library_item) => {
             item_marked_unplayed (library_item);
         });
+
+        library_item.game.notify["is-favorite"].connect (update_favorite);
+        update_favorite ();
     }
 
-    public void set_library_item (Replay.Widgets.LibraryItem library_item) {
-        this.library_item = library_item;
+    private string build_genre_year_publisher_text () {
+        var genre_year_publisher_data = new Gee.ArrayList<string> ();
+        if (library_item.game.libretro_details.genre_name != null) {
+            genre_year_publisher_data.add (library_item.game.libretro_details.genre_name);
+        }
+        if (library_item.game.libretro_details.release_year != null) {
+            genre_year_publisher_data.add (library_item.game.libretro_details.release_year.to_string ());
+        }
+        if (library_item.game.libretro_details.developer_name != null) {
+            genre_year_publisher_data.add (library_item.game.libretro_details.developer_name);
+        }
+        if (genre_year_publisher_data.size > 0) {
+            return string.joinv (" • ", genre_year_publisher_data.to_array ());
+        } else {
+            return "";
+        }
+    }
 
-        // Update the game image
-        load_image ();
-
-        // Update the header label
-        header_title_label.set_text (library_item.game.display_name);
-        header_title_label.set_tooltip_text (library_item.game.display_name);
-
-        // Update the favorite icon
+    public void update_favorite () {
         favorite_image.icon_name = library_item.game.is_favorite ? "starred" : "non-starred";
         favorite_image.tooltip_text = library_item.game.is_favorite ? _("Remove from favorites") : _("Add to favorites");
-
-        // Update the genre/year/publisher label
-        if (library_item.game.libretro_details == null) {
-            genre_year_publisher_label.set_text ("");
-            platform_label.set_text ("");
-        } else {
-            var genre_year_publisher_data = new Gee.ArrayList<string> ();
-            if (library_item.game.libretro_details.genre_name != null) {
-                genre_year_publisher_data.add (library_item.game.libretro_details.genre_name);
-            }
-            if (library_item.game.libretro_details.release_year != null) {
-                genre_year_publisher_data.add (library_item.game.libretro_details.release_year.to_string ());
-            }
-            if (library_item.game.libretro_details.developer_name != null) {
-                genre_year_publisher_data.add (library_item.game.libretro_details.developer_name);
-            }
-            if (genre_year_publisher_data.size > 0) {
-                genre_year_publisher_label.set_text (string.joinv (" • ", genre_year_publisher_data.to_array ()));
-            } else {
-                genre_year_publisher_label.set_text ("");
-            }
-            platform_label.set_text (library_item.game.libretro_details.platform_name);
-        }
-
-        // Update the "play with" popover menu
-        more_button.popup = create_run_with_menu ();
-
-        // Clear out the game grids and re-populate
-        genre_games_grid.clear ();
-        franchise_games_grid.clear ();
-        genre_games.set_visible (false);
-        franchise_games.set_visible (false);
-        if (library_item.game.libretro_details != null) {
-            string? this_genre = library_item.game.libretro_details.genre_name;
-            string? this_franchise = library_item.game.libretro_details.franchise_name;
-
-            if (this_genre != null) {
-                genre_games_label.set_text (_("Other %s Games").printf (this_genre));
-            }
-            if (this_franchise != null) {
-                franchise_games_label.set_text (_("Other Games in the %s Franchise").printf (this_franchise));
-            }
-
-            foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
-                if (library_item.game == game || game.libretro_details == null) {
-                    continue;
-                }
-
-                string? other_genre = game.libretro_details.genre_name;
-                if ((this_genre != null) && (other_genre != null) && (this_genre == other_genre)) {
-                    genre_games.set_visible (true);
-                    genre_games_grid.add_game (game);
-                }
-
-                string? other_franchise = game.libretro_details.franchise_name;
-                if ((this_franchise != null) && (other_franchise != null) && (this_franchise == other_franchise)) {
-                    franchise_games.set_visible (true);
-                    franchise_games_grid.add_game (game);
-                }
-            }
-        }
-
-        this.queue_draw ();
     }
 
-    private void load_image () {
+    private Gtk.Image get_image () {
         try {
             string? box_art_file_path = Replay.Core.Client.get_default ().game_art_repository.get_box_art_file_path (library_item.game);
             if (box_art_file_path == null) {
-                load_default_image ();
+                return get_default_image ();
             } else {
-                debug (box_art_file_path);
-                header_image.set_from_pixbuf (new Gdk.Pixbuf.from_file_at_size (box_art_file_path, 100, 100));
-                header_image.margin = 12;
-                //  header_image.set_margin_top (16);
-                //  header_image.set_margin_start (16);
-                //  header_image.set_margin_end (16);
-                //  header_image.set_margin_bottom (20);
-                //  new Gtk.Image.from_pixbuf (new Gdk.Pixbuf.from_file_at_size (box_art_file_path, 100, 100)) {
-                //      margin_top = 16,
-                //      margin_start = 16,
-                //      margin_end = 16,
-                //      margin_bottom = 20
-                //  };
+                return new Gtk.Image.from_pixbuf (new Gdk.Pixbuf.from_file_at_size (box_art_file_path, 100, 100)) {
+                    margin = 12
+                };
             }
         } catch (GLib.Error e) {
             warning (e.message);
-            load_default_image ();
+            return get_default_image ();
         }
     }
 
-    private void load_default_image () {
-        header_image.gicon = new ThemedIcon ("application-default-icon");
-        header_image.set_pixel_size (128);
-        header_image.margin = 8;
-        //  header_image.set_margin_bottom (8);
-        //  return new Gtk.Image () {
-        //      gicon = new ThemedIcon ("application-default-icon"),
-        //      pixel_size = 128,
-        //      margin_bottom = 8
-        //  };
+    private Gtk.Image get_default_image () {
+        return new Gtk.Image () {
+            gicon = new ThemedIcon ("application-default-icon"),
+            pixel_size = 128,
+            margin = 8
+        };
     }
 
     private Gtk.Menu create_run_with_menu () {
@@ -384,7 +327,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         return menu;
     }
 
-    public signal void play_button_clicked (Replay.Widgets.LibraryItem library_item, string? core_name = null);
+    public signal void play_button_clicked (Replay.Widgets.LibraryItem? library_item, string? core_name = null);
     public signal void item_selected (Replay.Widgets.LibraryItem library_item);
     public signal void item_added_to_favorites (Replay.Widgets.LibraryItem library_item);
     public signal void item_removed_from_favorites (Replay.Widgets.LibraryItem library_item);

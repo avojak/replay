@@ -54,9 +54,27 @@ public class Replay.Views.LibraryView : Gtk.Grid {
         var platforms = Replay.Core.Client.get_default ().game_repository.get_platforms ();
         platforms.sort ((a, b) => { return a.ascii_casecmp (b); });
         foreach (var platform in platforms) {
+            string icon_name;
+            switch (platform) {
+                //  case "Game Boy":
+                //      icon_name = "game-boy";
+                //      break;
+                //  case "Game Boy Color":
+                //      icon_name = "game-boy-color";
+                //      break;
+                //  case "Game Boy Advance":
+                //      icon_name = "game-boy-advance";
+                //      break;
+                //  case "Mega Drive - Genesis":
+                //      icon_name = "genesis";
+                //      break;
+                default:
+                    icon_name = "input-gaming";
+                    break;
+            }
             library_layout.add_system (
                 platform,
-                "input-gaming",
+                icon_name,
                 "platform:%s".printf (platform),
                 new Replay.Models.Functions.PlatformFilterFunction (platform),
                 new Replay.Models.Functions.AlphabeticalSortFunction ()

@@ -132,6 +132,16 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         return_button_separator.visible = visible;
     }
 
+    public void set_return_button_game (string? game_display_name) {
+        if (game_display_name == null) {
+            return_button.set_label (_("Library"));
+            return_button.set_tooltip_text (null);
+        } else {
+            return_button.set_label (game_display_name.length > 20 ? "%s…".printf (game_display_name.substring (0, 20)) : game_display_name);
+            return_button.set_tooltip_text (game_display_name.length > 20 ? game_display_name : null);
+        }
+    }
+
     public void update_find_button_state (bool new_state) {
         find_button.active = new_state;
         if (new_state) {

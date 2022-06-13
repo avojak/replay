@@ -23,6 +23,24 @@ install_data(
     install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', 'symbolic', 'apps')
 )
 
+# Install the system icons
+# install_data(
+#     join_paths('assets', 'icons', '16x16', 'game-boy.svg'),
+#     install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', 'symbolic', 'apps')
+# )
+# install_data(
+#     join_paths('assets', 'icons', '16x16', 'game-boy-color.svg'),
+#     install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', 'symbolic', 'apps')
+# )
+# install_data(
+#     join_paths('assets', 'icons', '16x16', 'game-boy-advance.svg'),
+#     install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', 'symbolic', 'apps')
+# )
+# install_data(
+#     join_paths('assets', 'icons', '16x16', 'genesis.svg'),
+#     install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', 'symbolic', 'apps')
+# )
+
 # Install the ROM files
 # install_data (
 #     join_paths('roms', 'GBWORDYL.gb'),
