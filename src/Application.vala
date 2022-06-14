@@ -19,7 +19,7 @@ public class Replay.Application : Gtk.Application {
 
     //  private GLib.List<Replay.Windows.LibraryWindow> library_windows;
 
-    private Replay.Windows.LibraryWindow? library_window;
+    public Replay.Windows.LibraryWindow? library_window;
 
     public Application () {
         Object (

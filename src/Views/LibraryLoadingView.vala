@@ -3,22 +3,22 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Replay.Views.LibraryAlertView : Granite.Widgets.AlertView {
+public class Replay.Views.LibraryLoadingView : Granite.Widgets.AlertView {
 
     private static Gtk.CssProvider provider;
 
-    public const string NAME = "Alert";
+    public const string NAME = "Loading";
 
     static construct {
         provider = new Gtk.CssProvider ();
         provider.load_from_resource ("com/github/avojak/replay/AlertView.css");
     }
 
-    public LibraryAlertView () {
+    public LibraryLoadingView () {
         Object (
-            title: _(""),
-            description: _(""),
-            icon_name: ""
+            title: _("Loading Game Library"),
+            description: _("Loading all systems and games in the library"),
+            icon_name: "emblem-synchronized"
         );
     }
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+APP_ID=com.github.avojak.replay
+
 # I'm lazy, and it's easier to remember './scripts/run' than the entire flatpak command
 EXTRA_ARGS=
 if [[ "$1" == "--debug" ]]; then
@@ -8,4 +10,4 @@ fi
 if [[ "$1" == "--inspect" ]]; then
     EXTRA_ARGS="--command=sh --devel"
 fi
-flatpak run --env=G_MESSAGES_DEBUG=all $EXTRA_ARGS com.github.avojak.replay ${@:2}
+flatpak run --env=G_MESSAGES_DEBUG=$APP_ID $EXTRA_ARGS $APP_ID ${@:2}

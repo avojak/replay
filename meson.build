@@ -14,6 +14,9 @@ application_name = 'Replay'
 # Set our translation domain
 add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()), language: 'c')
 
+# Set out log domain
+add_project_arguments('-DG_LOG_DOMAIN="@0@"'.format(meson.project_name()), language: 'c')
+
 subdir('data')
 subdir('src')
 # subdir('test')

@@ -131,17 +131,31 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
             expand = true
         };
 
-        var media_grid = new Gtk.Grid () {
+        var media = new Gtk.Grid () {
             hexpand = true
         };
-        media_grid.attach (new Granite.HeaderLabel ("Media") {
+        media.attach (new Granite.HeaderLabel ("Media") {
             hexpand = false
         }, 0, 0);
-        media_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
-            hexpand = true,
-            valign = Gtk.Align.CENTER,
-            margin_start = 8
-        }, 1, 0);
+        //  media.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
+        //      hexpand = true,
+        //      valign = Gtk.Align.CENTER,
+        //      margin_start = 8
+        //  }, 1, 0);
+        var media_grid = new Replay.Widgets.MediaGrid ();
+        string? box_art_file_path = Replay.Core.Client.get_default ().game_art_repository.get_box_art_file_path (library_item.game);
+        string? screenshot_art_file_path = Replay.Core.Client.get_default ().game_art_repository.get_screenshot_art_file_path (library_item.game);
+        string? titlescreen_art_file_path = Replay.Core.Client.get_default ().game_art_repository.get_titlescreen_art_file_path (library_item.game);
+        if (box_art_file_path != null) {
+            media_grid.add_media (GLib.File.new_for_path (box_art_file_path));
+        }
+        if (titlescreen_art_file_path != null) {
+            media_grid.add_media (GLib.File.new_for_path (titlescreen_art_file_path));
+        }
+        if (screenshot_art_file_path != null) {
+            media_grid.add_media (GLib.File.new_for_path (screenshot_art_file_path));
+        }
+        media.attach (media_grid, 0, 1, 2, 1);
 
         string? franchise = library_item.game.libretro_details == null ? null : library_item.game.libretro_details.franchise_name;
         var franchise_games = new Gtk.Grid () {
@@ -153,11 +167,11 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         };
         var franchise_games_grid = new Replay.Widgets.GameGrid ();
         franchise_games.attach (franchise_games_label, 0, 0);
-        franchise_games.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
-            hexpand = true,
-            valign = Gtk.Align.CENTER,
-            margin_start = 8
-        }, 1, 0);
+        //  franchise_games.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
+        //      hexpand = true,
+        //      valign = Gtk.Align.CENTER,
+        //      margin_start = 8
+        //  }, 1, 0);
         franchise_games.attach (franchise_games_grid, 0, 1, 2, 1);
         franchise_games.set_visible (false);
 
@@ -171,15 +185,15 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         };
         var genre_games_grid = new Replay.Widgets.GameGrid ();
         genre_games.attach (genre_games_label, 0, 0);
-        genre_games.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
-            hexpand = true,
-            valign = Gtk.Align.CENTER,
-            margin_start = 8
-        }, 1, 0);
+        //  genre_games.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
+        //      hexpand = true,
+        //      valign = Gtk.Align.CENTER,
+        //      margin_start = 8
+        //  }, 1, 0);
         genre_games.attach (genre_games_grid, 0, 1, 2, 1);
         genre_games.set_visible (false);
 
-        body_grid.attach (media_grid, 0, 0);
+        body_grid.attach (media, 0, 0);
         body_grid.attach (franchise_games, 0, 1);
         body_grid.attach (genre_games, 0, 2);
 
@@ -220,6 +234,11 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
                 genre_games.set_visible (true);
                 genre_games_grid.add_game (game);
             }
+        }
+
+        // Don't show an empty media section if there isn't any to show
+        if (box_art_file_path == null && screenshot_art_file_path == null && titlescreen_art_file_path == null) {
+            media.set_visible (false);
         }
 
         // Connect to signals for the franchise games grid

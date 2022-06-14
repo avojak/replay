@@ -11,6 +11,7 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
     private Gtk.AccelGroup accel_group;
 
     private Replay.Widgets.Dialogs.PreferencesDialog? preferences_dialog = null;
+    private Replay.Widgets.Dialogs.AboutDialog? about_dialog = null;
 
     private Replay.Views.LibraryView view;
 
@@ -84,6 +85,7 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
 
     public void reload_library () {
         debug ("Reloading library…");
+        view.show_loading_view ();
         foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
             var cores = Replay.Core.Client.get_default ().core_repository.get_cores_for_rom (GLib.File.new_for_path (game.rom_path));
             var core_names = new Gee.ArrayList<string> ();
@@ -105,6 +107,7 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
         //      games_by_system.get (key).add (game);
         //  }
         //  layout.set_games (games_by_system);
+        view.hide_loading_view ();
     }
 
     public void reload_systems () {
@@ -127,6 +130,17 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
             });
         }
         preferences_dialog.present ();
+    }
+
+    public void show_about_dialog () {
+        if (about_dialog == null) {
+            about_dialog = new Replay.Widgets.Dialogs.AboutDialog (this);
+            about_dialog.show_all ();
+            about_dialog.destroy.connect (() => {
+                about_dialog = null;
+            });
+        }
+        about_dialog.present ();
     }
 
     public void toggle_sidebar () {

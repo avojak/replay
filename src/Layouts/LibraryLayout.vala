@@ -110,6 +110,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
             expand = true
         };
         stack.add_named (game_grid, "game-grid");
+        stack.add_named (new Replay.Views.LibraryLoadingView (), Replay.Views.LibraryLoadingView.NAME);
         //  stack.add_named (alert_view, "alert-view");
         //  stack.add_named (detail_view, "detail-view");
 
@@ -161,6 +162,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
 
         // TODO: Load from settings
         //  stack.set_visible_child_name ("game-grid");
+        stack.set_visible_child_name (Replay.Views.LibraryLoadingView.NAME);
     }
 
     private Replay.Views.GameDetailView create_detail_view (Replay.Widgets.LibraryItem library_item) {
@@ -452,6 +454,17 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
 
     public void toggle_sidebar () {
         side_panel.visible = !side_panel.visible;
+    }
+
+    public void show_loading_view () {
+        stack.set_visible_child_name (Replay.Views.LibraryLoadingView.NAME);
+    }
+
+    public void hide_loading_view () {
+        Idle.add (() => {
+            stack.set_visible_child_name ("game-grid");
+            return false;
+        });
     }
 
     public signal void game_selected (Replay.Models.Game game, string? core_name);

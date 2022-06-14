@@ -124,6 +124,8 @@ public class Replay.Core.Client : GLib.Object {
             // TODO: Maybe do this somewhere else since it could take an even longer time?
             foreach (var game in games) {
                 game_art_repository.download_box_art (game);
+                game_art_repository.download_screenshot_art (game);
+                game_art_repository.download_titlescreen_art (game);
             }
             result = games;
             Idle.add ((owned) callback);

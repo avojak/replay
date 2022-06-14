@@ -109,6 +109,14 @@ public class Replay.Views.LibraryView : Gtk.Grid {
         library_layout.expand_systems_category ();
     }
 
+    public void show_loading_view () {
+        library_layout.show_loading_view ();
+    }
+
+    public void hide_loading_view () {
+        library_layout.hide_loading_view ();
+    }
+
     public signal void game_selected (Replay.Models.Game game, string? core_name);
 
 }

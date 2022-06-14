@@ -76,6 +76,16 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         preferences_menu_item.get_child ().destroy ();
         preferences_menu_item.add (preferences_accellabel);
 
+        var about_accellabel = new Granite.AccelLabel.from_action_name (
+            _("About…"),
+            Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_ABOUT
+        );
+
+        var about_menu_item = new Gtk.ModelButton ();
+        about_menu_item.action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_ABOUT;
+        about_menu_item.get_child ().destroy ();
+        about_menu_item.add (about_accellabel);
+
         var quit_accellabel = new Granite.AccelLabel.from_action_name (
             _("Quit"),
             Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_QUIT
@@ -95,7 +105,9 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         settings_popover_grid.attach (toggle_sidebar_menu_item, 0, 0);
         settings_popover_grid.attach (preferences_menu_item, 0, 1);
         settings_popover_grid.attach (create_menu_separator (), 0, 2);
-        settings_popover_grid.attach (quit_menu_item, 0, 3);
+        settings_popover_grid.attach (about_menu_item, 0, 3);
+        settings_popover_grid.attach (create_menu_separator (), 0, 4);
+        settings_popover_grid.attach (quit_menu_item, 0, 5);
         settings_popover_grid.show_all ();
 
         var settings_popover = new Gtk.Popover (null);

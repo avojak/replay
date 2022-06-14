@@ -11,13 +11,15 @@ public class Replay.Services.LibraryWindowActionManager : GLib.Object {
     public const string ACTION_TOGGLE_SIDEBAR = "action_toggle_sidebar";
     public const string ACTION_SHOW_FIND = "action_show_find";
     public const string ACTION_HIDE_FIND = "action_hide_find";
+    public const string ACTION_ABOUT = "action_about";
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { ACTION_QUIT, action_quit },
         { ACTION_PREFERENCES, action_preferences },
         { ACTION_TOGGLE_SIDEBAR, action_toggle_sidebar },
         { ACTION_SHOW_FIND, action_show_find },
-        { ACTION_HIDE_FIND, action_hide_find }
+        { ACTION_HIDE_FIND, action_hide_find },
+        { ACTION_ABOUT, action_about }
     };
 
     private static Gee.MultiMap<string, string> accelerators;
@@ -100,6 +102,10 @@ public class Replay.Services.LibraryWindowActionManager : GLib.Object {
 
     private void action_hide_find () {
         window.set_searchbar_visible (false);
+    }
+
+    private void action_about () {
+        window.show_about_dialog ();
     }
 
 }
