@@ -265,8 +265,12 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         // TODO: May not be needed anymore with new function object
         current_search_text = search_text;
 
-        if (stack.get_visible_child_name () == "detail-view") {
-            on_return_button_clicked ();
+        //  if (stack.get_visible_child_name () == "detail-view") {
+        //      on_return_button_clicked ();
+        //  }
+        if (!detail_view_names.is_empty ()) {
+            stack.set_visible_child_full ("game-grid", Gtk.StackTransitionType.SLIDE_RIGHT);
+            detail_view_names.clear ();
         }
         if (search_text.length == 0) {
             game_grid.set_filter_func (new Replay.Models.Functions.SearchResultsFilterFunction (search_text));
