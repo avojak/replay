@@ -40,9 +40,7 @@ public class Replay.Widgets.Dialogs.MediaDialog : Hdy.Window {
             close ();
         });
         key_press_event.connect ((event) => {
-            if (event.keyval == Gdk.Key.Escape) {
-                close ();
-            }
+            close ();
         });
 
         // Center the window on the parent, since the window_position property doesn't seem to be working

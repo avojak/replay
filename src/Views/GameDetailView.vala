@@ -23,10 +23,22 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         var header_grid = new Gtk.Grid () {
             margin_bottom = 10,
             column_spacing = 10,
-            row_spacing = 10,
+            row_spacing = 20,
             hexpand = true,
             vexpand = false
         };
+        //  var provider = new Gtk.CssProvider ();
+        //  try {
+        //      provider.load_from_data ("""
+        //      .game-detail-header {
+        //          background-image: url('%s');
+        //      }
+        //      """.printf (Replay.Core.Client.get_default ().game_art_repository.get_box_art_file_path (library_item.game)));
+        //  } catch (GLib.Error e) {
+        //      warning (e.message);
+        //  }
+        //  header_grid.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        //  header_grid.get_style_context ().add_class ("game-detail-header");
 
         var header_image = get_image ();
 
@@ -46,14 +58,14 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         //  };
         //  region_label.get_style_context ().add_class ("region-label");
 
-        var genre_year_publisher_label = new Gtk.Label (library_item.game.libretro_details == null ? "" : build_genre_year_publisher_text ()) {
-            valign = Gtk.Align.START,
-            halign = Gtk.Align.START,
-            hexpand = true,
-            wrap = false,
-            ellipsize = Pango.EllipsizeMode.END
-        };
-        genre_year_publisher_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
+        //  var genre_year_publisher_label = new Gtk.Label (library_item.game.libretro_details == null ? "" : build_genre_year_publisher_text ()) {
+        //      valign = Gtk.Align.START,
+        //      halign = Gtk.Align.START,
+        //      hexpand = true,
+        //      wrap = false,
+        //      ellipsize = Pango.EllipsizeMode.END
+        //  };
+        //  genre_year_publisher_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
 
         var platform_label = new Gtk.Label (library_item.game.libretro_details == null ? "" : library_item.game.libretro_details.platform_name) {
             valign = Gtk.Align.START,
@@ -83,8 +95,9 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         more_button.popup = create_run_with_menu ();
 
         var play_button_grid = new Gtk.Grid () {
-            valign = Gtk.Align.CENTER,
+            valign = Gtk.Align.START,
             halign = Gtk.Align.START,
+            vexpand = true
         };
         play_button_grid.get_style_context ().add_class (Gtk.STYLE_CLASS_LINKED);
         play_button_grid.add (play_button);
@@ -107,12 +120,12 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
             }
         });
 
-        var metadata_grid = new Gtk.Grid () {
-            row_spacing = 0,
-            margin_bottom = 8
-        };
-        metadata_grid.attach (genre_year_publisher_label, 0, 0);
-        metadata_grid.attach (platform_label, 0, 1);
+        //  var metadata_grid = new Gtk.Grid () {
+        //      row_spacing = 0,
+        //      margin_bottom = 8
+        //  };
+        //  metadata_grid.attach (genre_year_publisher_label, 0, 0);
+        //  metadata_grid.attach (platform_label, 0, 1);
 
         //  var header_title_grid = new Gtk.Grid () {
         //      hexpand = true
@@ -122,10 +135,10 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
 
         header_grid.attach (header_image, 0, 0, 1, 2);
         header_grid.attach (header_title_label, 1, 0, 1, 1);
-        header_grid.attach (metadata_grid, 1, 1, 1, 1);
+        //  header_grid.attach (metadata_grid, 1, 1, 1, 1);
         //  header_grid.attach (platform_label, 1, 2, 1, 1);
         header_grid.attach (favorite_event_box, 2, 0, 1, 1);
-        header_grid.attach (play_button_grid, 2, 1, 1, 1);
+        header_grid.attach (play_button_grid, 1, 1, 1, 1);
 
         var body_grid = new Gtk.Grid () {
             expand = true
@@ -193,9 +206,100 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         genre_games.attach (genre_games_grid, 0, 1, 2, 1);
         genre_games.set_visible (false);
 
-        body_grid.attach (media, 0, 0);
-        body_grid.attach (franchise_games, 0, 1);
-        body_grid.attach (genre_games, 0, 2);
+        var detail_grid = new Gtk.Grid () {
+            hexpand = false,
+            vexpand = true,
+            margin = 12,
+            row_spacing = 10
+        };
+
+        if (library_item.game.libretro_details != null) {
+            if (library_item.game.libretro_details.genre_name != null) {
+                detail_grid.attach (new Gtk.Image.from_icon_name ("applications-games-symbolic", Gtk.IconSize.BUTTON) {
+                    margin_end = 6
+                }, 0, 0);
+                detail_grid.attach (new Gtk.Label ("<b>Genre:</b> %s".printf (library_item.game.libretro_details.genre_name)) {
+                    halign = Gtk.Align.START,
+                    use_markup = true
+                }, 1, 0);
+            }
+
+            if (library_item.game.libretro_details.developer_name != null) {
+                detail_grid.attach (new Gtk.Image.from_icon_name ("system-users-symbolic", Gtk.IconSize.BUTTON) {
+                    margin_end = 6
+                }, 0, 1);
+                detail_grid.attach (new Gtk.Label ("<b>Developer:</b> %s".printf (library_item.game.libretro_details.developer_name)) {
+                    halign = Gtk.Align.START,
+                    use_markup = true
+                }, 1, 1);
+            }
+
+            if (library_item.game.libretro_details.release_year != null) {
+                detail_grid.attach (new Gtk.Image.from_icon_name ("x-office-calendar-symbolic", Gtk.IconSize.BUTTON) {
+                    margin_end = 6
+                }, 0, 2);
+                //  debug ("%d", library_item.game.libretro_details.release_year);
+                //  debug ("%d", library_item.game.libretro_details.release_month);
+                //  var release_date = new GLib.DateTime.local (library_item.game.libretro_details.release_year, library_item.game.libretro_details.release_month == null ? 0 : library_item.game.libretro_details.release_month, 1, 1, 1, 0);
+                //  debug (release_date.to_string ());
+                //  var value = library_item.game.libretro_details.release_month == null ? library_item.game.libretro_details.release_year.to_string () : release_date.format (Granite.DateTime.get_default_date_format (false, false, true));
+                detail_grid.attach (new Gtk.Label ("<b>Release Year:</b> %s".printf (library_item.game.libretro_details.release_year.to_string ())) {
+                    halign = Gtk.Align.START,
+                    use_markup = true
+                }, 1, 2);
+            }
+            
+            if (library_item.game.libretro_details.region_name != null) {
+                detail_grid.attach (new Gtk.Image.from_icon_name ("location-active-symbolic", Gtk.IconSize.BUTTON) {
+                    margin_end = 6
+                }, 0, 3);
+                detail_grid.attach (new Gtk.Label ("<b>Region:</b> %s".printf (library_item.game.libretro_details.region_name)) {
+                    halign = Gtk.Align.START,
+                    use_markup = true
+                }, 1, 3);
+            }
+
+            detail_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 4, 2, 1);
+        }
+
+        detail_grid.attach (new Gtk.Image.from_icon_name ("x-office-calendar-symbolic", Gtk.IconSize.BUTTON) {
+            margin_end = 6
+        }, 0, 5);
+        detail_grid.attach (new Gtk.Label ("<b>Last Played:</b> %s".printf (library_item.game.last_played == null ? _("Never") : Granite.DateTime.get_relative_datetime (library_item.game.last_played))) {
+            halign = Gtk.Align.START,
+            use_markup = true
+        }, 1, 5);
+
+        detail_grid.attach (new Gtk.Image.from_icon_name ("tools-timer-symbolic", Gtk.IconSize.BUTTON) {
+            margin_end = 6
+        }, 0, 6);
+        detail_grid.attach (new Gtk.Label ("<b>Play Time:</b> %s".printf (library_item.game.last_played == null ? _("None") : Granite.DateTime.get_relative_datetime (library_item.game.last_played))) {
+            halign = Gtk.Align.START,
+            use_markup = true
+        }, 1, 6);
+
+        //  var game_summary = new Gtk.Label ("Bowser has once again taken over the Mushroom Kingdom, and it's up to Mario to put an end to his sinister reign. Battle Bowser's vile henchmen through 32 different levels - all taken directly from the 1985 classic! Then move on to collect special Red Coins and Yoshi Eggs in the Challenge Mode. Or face off against a friend and race through 8 competition courses in the all-new VS Mode! This time there's a lot more to do than just save a Princess, so get ready for a brick-smashin', pipe-warpin', turtle-stompin' good time!") {
+        var synopsis_grid = new Gtk.Grid () {
+            hexpand = true
+        };
+        string? placeholder_text = "Once upon a time, the peaceful Mushroom Kingdom was invaded by the Koopa, a tribe of turtles famous for their dark magic. These terrible terrapins transformed the peace loving Mushroom People into stones, bricks, and ironically, mushrooms, then set their own evil king on the throne. In the wake of the ghastly coup d'etat, the beautiful Mushroom Kingdom fell into ruin and despair.\n\nIt is said that only the daughter of the Mushroom King, Princess Toadstool, can break the evil spell and return the inhabitants of Mushroom kingdom to their normal selves.\n\nBut the King of the Koopas, knowing of this prophecy, kidnapped the lovely Princess and hid her away in one of his castles.\n\nWord of the terrible plight of the Mushroom People quickly spread throughout the land, eventually reaching the ears of a humble plumber. The simple, yet valiant Mario vowed to rescue the Princess and free her subjects from King Koopa's tyrannous reign. But can Mario really overcome the many obstacles facing him and become a true hero?";
+        var synopsis_label = new Gtk.Label (placeholder_text) {
+            margin = 12,
+            hexpand = true,
+            vexpand = false,
+            wrap = true,
+            wrap_mode = Pango.WrapMode.WORD
+        };
+        if (placeholder_text != null) {
+            synopsis_grid.attach (new Granite.HeaderLabel (_("Synopsis")), 0, 0);
+            synopsis_grid.attach (synopsis_label, 0, 1);
+        }
+
+        body_grid.attach (synopsis_grid, 0, 0);
+        body_grid.attach (media, 0, 1);
+        body_grid.attach (franchise_games, 0, 2);
+        body_grid.attach (genre_games, 0, 3);
+        body_grid.attach (detail_grid, 1, 0, 1, 3);
 
         //  var activity_header_label = new Granite.HeaderLabel (_("Activity"));
         //  var last_played_label = new Gtk.Label (_("Last played:")) {
