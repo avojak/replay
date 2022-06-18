@@ -72,9 +72,9 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
             Idle.add (() => {
                 invalidate_filter ();
                 update_side_panel_badges ();
-                if (stack.get_child_by_name (library_item.game.display_name) != null) {
-                    ((Replay.Views.GameDetailView) stack.get_child_by_name (library_item.game.display_name)).update_favorite ();
-                }
+                //  if (stack.get_child_by_name (library_item.game.display_name) != null) {
+                //      ((Replay.Views.GameDetailView) stack.get_child_by_name (library_item.game.display_name)).update_favorite ();
+                //  }
                 return false;
             });
         });
@@ -242,7 +242,11 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
             stack.add_named (detail_view, view_name);
         }
         detail_view_names.push_tail (view_name);
-        stack.set_visible_child_full (view_name, Gtk.StackTransitionType.SLIDE_LEFT);
+        Idle.add (() => {
+            ((Replay.Views.GameDetailView) stack.get_child_by_name (view_name)).reset_scroll ();
+            stack.set_visible_child_full (view_name, Gtk.StackTransitionType.SLIDE_LEFT);
+            return false;
+        });
     }
 
     private void on_return_button_clicked () {
