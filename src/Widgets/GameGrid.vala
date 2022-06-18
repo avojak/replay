@@ -31,7 +31,9 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             activate_on_single_click = true,
             selection_mode = Gtk.SelectionMode.SINGLE,
             homogeneous = true,
-            expand = true,
+            //  expand = true,
+            vexpand = false,
+            hexpand = true,
             margin = 12,
             valign = Gtk.Align.START
         };
@@ -39,12 +41,6 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         //  flow_box.button_press_event.connect (launch_game);
         flow_box.button_press_event.connect (show_context_menu);
         //  flow_box.button_press_event.connect (show_details_panel);
-
-        var scrolled_window = new Gtk.ScrolledWindow (null, null) {
-            expand = true
-        };
-        scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-        scrolled_window.add (flow_box);
 
         //  var event_box = new Gtk.EventBox ();
         //  event_box.add (scrolled_window);
@@ -70,7 +66,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         stack = new Gtk.Stack () {
             expand = true
         };
-        stack.add_named (scrolled_window, "scrolled-window");
+        stack.add_named (flow_box, "flow-box");
         stack.add_named (alert_view, "alert-view");
 
         var grid = new Gtk.Grid () {
@@ -232,7 +228,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
     private void update_visible_stack_child () {
         //  Idle.add (() => {
             if (count_visible_children (filter_func) > 0) {
-                stack.set_visible_child_name ("scrolled-window");
+                stack.set_visible_child_name ("flow-box");
             } else {
                 stack.set_visible_child_name ("alert-view");
             }

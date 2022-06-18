@@ -103,13 +103,19 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
             });
         });
 
+        var scrolled_window = new Gtk.ScrolledWindow (null, null) {
+            expand = true
+        };
+        scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+        scrolled_window.add (game_grid);
+
         //  alert_view = new Granite.Widgets.AlertView ("", "", "");
         //  alert_view.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
         stack = new Gtk.Stack () {
             expand = true
         };
-        stack.add_named (game_grid, "game-grid");
+        stack.add_named (scrolled_window, "game-grid");
         stack.add_named (new Replay.Views.LibraryLoadingView (), Replay.Views.LibraryLoadingView.NAME);
         //  stack.add_named (alert_view, "alert-view");
         //  stack.add_named (detail_view, "detail-view");
