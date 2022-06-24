@@ -31,34 +31,13 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             activate_on_single_click = true,
             selection_mode = Gtk.SelectionMode.SINGLE,
             homogeneous = true,
-            //  expand = true,
             vexpand = false,
             hexpand = true,
             margin = 12,
             valign = Gtk.Align.START
         };
         flow_box.child_activated.connect (on_item_selected);
-        //  flow_box.button_press_event.connect (launch_game);
         flow_box.button_press_event.connect (show_context_menu);
-        //  flow_box.button_press_event.connect (show_details_panel);
-
-        //  var event_box = new Gtk.EventBox ();
-        //  event_box.add (scrolled_window);
-        //  event_box.set_events (Gdk.EventMask.ENTER_NOTIFY_MASK);
-        //  event_box.set_events (Gdk.EventMask.LEAVE_NOTIFY_MASK);
-
-        //  event_box.enter_notify_event.connect (() => {
-        //      debug ("enter grid");
-        //  });
-        //  event_box.leave_notify_event.connect (() => {
-        //      debug ("leave grid");
-        //  });
-
-        //  game_details_panel = new Replay.Widgets.GameGridDetailsPanel ();
-        //  revealer = new Gtk.Revealer () {
-        //      transition_type = Gtk.RevealerTransitionType.SLIDE_UP
-        //  };
-        //  revealer.add (game_details_panel);
 
         alert_view = new Granite.Widgets.AlertView ("", "", "");
         alert_view.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -103,24 +82,22 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             run_with_item.submenu = run_with_submenu;
             var played_item = create_image_menu_item (_("Mark as Played"), "mail-read");
             played_item.activate.connect (() => {
-                item_marked_played (library_item);
+                library_item.game.is_played = true;
             });
             var unplayed_item = create_image_menu_item (_("Mark as Unplayed"), "mail-unread");
             unplayed_item.activate.connect (() => {
-                item_marked_unplayed (library_item);
+                library_item.game.is_played = false;
+                library_item.game.last_played = null;
+                library_item.game.time_played = 0;
             });
             var favorite_item = create_image_menu_item (_("Add to Favorites"), "starred");
             favorite_item.activate.connect (() => {
-                item_added_to_favorites (library_item);
+                library_item.game.is_favorite = true;
             });
             var unfavorite_item = create_image_menu_item (_("Remove from Favorites"), "non-starred");
             unfavorite_item.activate.connect (() => {
-                item_removed_from_favorites (library_item);
+                library_item.game.is_favorite = false;
             });
-            //  var rename_item = create_image_menu_item (_("Rename…"), "edit");
-            //  rename_item.activate.connect (() => {
-            //      // TODO
-            //  });
             var properties_item = create_image_menu_item (_("Properties…"), "");
             properties_item.activate.connect (() => {
                 // TODO
@@ -135,8 +112,8 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
             menu.add (new Gtk.SeparatorMenuItem ());
             menu.add (library_item.game.is_favorite ? unfavorite_item : favorite_item);
             menu.add (library_item.game.is_played ? unplayed_item : played_item);
-            menu.add (new Gtk.SeparatorMenuItem ());
-            menu.add (properties_item);
+            //  menu.add (new Gtk.SeparatorMenuItem ());
+            //  menu.add (properties_item);
             //  menu.add (new Gtk.SeparatorMenuItem ());
             //  menu.add (delete_item);
             menu.attach_to_widget (child, null);
@@ -146,22 +123,6 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         }
         return false;
     }
-
-    //  private bool show_details_panel (Gdk.EventButton event) {
-    //      if (event.type == Gdk.EventType.BUTTON_PRESS && event.button == Gdk.BUTTON_PRIMARY) {
-    //          unowned Gtk.FlowBoxChild? child = flow_box.get_child_at_pos ((int) event.x, (int) event.y);
-    //          if (child == null) {
-    //              //  revealer.set_reveal_child (false);
-    //              //  flow_box.unselect_all ();
-    //              return false;
-    //          }
-    //          unowned var library_item = child as Replay.Widgets.LibraryItem;
-    //          game_details_panel.update_title (library_item.game.display_name);
-    //          revealer.set_reveal_child (true);
-    //          return true;
-    //      }
-    //      return false;
-    //  }
 
     private Gtk.MenuItem create_image_menu_item (string str, string icon_name) {
         var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6);
@@ -187,7 +148,6 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
     private void on_item_run_selected (Gtk.FlowBoxChild child, string? core_name = null) {
         unowned var library_item = child as Replay.Widgets.LibraryItem;
         item_run (library_item, core_name);
-        item_marked_played (library_item);
     }
 
     public void set_filter_func (Replay.Models.Functions.LibraryItemFilterFunction? filter_func) {
@@ -226,14 +186,11 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
     }
 
     private void update_visible_stack_child () {
-        //  Idle.add (() => {
-            if (count_visible_children (filter_func) > 0) {
-                stack.set_visible_child_name ("flow-box");
-            } else {
-                stack.set_visible_child_name ("alert-view");
-            }
-            //  return false;
-        //  });
+        if (count_visible_children (filter_func) > 0) {
+            stack.set_visible_child_name ("flow-box");
+        } else {
+            stack.set_visible_child_name ("alert-view");
+        }
     }
 
     public int count_visible_children (Replay.Models.Functions.LibraryItemFilterFunction? filter_func) {
@@ -257,12 +214,8 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
     }
 
     public bool add_game (Replay.Models.Game game) {
-        //  if (games.contains (game)) {
-        //      return false;
-        //  }
         var game_item = new Replay.Widgets.LibraryItem.for_game (game);
         flow_box.add (game_item);
-        //  games.add (game);
         return true;
     }
 
@@ -277,13 +230,7 @@ public class Replay.Widgets.GameGrid : Gtk.Grid {
         }
     }
 
-    //  public delegate bool FilterFunction (Replay.Widgets.LibraryItem library_item);
-
     public signal void item_selected (Replay.Widgets.LibraryItem library_item);
     public signal void item_run (Replay.Widgets.LibraryItem library_item, string? core_name = null);
-    public signal void item_added_to_favorites (Replay.Widgets.LibraryItem library_item);
-    public signal void item_removed_from_favorites (Replay.Widgets.LibraryItem library_item);
-    public signal void item_marked_played (Replay.Widgets.LibraryItem library_item);
-    public signal void item_marked_unplayed (Replay.Widgets.LibraryItem library_item);
 
 }

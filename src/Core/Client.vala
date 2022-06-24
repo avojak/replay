@@ -17,9 +17,6 @@ public class Replay.Core.Client : GLib.Object {
     public Replay.Services.EmulatorManager emulator_manager;
     public Replay.Services.SQLClient sql_client;
 
-    //  private Gee.List<Replay.Core.LibretroCoreSource> core_sources = new Gee.ArrayList<Replay.Core.LibretroCoreSource> ();
-    //  private Gee.List<Replay.Core.LibrarySource> library_sources = new Gee.ArrayList<Replay.Core.LibrarySource> ();
-
     construct {
         core_repository = Replay.Services.LibretroCoreRepository.get_default ();
         game_repository = Replay.Services.LibretroGameRepository.get_default ();
@@ -38,24 +35,9 @@ public class Replay.Core.Client : GLib.Object {
         if (Replay.Application.settings.user_rom_directory.strip ().length == 0) {
             Replay.Application.settings.user_rom_directory = GLib.Environment.get_home_dir (); // "%s/Games/Replay".printf (GLib.Environment.get_home_dir ());
             Replay.Application.settings.user_save_directory = GLib.Environment.get_home_dir (); // Default this to the same location as the ROMs
-            //  var user_rom_dir_file = GLib.File.new_for_path (user_rom_dir);
-            //  if (!user_rom_dir_file.query_exists ()) {
-            //      try {
-            //          if (!user_rom_dir_file.make_directory_with_parents ()) {
-            //              warning ("Did not create user rom directory (%s)", user_rom_dir);
-            //          }
-            //      } catch (GLib.Error e) {
-            //          warning ("Error while creating user rom directory (%s): %s", user_rom_dir, e.message);
-            //      }
-            //  }
         }
         game_library.library_sources.add (new Replay.Core.FileSystemLibrarySource (Replay.Application.settings.user_rom_directory));
     }
-
-    //  public async void scan_all_sources () {
-    //      yield scan_core_sources ();
-    //      yield scan_library_sources ();
-    //  }
 
     public async Gee.Collection<Replay.Models.LibretroCore> scan_core_sources_async () {
         GLib.SourceFunc callback = scan_core_sources_async.callback;

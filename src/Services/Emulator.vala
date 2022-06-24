@@ -143,6 +143,10 @@ public class Replay.Services.Emulator : GLib.Object {
         // Run the game
         core.run ();
 
+        // Update properties on the game
+        game.is_played = true;
+        game.last_played = new GLib.DateTime.now_utc ();
+
         // Start the timer
         timer = new GLib.Timer ();
         timer_thread = new GLib.Thread<void> ("gameplay-timer", () => {
@@ -150,7 +154,7 @@ public class Replay.Services.Emulator : GLib.Object {
                 if (timer.is_active ()) {
                     game.time_played++;
                 }
-                Thread.usleep (1000000); // 0.5 seconds
+                Thread.usleep (1000000); // 1 second
             }
         });
 
@@ -161,7 +165,6 @@ public class Replay.Services.Emulator : GLib.Object {
         if (core != null) {
             timer.stop ();
             timer_cancellable.cancel ();
-            Replay.Core.Client.get_default ().game_library.update_time_played (game, game.time_played);
             core.stop ();
             core.reset ();
             core = null;

@@ -22,18 +22,6 @@ public class Replay.Services.GameLibrary : GLib.Object {
         library_sources = new Gee.ArrayList<Replay.Core.LibrarySource> ();
     }
 
-    /**
-     * Set the games in the library after scanning sources.
-     */
-    public void set_games (Gee.List<Replay.Models.Game> games) {
-        known_games.clear ();
-        foreach (var game in games) {
-            if (!known_games.has_key (game.rom_path)) {
-                known_games.set (game.rom_path, game);
-            }
-        }
-    }
-
     public Gee.Collection<Replay.Models.Game> reload_games () {
         // Clear previously known games
         known_games.clear ();
@@ -72,6 +60,12 @@ public class Replay.Services.GameLibrary : GLib.Object {
                     debug ("Found game %s (MD5: %s)", game.display_name, game.rom_md5);
                     rom_checksums.add (game.rom_md5);
 
+                    // When any of these properties change, we want to persist the change in the database
+                    game.notify["is-played"].connect (persist_change);
+                    game.notify["is-favorite"].connect (persist_change);
+                    game.notify["last-played"].connect (persist_change);
+                    game.notify["time-played"].connect (persist_change);
+
                     // Store the game internally by the ROM path, even though we deconflict based on MD5. If two ROMs
                     // have the same path, then they will naturally have the same MD5 (pointing to same file), but if
                     // two ROMs have the same MD5, they may not have the same path (duplicates in different folders).
@@ -90,35 +84,12 @@ public class Replay.Services.GameLibrary : GLib.Object {
         return known_games.values;
     }
 
+    private void persist_change (GLib.Object source, GLib.ParamSpec property) {
+        Replay.Core.Client.get_default ().sql_client.update_game (source as Replay.Models.Game);
+    }
+
     public Gee.Collection<Replay.Models.Game> get_games () {
         return known_games.values;
-    }
-
-    public void set_game_played (Replay.Models.Game game, bool played) {
-        known_games.get (game.rom_path).is_played = played;
-        if (!played) {
-            known_games.get (game.rom_path).last_played = null;
-        }
-        // Persist the update
-        Replay.Core.Client.get_default ().sql_client.update_game (known_games.get (game.rom_path));
-    }
-
-    public void set_game_favorite (Replay.Models.Game game, bool favorite) {
-        known_games.get (game.rom_path).is_favorite = favorite;
-        // Persist the update
-        Replay.Core.Client.get_default ().sql_client.update_game (known_games.get (game.rom_path));
-    }
-
-    public void update_last_run_date (Replay.Models.Game game) {
-        known_games.get (game.rom_path).last_played = new GLib.DateTime.now_utc ();
-        // Persist the update
-        Replay.Core.Client.get_default ().sql_client.update_game (known_games.get (game.rom_path));
-    }
-
-    public void update_time_played (Replay.Models.Game game, int time_played_seconds) {
-        known_games.get (game.rom_path).time_played = time_played_seconds;
-        // Persist the update
-        Replay.Core.Client.get_default ().sql_client.update_game (known_games.get (game.rom_path));
     }
 
 }

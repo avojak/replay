@@ -54,43 +54,6 @@
 
     public Gtk.Image? download_box_art (Replay.Models.Game game) {
         return download_art (game, Replay.Models.LibretroArtType.BOX);
-        //  var image_file = get_file (game, Replay.Models.LibretroArtType.BOX);
-        //  //  debug (image_file.get_path ());
-        //  if (image_file.query_exists ()) {
-        //      return new Gtk.Image.from_file (image_file.get_path ());
-        //  }
-        //  if (game.libretro_details == null) {
-        //      return null;
-        //  }
-        //  var manufacturer = game.libretro_details.manufacturer_name;
-        //  if (game.libretro_details.platform_name != null) {
-        //      manufacturer += " - %s".printf (game.libretro_details.platform_name);
-        //  }
-        //  manufacturer = Soup.URI.encode (manufacturer, null);
-        //  var filename = Soup.URI.encode (game.libretro_details.full_name, null);
-        //  var url = @"http://thumbnails.libretro.com/$manufacturer/Named_Boxarts/$filename.png";
-
-        //  debug (url);
-        //  try {
-        //      Replay.Utils.HttpUtils.download_file (url, image_file, null);
-        //  } catch (GLib.Error e) {
-        //      warning ("Error executing request for artwork: %s", e.message);
-        //      return null;
-        //  }
-        //  //  var session = new Soup.Session ();
-        //  //  try {
-        //  //      var input_stream = new DataInputStream (session.send (new Soup.Message.from_uri ("GET", new Soup.URI (url)), null));
-        //  //      var output_stream = image_file.replace (null, false, GLib.FileCreateFlags.NONE, null);
-        //  //      size_t bytes_read;
-        //  //      uint8[] buffer = new uint8[256];
-        //  //      while ((bytes_read = input_stream.read (buffer, null)) != 0) {
-        //  //          output_stream.write (buffer, null);
-        //  //      }
-        //  //  } catch (GLib.Error e) {
-        //  //      warning ("Error executing request for artwork: %s", e.message);
-        //  //      return null;
-        //  //  }
-        //  return new Gtk.Image.from_file (image_file.get_path ());
     }
 
     public Gtk.Image? download_screenshot_art (Replay.Models.Game game) {

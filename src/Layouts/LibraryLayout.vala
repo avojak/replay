@@ -11,10 +11,6 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     private Replay.Widgets.LibrarySidePanel side_panel;
     private Gtk.Grid grid;
     private Replay.Widgets.GameGrid game_grid;
-    //  private Granite.Widgets.AlertView alert_view;
-    //  private Replay.Views.GameDetailView detail_view;
-    //  private Gtk.Revealer searchbar_revealer;
-    //  private Gtk.SearchEntry search_entry;
     private Gtk.Stack stack;
 
     private Gee.Map<string, Replay.Models.Functions.LibraryItemFilterFunction> filter_mapping;
@@ -50,57 +46,10 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
 
         game_grid = new Replay.Widgets.GameGrid ();
         game_grid.item_selected.connect ((library_item) => {
-            //  Idle.add (() => {
-            //      //  set_searchbar_visible (false);
-            //      detail_view.set_library_item (library_item);
-            //      stack.set_visible_child_full ("detail-view", Gtk.StackTransitionType.SLIDE_LEFT);
-            //      header_bar.set_return_button_visible (true);
-            //      return false;
-            //  });
             on_library_item_selected (library_item);
         });
         game_grid.item_run.connect ((library_item, core_name) => {
             game_selected (library_item.game, core_name);
-            Idle.add (() => {
-                invalidate_sort ();
-                invalidate_filter ();
-                return false;
-            });
-        });
-        game_grid.item_added_to_favorites.connect ((library_item) => {
-            Replay.Core.Client.get_default ().game_library.set_game_favorite (library_item.game, true); // TODO: Do this a level up?
-            Idle.add (() => {
-                invalidate_filter ();
-                update_side_panel_badges ();
-                //  if (stack.get_child_by_name (library_item.game.display_name) != null) {
-                //      ((Replay.Views.GameDetailView) stack.get_child_by_name (library_item.game.display_name)).update_favorite ();
-                //  }
-                return false;
-            });
-        });
-        game_grid.item_removed_from_favorites.connect ((library_item) => {
-            Replay.Core.Client.get_default ().game_library.set_game_favorite (library_item.game, false);
-            Idle.add (() => {
-                invalidate_filter ();
-                update_side_panel_badges ();
-                return false;
-            });
-        });
-        game_grid.item_marked_played.connect ((library_item) => {
-            Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, true);
-            Idle.add (() => {
-                invalidate_filter ();
-                update_side_panel_badges ();
-                return false;
-            });
-        });
-        game_grid.item_marked_unplayed.connect ((library_item) => {
-            Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, false);
-            Idle.add (() => {
-                invalidate_filter ();
-                update_side_panel_badges ();
-                return false;
-            });
         });
 
         var scrolled_window = new Gtk.ScrolledWindow (null, null) {
@@ -109,41 +58,15 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         scrolled_window.add (game_grid);
 
-        //  alert_view = new Granite.Widgets.AlertView ("", "", "");
-        //  alert_view.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-
         stack = new Gtk.Stack () {
             expand = true
         };
         stack.add_named (scrolled_window, "game-grid");
         stack.add_named (new Replay.Views.LibraryLoadingView (), Replay.Views.LibraryLoadingView.NAME);
-        //  stack.add_named (alert_view, "alert-view");
-        //  stack.add_named (detail_view, "detail-view");
-
-        //  searchbar_revealer = new Gtk.Revealer () {
-        //      hexpand = true,
-        //      transition_type = Gtk.RevealerTransitionType.SLIDE_DOWN
-        //  };
-        //  search_entry = new Gtk.SearchEntry () {
-        //      margin = 8
-        //  };
-        //  search_entry.search_changed.connect (() => {
-        //      Idle.add (() => {
-        //          if (stack.get_visible_child_name () == "detail-view") {
-        //              header_bar.set_return_button_visible (false);
-        //              stack.set_visible_child_full ("game-grid", Gtk.StackTransitionType.SLIDE_RIGHT);
-        //          }
-        //          game_grid.invalidate_filter ();
-        //          update_visible_stack_child ();
-        //          return false;
-        //      });
-        //  });
-        //  searchbar_revealer.add (search_entry);
 
         var stack_grid = new Gtk.Grid () {
             expand = true
         };
-        //  stack_grid.attach (searchbar_revealer, 0, 0);
         stack_grid.attach (stack, 0, 0);
 
         grid = new Gtk.Grid () {
@@ -173,56 +96,9 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
 
     private Replay.Views.GameDetailView create_detail_view (Replay.Widgets.LibraryItem library_item) {
         var detail_view = new Replay.Views.GameDetailView.for_library_item (library_item);
-        detail_view.item_selected.connect ((library_item) => {
-            //  Idle.add (() => {
-            //      //  set_searchbar_visible (false);
-            //      detail_view.set_library_item (library_item);
-            //      stack.set_visible_child_full ("detail-view", Gtk.StackTransitionType.SLIDE_LEFT);
-            //      header_bar.set_return_button_visible (true);
-            //      return false;
-            //  });
-            on_library_item_selected (library_item);
-        });
+        detail_view.item_selected.connect (on_library_item_selected);
         detail_view.play_button_clicked.connect ((library_item, core_name) => {
-            Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, true);
-            Idle.add (() => {
-                //  invalidate_filter ();
-                update_side_panel_badges ();
-                return false;
-            });
             game_selected (library_item.game, core_name);
-        });
-        detail_view.item_added_to_favorites.connect ((library_item) => {
-            Replay.Core.Client.get_default ().game_library.set_game_favorite (library_item.game, true);
-            Idle.add (() => {
-                //  invalidate_filter ();
-                update_side_panel_badges ();
-                return false;
-            });
-        });
-        detail_view.item_removed_from_favorites.connect ((library_item) => {
-            Replay.Core.Client.get_default ().game_library.set_game_favorite (library_item.game, false);
-            Idle.add (() => {
-                //  invalidate_filter ();
-                update_side_panel_badges ();
-                return false;
-            });
-        });
-        detail_view.item_marked_played.connect ((library_item) => {
-            Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, true);
-            Idle.add (() => {
-                //  invalidate_filter ();
-                update_side_panel_badges ();
-                return false;
-            });
-        });
-        detail_view.item_marked_unplayed.connect ((library_item) => {
-            Replay.Core.Client.get_default ().game_library.set_game_played (library_item.game, false);
-            Idle.add (() => {
-                //  invalidate_filter ();
-                update_side_panel_badges ();
-                return false;
-            });
         });
         return detail_view;
     }
@@ -275,9 +151,6 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         // TODO: May not be needed anymore with new function object
         current_search_text = search_text;
 
-        //  if (stack.get_visible_child_name () == "detail-view") {
-        //      on_return_button_clicked ();
-        //  }
         if (!detail_view_names.is_empty ()) {
             stack.set_visible_child_full ("game-grid", Gtk.StackTransitionType.SLIDE_RIGHT);
             detail_view_names.clear ();
@@ -285,17 +158,12 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         if (search_text.length == 0) {
             game_grid.set_filter_func (new Replay.Models.Functions.SearchResultsFilterFunction (search_text));
             side_panel.set_enabled (true);
-            //  update_visible_stack_child ();
         } else {
             var filter_func = new Replay.Models.Functions.SearchResultsFilterFunction (search_text);
-            //  alert_view.title = filter_func.placeholder_title;
-            //  alert_view.description = filter_func.placeholder_description;
-            //  alert_view.icon_name = filter_func.placeholder_icon_name;
             game_grid.set_filter_func (filter_func);
             game_grid.set_sort_func (new Replay.Models.Functions.AlphabeticalSortFunction ());
             side_panel.select_none ();
             side_panel.set_enabled (false);
-            //  update_visible_stack_child ();
         }
     }
 
@@ -327,9 +195,20 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
 
     public void add_game (Replay.Models.Game game) {
         game_grid.add_game (game);
+        game.notify["is-favorite"].connect (on_game_property_changed);
+        game.notify["is-played"].connect (on_game_property_changed);
+        game.notify["last-played"].connect (on_game_property_changed);
         Idle.add (() => {
             update_side_panel_badges ();
             invalidate_filter ();
+            return false;
+        });
+    }
+
+    private void on_game_property_changed (GLib.Object source, GLib.ParamSpec property) {
+        Idle.add (() => {
+            invalidate_filter ();
+            update_side_panel_badges ();
             return false;
         });
     }
@@ -354,116 +233,38 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         });
     }
 
-    public void set_searchbar_visible (bool visible) {
-        //  if (visible) {
-        //      if (stack.get_visible_child_name () == "detail-view") {
-        //          on_return_button_clicked ();
-        //      }
-        //      side_panel.select_none ();
-        //      side_panel.set_enabled (false);
-        //      header_bar.update_find_button_state (true);
-        //      searchbar_revealer.set_reveal_child (true);
-        //      search_entry.grab_focus ();
-        //      var filter_func = new Models.LibraryItemFilterFunction (_("No Games Found"), _("Try changing search terms."), "system-search", (library_item) => {
-        //          if (search_entry.get_text ().strip ().length == 0) {
-        //              return true;
-        //          }
-        //          return library_item.game.display_name.down ().contains (search_entry.get_text ().strip ().down ());
-        //      });
-        //      game_grid.set_filter_func (filter_func);
-        //      alert_view.title = filter_func.placeholder_title;
-        //      alert_view.description = filter_func.placeholder_description;
-        //      alert_view.icon_name = filter_func.placeholder_icon_name;
-        //      game_grid.set_sort_func (new Models.LibraryItemSortFunction ((item_a, item_b) => {
-        //          return item_a.game.display_name.ascii_casecmp (item_b.game.display_name);
-        //      }));
-        //      Idle.add (() => {
-        //          update_visible_stack_child ();
-        //          return false;
-        //      });
-        //  } else {
-        //      search_entry.set_text ("");
-        //      side_panel.set_enabled (true);
-        //      header_bar.update_find_button_state (false);
-        //      searchbar_revealer.set_reveal_child (false);
-        //  }
-    }
-
-    /*
-     * Force the game grid to be resorted. For example, in the case where the display name of a game has
-     * changed and we need to ensure proper sorting.
-     */
-    private void invalidate_sort () {
-        //  Idle.add (() => {
-            game_grid.invalidate_sort ();
-            //  return false;
-        //  });
-    }
-
     /*
      * Force the game grid to be refiltered. For example, in the case where the state of an item has changed
      * and we need to ensure the change in visibility.
      */
     private void invalidate_filter () {
-        //  Idle.add (() => {
         game_grid.invalidate_filter ();
-        update_visible_stack_child ();
-            //  return false;
-        //  });
     }
 
     private void on_side_panel_item_selected (Replay.Widgets.LibrarySidePanelItem item) {
-        //  debug (item.view_name);
         var filter_func = filter_mapping.get (item.view_name);
         var sort_func = sort_mapping.get (item.view_name);
         Idle.add (() => {
-            set_searchbar_visible (false);
             header_bar.set_return_button_visible (false);
-            //  if (stack.get_visible_child_name () == "detail-view") {
             if (!detail_view_names.is_empty ()) {
                 stack.set_visible_child_full ("game-grid", Gtk.StackTransitionType.SLIDE_RIGHT);
                 detail_view_names.clear ();
             }
             game_grid.set_sort_func (sort_func);
             game_grid.set_filter_func (filter_func);
-            // Always update the alert view text in case a refilter occurs later without selecting a new side panel item
-            //  alert_view.title = filter_func.placeholder_title;
-            //  alert_view.description = filter_func.placeholder_description;
-            //  alert_view.icon_name = filter_func.placeholder_icon_name;
-            update_visible_stack_child ();
             return false;
         });
-    }
-
-    /*
-     * Check the number of visible items in the game grid and determine whether the game grid should be shown,
-     * or the alert view in the event of no visibile items.
-     */
-    private void update_visible_stack_child () {
-        // TODO: Would it be better to check the side panel badge than trying to evaluate the number of visible children?
-
-        // Need to switch back to the game grid so that get_visible_children() can
-        // determine how many children are visible
-        //  stack.set_visible_child_name ("game-grid");
-        //  if (game_grid.get_visible_children () > 0) {
-        //      stack.set_visible_child_name ("game-grid");
-        //  } else {
-        //      stack.set_visible_child_name ("alert-view");
-        //  }
     }
 
     /*
      * Update the badges for side panel items. For example, in the case a new game being added to the game grid.
      */
     private void update_side_panel_badges () {
-        //  Idle.add (() => {
-            foreach (var side_panel_item in side_panel.get_items ()) {
-                var filter_func = filter_mapping.get (side_panel_item.view_name);
-                int count = game_grid.count_visible_children (filter_func);
-                side_panel_item.badge = count > 0 ? count.to_string () : "";
-            }
-        //      return false;
-        //  });
+        foreach (var side_panel_item in side_panel.get_items ()) {
+            var filter_func = filter_mapping.get (side_panel_item.view_name);
+            int count = game_grid.count_visible_children (filter_func);
+            side_panel_item.badge = count > 0 ? count.to_string () : "";
+        }
     }
 
     public void toggle_sidebar () {

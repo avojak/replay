@@ -5,7 +5,7 @@
 
 public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
 
-    private Gtk.ToggleButton find_button;
+    //  private Gtk.ToggleButton find_button;
     private Gtk.Button return_button;
     private Gtk.Separator return_button_separator;
     private Gtk.SearchEntry search_entry;
@@ -38,17 +38,6 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         // TODO: Add ability to open a ROM file not in the library
 
         // TODO: Allow changing the icon size for the icons in the view
-
-        find_button = new Gtk.ToggleButton () {
-            action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND,
-            image = new Gtk.Image.from_icon_name ("edit-find-symbolic", Gtk.IconSize.SMALL_TOOLBAR),
-            tooltip_markup = Granite.markup_accel_tooltip (
-                Replay.Application.get_instance ().get_accels_for_action (Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND),
-                _("Find…")
-            ),
-            relief = Gtk.ReliefStyle.NONE,
-            valign = Gtk.Align.CENTER
-        };
 
         var settings_button = new Gtk.MenuButton () {
             image = new Gtk.Image.from_icon_name ("preferences-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR),
@@ -132,8 +121,6 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         pack_start (return_button_separator);
 
         pack_end (settings_button);
-        //  pack_end (new Gtk.Separator (Gtk.Orientation.VERTICAL));
-        //  pack_end (find_button);
         pack_end (search_entry);
         pack_end (spinner);
     }
@@ -158,23 +145,6 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         } else {
             return_button.set_label (game_display_name.length > 20 ? "%s…".printf (game_display_name.substring (0, 20)) : game_display_name);
             return_button.set_tooltip_text (game_display_name.length > 20 ? game_display_name : null);
-        }
-    }
-
-    public void update_find_button_state (bool new_state) {
-        find_button.active = new_state;
-        if (new_state) {
-            find_button.action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_HIDE_FIND;
-            find_button.tooltip_markup = Granite.markup_accel_tooltip (
-                {"Escape"},
-                _("Hide search bar")
-            );
-        } else {
-            find_button.action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND;
-            find_button.tooltip_markup = Granite.markup_accel_tooltip (
-                Replay.Application.get_instance ().get_accels_for_action (Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND),
-                _("Find…")
-            );
         }
     }
 

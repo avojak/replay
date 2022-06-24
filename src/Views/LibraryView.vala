@@ -102,10 +102,6 @@ public class Replay.Views.LibraryView : Gtk.Grid {
         library_layout.toggle_sidebar ();
     }
 
-    public void set_searchbar_visible (bool visible) {
-        library_layout.set_searchbar_visible (visible);
-    }
-
     public void expand_systems_category () {
         library_layout.expand_systems_category ();
     }

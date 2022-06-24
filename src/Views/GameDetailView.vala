@@ -21,8 +21,6 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
     }
 
     construct {
-        // TODO: This entire view should be in a scrolled window
-
         var header_grid = new Gtk.Grid () {
             margin_bottom = 10,
             column_spacing = 10,
@@ -30,18 +28,6 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
             hexpand = true,
             vexpand = false
         };
-        //  var provider = new Gtk.CssProvider ();
-        //  try {
-        //      provider.load_from_data ("""
-        //      .game-detail-header {
-        //          background-image: url('%s');
-        //      }
-        //      """.printf (Replay.Core.Client.get_default ().game_art_repository.get_box_art_file_path (library_item.game)));
-        //  } catch (GLib.Error e) {
-        //      warning (e.message);
-        //  }
-        //  header_grid.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-        //  header_grid.get_style_context ().add_class ("game-detail-header");
 
         var header_image = get_image ();
 
@@ -55,20 +41,6 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
             ellipsize = Pango.EllipsizeMode.END
         };
         header_title_label.get_style_context ().add_class (Granite.STYLE_CLASS_H1_LABEL);
-
-        //  region_label = new Gtk.Label ("USA") {
-
-        //  };
-        //  region_label.get_style_context ().add_class ("region-label");
-
-        //  var genre_year_publisher_label = new Gtk.Label (library_item.game.libretro_details == null ? "" : build_genre_year_publisher_text ()) {
-        //      valign = Gtk.Align.START,
-        //      halign = Gtk.Align.START,
-        //      hexpand = true,
-        //      wrap = false,
-        //      ellipsize = Pango.EllipsizeMode.END
-        //  };
-        //  genre_year_publisher_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
 
         var platform_label = new Gtk.Label (library_item.game.libretro_details == null ? "" : library_item.game.libretro_details.platform_name) {
             valign = Gtk.Align.START,
@@ -113,39 +85,21 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         favorite_event_box.add (favorite_image);
         favorite_event_box.button_press_event.connect (() => {
             if (library_item.game.is_favorite) {
+                library_item.game.is_favorite = false;
                 favorite_image.icon_name = "non-starred";
                 favorite_image.tooltip_text = _("Add to favorites");
-                item_removed_from_favorites (library_item);
             } else {
+                library_item.game.is_favorite = true;
                 favorite_image.icon_name = "starred";
                 favorite_image.tooltip_text = _("Remove from favorites");
-                item_added_to_favorites (library_item);
             }
         });
 
-        //  var metadata_grid = new Gtk.Grid () {
-        //      row_spacing = 0,
-        //      margin_bottom = 8
-        //  };
-        //  metadata_grid.attach (genre_year_publisher_label, 0, 0);
-        //  metadata_grid.attach (platform_label, 0, 1);
-
-        //  var header_title_grid = new Gtk.Grid () {
-        //      hexpand = true
-        //  };
-        //  header_title_grid.attach (header_title_label, 0, 0);
-        //  header_title_grid.attach (region_label, 1, 0);
 
         header_grid.attach (header_image, 0, 0, 1, 2);
         header_grid.attach (header_title_label, 1, 0, 1, 1);
-        //  header_grid.attach (metadata_grid, 1, 1, 1, 1);
-        //  header_grid.attach (platform_label, 1, 2, 1, 1);
         header_grid.attach (favorite_event_box, 2, 0, 1, 1);
         header_grid.attach (play_button_grid, 1, 1, 1, 1);
-
-        //  var body_grid = new Gtk.Grid () {
-        //      expand = true
-        //  };
 
         var media = new Gtk.Grid () {
             hexpand = true
@@ -153,11 +107,6 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         media.attach (new Granite.HeaderLabel ("Media") {
             hexpand = false
         }, 0, 0);
-        //  media.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
-        //      hexpand = true,
-        //      valign = Gtk.Align.CENTER,
-        //      margin_start = 8
-        //  }, 1, 0);
         var media_grid = new Replay.Widgets.MediaGrid ();
         string? box_art_file_path = Replay.Core.Client.get_default ().game_art_repository.get_box_art_file_path (library_item.game);
         string? screenshot_art_file_path = Replay.Core.Client.get_default ().game_art_repository.get_screenshot_art_file_path (library_item.game);
@@ -183,11 +132,6 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         };
         var franchise_games_grid = new Replay.Widgets.GameGrid ();
         franchise_games.attach (franchise_games_label, 0, 0);
-        //  franchise_games.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
-        //      hexpand = true,
-        //      valign = Gtk.Align.CENTER,
-        //      margin_start = 8
-        //  }, 1, 0);
         franchise_games.attach (franchise_games_grid, 0, 1, 2, 1);
         franchise_games.set_visible (false);
 
@@ -201,11 +145,6 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         };
         var genre_games_grid = new Replay.Widgets.GameGrid ();
         genre_games.attach (genre_games_label, 0, 0);
-        //  genre_games.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
-        //      hexpand = true,
-        //      valign = Gtk.Align.CENTER,
-        //      margin_start = 8
-        //  }, 1, 0);
         genre_games.attach (genre_games_grid, 0, 1, 2, 1);
         genre_games.set_visible (false);
 
@@ -338,20 +277,6 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         scrolled_window.add (scroll_area);
 
-        //  var activity_header_label = new Granite.HeaderLabel (_("Activity"));
-        //  var last_played_label = new Gtk.Label (_("Last played:")) {
-        //      halign = Gtk.Align.END
-        //  };
-        //  var last_played_value_label = new Gtk.Label ("") {
-        //      halign = Gtk.Align.START
-        //  };
-        //  var play_time_label = new Gtk.Label (_("Play time:")) {
-        //      halign = Gtk.Align.END
-        //  };
-        //  var play_time_value_label = new Gtk.Label ("") {
-        //      halign = Gtk.Align.START
-        //  };
-
         attach (header_grid, 0, 0, 2, 1);
         attach (scrolled_window, 0, 1);
         attach (detail_grid, 1, 1);
@@ -390,18 +315,6 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         franchise_games_grid.item_run.connect ((library_item, core_name) => {
             play_button_clicked (library_item, core_name);
         });
-        franchise_games_grid.item_added_to_favorites.connect ((library_item) => {
-            item_added_to_favorites (library_item);
-        });
-        franchise_games_grid.item_removed_from_favorites.connect ((library_item) => {
-            item_removed_from_favorites (library_item);
-        });
-        franchise_games_grid.item_marked_played.connect ((library_item) => {
-            item_marked_played (library_item);
-        });
-        franchise_games_grid.item_marked_unplayed.connect ((library_item) => {
-            item_marked_unplayed (library_item);
-        });
 
         // Connect to signals for the genre games grid
         genre_games_grid.item_selected.connect ((library_item) => {
@@ -409,18 +322,6 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         });
         genre_games_grid.item_run.connect ((library_item, core_name) => {
             play_button_clicked (library_item, core_name);
-        });
-        genre_games_grid.item_added_to_favorites.connect ((library_item) => {
-            item_added_to_favorites (library_item);
-        });
-        genre_games_grid.item_removed_from_favorites.connect ((library_item) => {
-            item_removed_from_favorites (library_item);
-        });
-        genre_games_grid.item_marked_played.connect ((library_item) => {
-            item_marked_played (library_item);
-        });
-        genre_games_grid.item_marked_unplayed.connect ((library_item) => {
-            item_marked_unplayed (library_item);
         });
 
         // Update information when attributes of the game model change
@@ -525,9 +426,5 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
 
     public signal void play_button_clicked (Replay.Widgets.LibraryItem? library_item, string? core_name = null);
     public signal void item_selected (Replay.Widgets.LibraryItem library_item);
-    public signal void item_added_to_favorites (Replay.Widgets.LibraryItem library_item);
-    public signal void item_removed_from_favorites (Replay.Widgets.LibraryItem library_item);
-    public signal void item_marked_played (Replay.Widgets.LibraryItem library_item);
-    public signal void item_marked_unplayed (Replay.Widgets.LibraryItem library_item);
 
 }

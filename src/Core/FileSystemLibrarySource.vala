@@ -14,6 +14,7 @@ public class Replay.Core.FileSystemLibrarySource : Replay.Core.LibrarySource, GL
     }
 
     public Gee.Collection<Replay.Models.Game> scan () {
+        debug ("Scanning library source %s", path);
         var games = new Gee.ArrayList<Replay.Models.Game> ();
         var directory = GLib.File.new_for_path (path);
         if (!directory.query_exists ()) {

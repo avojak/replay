@@ -38,14 +38,6 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
 
         restore_window_position ();
 
-        this.key_press_event.connect ((event) => {
-            if (event.keyval == Gdk.Key.Escape) {
-                //  Replay.Services.LibraryWindowActionManager.set_action_state (Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND, false);
-                set_searchbar_visible (false);
-            }
-            return false;
-        });
-
         this.destroy.connect (() => {
             // Do stuff before closing the library
             //  GLib.Process.exit (0);
@@ -92,33 +84,10 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
             foreach (var core in cores) {
                 core_names.add (core.info.core_name);
             }
-            //  debug ("Adding game %s", game.display_name);
             view.add_game (game);
-            //  layout.add_game (game, core_names);
         }
         view.expand_systems_category ();
-        //  var games_by_system = new Gee.HashMap<string, Gee.List<Replay.Models.Game>> ();
-        //  foreach (var game in Replay.Core.Client.get_default ().game_library.get_games ()) {
-        //      Replay.Models.LibretroCore? core = Replay.Core.Client.get_default ().core_repository.get_core_for_rom (GLib.File.new_for_path (game.rom_path));
-        //      var key = core != null ? core.info.system_id : "";
-        //      if (!games_by_system.has_key (key)) {
-        //          games_by_system.set (key, new Gee.ArrayList<Replay.Models.Game> ());
-        //      }
-        //      games_by_system.get (key).add (game);
-        //  }
-        //  layout.set_games (games_by_system);
         view.hide_loading_view ();
-    }
-
-    //  public void reload_systems () {
-    //      debug ("Reloading systems…");
-    //      foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores ()) {
-    //          //  layout.add_view_for_core (core);
-    //      }
-    //  }
-
-    public void show_favorites_view () {
-        //  layout.show_favorites_view ();
     }
 
     public void show_preferences_dialog () {
@@ -147,10 +116,6 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
         view.toggle_sidebar ();
     }
 
-    public void set_searchbar_visible (bool visible) {
-        view.set_searchbar_visible (visible);
-    }
-
     public void show_processing (bool processing) {
         view.show_processing (processing);
     }
@@ -158,7 +123,6 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
     private void launch_game (Replay.Models.Game game, string? specified_core_name) {
         Replay.Models.LibretroCore? specified_core = specified_core_name == null ? null : Replay.Core.Client.get_default ().core_repository.get_core_by_name (specified_core_name);
         Replay.Core.Client.get_default ().emulator_manager.launch_game (game, specified_core);
-        Replay.Core.Client.get_default ().game_library.update_last_run_date (game);
     }
 
 }

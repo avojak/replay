@@ -78,17 +78,6 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             halign = Gtk.Align.CENTER
         };
 
-        //  var unplayed_image = new Gtk.Image () {
-        //      gicon = new ThemedIcon ("mail-unread"),
-        //      pixel_size = 16,
-        //      margin_right = 8
-        //  };
-        //  unplayed_badge = new Gtk.Revealer () {
-        //      transition_type = Gtk.RevealerTransitionType.NONE,
-        //      valign = Gtk.Align.START
-        //  };
-        //  unplayed_badge.add (unplayed_image);
-
         var label = new Gtk.Label (null) {
             wrap = true,
             max_width_chars = 20,
@@ -98,46 +87,15 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         };
         label.set_markup (@"<b>$title</b>");
 
-        //  label_grid.attach (unplayed_badge, 0, 0);
-        label_grid.attach (label, 1, 0);
+        label_grid.attach (label, 0, 0);
 
         grid.add (overlay);
         grid.add (label_grid);
 
-        //  var style_context = get_style_context ();
-        //  style_context.add_class (Granite.STYLE_CLASS_CARD);
-        //  style_context.add_class (Granite.STYLE_CLASS_ROUNDED);
-
-        //  var event_box = new Gtk.EventBox ();
-        //  event_box.add (grid);
-        //  event_box.set_events (Gdk.EventMask.ENTER_NOTIFY_MASK);
-        //  event_box.set_events (Gdk.EventMask.LEAVE_NOTIFY_MASK);
-
-        //  event_box.enter_notify_event.connect (() => {
-        //      debug ("enter event box");
-        //      play_button.set_reveal_child (true);
-        //  });
-        //  event_box.leave_notify_event.connect (() => {
-        //      debug ("leave event box");
-        //      play_button.set_reveal_child (false);
-        //  });
-
-        //  child = event_box;
         child = grid;
-
-        //  set_played (game.is_played);
 
         update_played_badge ();
         game.notify["is-played"].connect (update_played_badge);
-
-        //  enter_notify_event.connect (() => {
-        //      debug ("enter");
-        //      
-        //  });
-        //  leave_notify_event.connect (() => {
-        //      debug ("leave");
-        //      
-        //  });
 
         show_all ();
     }
@@ -172,10 +130,5 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
     private void update_played_badge () {
         unplayed_badge.set_reveal_child (!game.is_played);
     }
-
-    //  public void set_visible (bool visible) {
-    //      //  this.hide ();
-    //      this.visible = visible;
-    //  }
 
 }
