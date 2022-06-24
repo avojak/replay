@@ -69,7 +69,7 @@
         //  manufacturer = Soup.URI.encode (manufacturer, null);
         //  var filename = Soup.URI.encode (game.libretro_details.full_name, null);
         //  var url = @"http://thumbnails.libretro.com/$manufacturer/Named_Boxarts/$filename.png";
-        
+
         //  debug (url);
         //  try {
         //      Replay.Utils.HttpUtils.download_file (url, image_file, null);

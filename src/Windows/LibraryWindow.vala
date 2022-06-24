@@ -110,12 +110,12 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
         view.hide_loading_view ();
     }
 
-    public void reload_systems () {
-        debug ("Reloading systems…");
-        foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores ()) {
-            //  layout.add_view_for_core (core);
-        }
-    }
+    //  public void reload_systems () {
+    //      debug ("Reloading systems…");
+    //      foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores ()) {
+    //          //  layout.add_view_for_core (core);
+    //      }
+    //  }
 
     public void show_favorites_view () {
         //  layout.show_favorites_view ();
@@ -149,6 +149,10 @@ public class Replay.Windows.LibraryWindow : Hdy.Window {
 
     public void set_searchbar_visible (bool visible) {
         view.set_searchbar_visible (visible);
+    }
+
+    public void show_processing (bool processing) {
+        view.show_processing (processing);
     }
 
     private void launch_game (Replay.Models.Game game, string? specified_core_name) {

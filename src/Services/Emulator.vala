@@ -14,6 +14,9 @@ public class Replay.Services.Emulator : GLib.Object {
     private Retro.Core? core = null;
     private Replay.Models.Game? game = null;
     private GLib.File? rom = null;
+    private GLib.Timer? timer = null;
+    private GLib.Thread<void>? timer_thread = null;
+    private GLib.Cancellable? timer_cancellable = null;
 
     private bool manually_paused = false;
 
@@ -139,11 +142,26 @@ public class Replay.Services.Emulator : GLib.Object {
 
         // Run the game
         core.run ();
+
+        // Start the timer
+        timer = new GLib.Timer ();
+        timer_thread = new GLib.Thread<void> ("gameplay-timer", () => {
+            while (!timer_cancellable.is_cancelled ()) {
+                if (timer.is_active ()) {
+                    game.time_played++;
+                }
+                Thread.usleep (1000000); // 0.5 seconds
+            }
+        });
+
         started ();
     }
 
     public void stop () {
         if (core != null) {
+            timer.stop ();
+            timer_cancellable.cancel ();
+            Replay.Core.Client.get_default ().game_library.update_time_played (game, game.time_played);
             core.stop ();
             core.reset ();
             core = null;
@@ -154,6 +172,7 @@ public class Replay.Services.Emulator : GLib.Object {
     public void pause () {
         if (core != null) {
             debug ("Pausing…");
+            timer.stop ();
             core.stop ();
             stopped ();
         }
@@ -162,6 +181,9 @@ public class Replay.Services.Emulator : GLib.Object {
     public void resume () {
         if (core != null) {
             debug ("Resuming…");
+            if (!timer.is_active ()) {
+                timer.@continue ();
+            }
             core.run ();
             resumed ();
         }

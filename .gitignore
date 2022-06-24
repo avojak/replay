@@ -1,6 +1,6 @@
-src/Application
 build/
 builddir/
 .flatpak-builder/
-
+.flatpak/
+.vscode/
 .DS_Store

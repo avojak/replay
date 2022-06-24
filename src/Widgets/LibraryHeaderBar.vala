@@ -9,6 +9,7 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
     private Gtk.Button return_button;
     private Gtk.Separator return_button_separator;
     private Gtk.SearchEntry search_entry;
+    private Gtk.Spinner spinner;
 
     public MainHeaderBar () {
         Object (
@@ -122,6 +123,11 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
             search_changed (search_entry.get_text ());
         });
 
+        spinner = new Gtk.Spinner () {
+            visible = false,
+            no_show_all = true
+        };
+
         pack_start (return_button);
         pack_start (return_button_separator);
 
@@ -129,6 +135,7 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
         //  pack_end (new Gtk.Separator (Gtk.Orientation.VERTICAL));
         //  pack_end (find_button);
         pack_end (search_entry);
+        pack_end (spinner);
     }
 
     private Gtk.Separator create_menu_separator (int margin_top = 0) {
@@ -168,6 +175,16 @@ public class Replay.Widgets.MainHeaderBar : Hdy.HeaderBar {
                 Replay.Application.get_instance ().get_accels_for_action (Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_SHOW_FIND),
                 _("Find…")
             );
+        }
+    }
+
+    public void set_spinner_visible (bool visible) {
+        spinner.visible = visible;
+        spinner.no_show_all = !visible;
+        if (visible) {
+            spinner.start ();
+        } else {
+            spinner.stop ();
         }
     }
 

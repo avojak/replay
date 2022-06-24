@@ -146,14 +146,16 @@ public class Replay.Application : Gtk.Application {
         //      window.update_systems ();
         //  });
         //  client.scan_all_sources.begin ();
-        client.scan_core_sources.begin ((obj, res) => {
-            client.scan_core_sources.end (res);
-            library_window.reload_systems ();
+        library_window.show_processing (true);
+        client.scan_core_sources_async.begin ((obj, res) => {
+            client.scan_core_sources_async.end (res);
+            //  library_window.reload_systems ();
             // Scan for games *after* all the cores have been loaded to facilitate mapping games to cores
             // that can play them
-            client.scan_library_sources.begin ((obj, res) => {
-                client.scan_library_sources.end (res);
+            client.scan_library_sources_async.begin ((obj, res) => {
+                client.scan_library_sources_async.end (res);
                 library_window.reload_library ();
+                library_window.show_processing (false);
             });
         });
         //  } else {

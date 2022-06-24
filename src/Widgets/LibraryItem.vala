@@ -14,7 +14,9 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
     public LibraryItem.for_game (Replay.Models.Game game) {
         Object (
             game: game,
-            title: game.display_name
+            title: game.display_name,
+            width_request: 155,
+            height_request: 175
         );
     }
 

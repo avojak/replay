@@ -63,7 +63,8 @@ public class Replay.Services.SQLClient : GLib.Object {
                 "rom_md5" TEXT NOT NULL,
                 "is_favorite" BOOL NOT NULL,
                 "is_played" BOOL NOT NULL,
-                "last_played" INTEGER
+                "last_played" INTEGER,
+                "time_played" INTEGER NOT NULL
             );
             """;
         database.exec (sql);
@@ -221,8 +222,8 @@ public class Replay.Services.SQLClient : GLib.Object {
 
     public void insert_game (Replay.Models.Game game) {
         var sql = """
-            INSERT INTO games (rom_md5, is_favorite, is_played, last_played) 
-            VALUES ($ROM_MD5, $IS_FAVORITE, $IS_PLAYED, $LAST_PLAYED);
+            INSERT INTO games (rom_md5, is_favorite, is_played, last_played, time_played) 
+            VALUES ($ROM_MD5, $IS_FAVORITE, $IS_PLAYED, $LAST_PLAYED, $TIME_PLAYED);
             """;
 
         Sqlite.Statement statement;
@@ -239,6 +240,7 @@ public class Replay.Services.SQLClient : GLib.Object {
         } else {
             statement.bind_int64 (4, game.last_played.to_unix ());
         }
+        statement.bind_int (5, game.time_played);
 
         string err_msg;
         int ec = database.exec (statement.expanded_sql (), null, out err_msg);
@@ -269,7 +271,7 @@ public class Replay.Services.SQLClient : GLib.Object {
     public void update_game (Replay.Models.Game game) {
         var sql = """
             UPDATE games
-            SET is_favorite = $IS_FAVORITE, is_played = $IS_PLAYED, last_played = $LAST_PLAYED
+            SET is_favorite = $IS_FAVORITE, is_played = $IS_PLAYED, last_played = $LAST_PLAYED, time_played = $TIME_PLAYED
             WHERE rom_md5 = $ROM_MD5;
             """;
 
@@ -285,7 +287,8 @@ public class Replay.Services.SQLClient : GLib.Object {
         } else {
             statement.bind_int64 (3, game.last_played.to_unix ());
         }
-        statement.bind_text (4, game.rom_md5);
+        statement.bind_int (4, game.time_played);
+        statement.bind_text (5, game.rom_md5);
 
         string err_msg;
         int ec = database.exec (statement.expanded_sql (), null, out err_msg);
@@ -316,6 +319,9 @@ public class Replay.Services.SQLClient : GLib.Object {
                     } else {
                         metadata.last_played = statement.column_int64 (i);
                     }
+                    break;
+                case "time_played":
+                    metadata.time_played = statement.column_int (i);
                     break;
                 default:
                     break;

@@ -72,8 +72,9 @@ public class Replay.Views.LibraryView : Gtk.Grid {
                     icon_name = "input-gaming";
                     break;
             }
+            string? display_name = Replay.Models.LibretroSystemMapping.get_default ().get_display_name (platform);
             library_layout.add_system (
-                platform,
+                display_name == null ? platform : display_name,
                 icon_name,
                 "platform:%s".printf (platform),
                 new Replay.Models.Functions.PlatformFilterFunction (platform),
@@ -115,6 +116,10 @@ public class Replay.Views.LibraryView : Gtk.Grid {
 
     public void hide_loading_view () {
         library_layout.hide_loading_view ();
+    }
+
+    public void show_processing (bool processing) {
+        library_layout.show_processing (processing);
     }
 
     public signal void game_selected (Replay.Models.Game game, string? core_name);

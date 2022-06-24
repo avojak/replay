@@ -413,7 +413,7 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
     }
 
     private void on_side_panel_item_selected (Replay.Widgets.LibrarySidePanelItem item) {
-        debug (item.view_name);
+        //  debug (item.view_name);
         var filter_func = filter_mapping.get (item.view_name);
         var sort_func = sort_mapping.get (item.view_name);
         Idle.add (() => {
@@ -479,6 +479,10 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
             stack.set_visible_child_name ("game-grid");
             return false;
         });
+    }
+
+    public void show_processing (bool processing) {
+        header_bar.set_spinner_visible (processing);
     }
 
     public signal void game_selected (Replay.Models.Game game, string? core_name);

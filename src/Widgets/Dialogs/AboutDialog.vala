@@ -16,11 +16,12 @@ public class Replay.Widgets.Dialogs.AboutDialog : Granite.Dialog {
 
     construct {
         // Create the header
-        var grid = new Gtk.Grid ();
-        grid.margin_start = 30;
-        grid.margin_end = 30;
-        grid.margin_bottom = 10;
-        grid.column_spacing = 10;
+        var grid = new Gtk.Grid () {
+            margin_start = 30,
+            margin_end = 30,
+            margin_bottom = 10,
+            column_spacing = 10
+        };
 
         grid.attach (new Gtk.Image () {
             gicon = new GLib.ThemedIcon (Constants.APP_ID),
@@ -53,6 +54,8 @@ public class Replay.Widgets.Dialogs.AboutDialog : Granite.Dialog {
         });
 
         add_action_widget (close_button, 0);
+
+        set_focus (close_button);
     }
 
 }

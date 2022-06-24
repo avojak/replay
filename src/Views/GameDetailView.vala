@@ -8,6 +8,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
     public unowned Replay.Widgets.LibraryItem library_item { get; construct; }
 
     private Gtk.Image favorite_image;
+    private Gtk.Label time_played_label;
     private Gtk.Label last_played_label;
     private Gtk.ScrolledWindow scrolled_window;
 
@@ -216,30 +217,41 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         };
 
         if (library_item.game.libretro_details != null) {
-            if (library_item.game.libretro_details.genre_name != null) {
-                detail_grid.attach (new Gtk.Image.from_icon_name ("applications-games-symbolic", Gtk.IconSize.BUTTON) {
+            if (library_item.game.libretro_details.platform_name != null) {
+                string? display_name = Replay.Models.LibretroSystemMapping.get_default ().get_display_name (library_item.game.libretro_details.platform_name);
+                detail_grid.attach (new Gtk.Image.from_icon_name ("input-gaming-symbolic", Gtk.IconSize.BUTTON) {
                     margin_end = 6
                 }, 0, 0);
-                detail_grid.attach (new Gtk.Label ("<b>Genre:</b> %s".printf (library_item.game.libretro_details.genre_name)) {
+                detail_grid.attach (new Gtk.Label ("<b>System:</b> %s".printf (display_name == null ? library_item.game.libretro_details.platform_name : display_name)) {
                     halign = Gtk.Align.START,
                     use_markup = true
                 }, 1, 0);
             }
 
-            if (library_item.game.libretro_details.developer_name != null) {
-                detail_grid.attach (new Gtk.Image.from_icon_name ("system-users-symbolic", Gtk.IconSize.BUTTON) {
+            if (library_item.game.libretro_details.genre_name != null) {
+                detail_grid.attach (new Gtk.Image.from_icon_name ("applications-games-symbolic", Gtk.IconSize.BUTTON) {
                     margin_end = 6
                 }, 0, 1);
-                detail_grid.attach (new Gtk.Label ("<b>Developer:</b> %s".printf (library_item.game.libretro_details.developer_name)) {
+                detail_grid.attach (new Gtk.Label ("<b>Genre:</b> %s".printf (library_item.game.libretro_details.genre_name)) {
                     halign = Gtk.Align.START,
                     use_markup = true
                 }, 1, 1);
             }
 
+            if (library_item.game.libretro_details.developer_name != null) {
+                detail_grid.attach (new Gtk.Image.from_icon_name ("system-users-symbolic", Gtk.IconSize.BUTTON) {
+                    margin_end = 6
+                }, 0, 2);
+                detail_grid.attach (new Gtk.Label ("<b>Developer:</b> %s".printf (library_item.game.libretro_details.developer_name)) {
+                    halign = Gtk.Align.START,
+                    use_markup = true
+                }, 1, 2);
+            }
+
             if (library_item.game.libretro_details.release_year != null) {
                 detail_grid.attach (new Gtk.Image.from_icon_name ("x-office-calendar-symbolic", Gtk.IconSize.BUTTON) {
                     margin_end = 6
-                }, 0, 2);
+                }, 0, 3);
                 //  debug ("%d", library_item.game.libretro_details.release_year);
                 //  debug ("%d", library_item.game.libretro_details.release_month);
                 //  var release_date = new GLib.DateTime.local (library_item.game.libretro_details.release_year, library_item.game.libretro_details.release_month == null ? 0 : library_item.game.libretro_details.release_month, 1, 1, 1, 0);
@@ -248,38 +260,50 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
                 detail_grid.attach (new Gtk.Label ("<b>Release Year:</b> %s".printf (library_item.game.libretro_details.release_year.to_string ())) {
                     halign = Gtk.Align.START,
                     use_markup = true
-                }, 1, 2);
-            }
-            
-            if (library_item.game.libretro_details.region_name != null) {
-                detail_grid.attach (new Gtk.Image.from_icon_name ("location-active-symbolic", Gtk.IconSize.BUTTON) {
-                    margin_end = 6
-                }, 0, 3);
-                detail_grid.attach (new Gtk.Label ("<b>Region:</b> %s".printf (library_item.game.libretro_details.region_name)) {
-                    halign = Gtk.Align.START,
-                    use_markup = true
                 }, 1, 3);
             }
 
-            detail_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 4, 2, 1);
+            if (library_item.game.libretro_details.region_name != null) {
+                detail_grid.attach (new Gtk.Image.from_icon_name ("location-active-symbolic", Gtk.IconSize.BUTTON) {
+                    margin_end = 6
+                }, 0, 4);
+                detail_grid.attach (new Gtk.Label ("<b>Region:</b> %s".printf (library_item.game.libretro_details.region_name)) {
+                    halign = Gtk.Align.START,
+                    use_markup = true
+                }, 1, 4);
+            }
+
+            // TODO: This is a placeholder
+            detail_grid.attach (new Gtk.Image.from_icon_name ("preferences-system-parental-controls-symbolic", Gtk.IconSize.BUTTON) {
+                margin_end = 6
+            }, 0, 5);
+            detail_grid.attach (new Gtk.Label ("<b>Rating:</b> %s".printf ("E - Everyone")) {
+                halign = Gtk.Align.START,
+                use_markup = true
+            }, 1, 5);
+
+            detail_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 6, 2, 1);
         }
 
         detail_grid.attach (new Gtk.Image.from_icon_name ("x-office-calendar-symbolic", Gtk.IconSize.BUTTON) {
             margin_end = 6
-        }, 0, 5);
+        }, 0, 7);
         last_played_label = new Gtk.Label (null) {
             halign = Gtk.Align.START,
             use_markup = true
         };
-        detail_grid.attach (last_played_label, 1, 5);
+        detail_grid.attach (last_played_label, 1, 7);
 
         detail_grid.attach (new Gtk.Image.from_icon_name ("tools-timer-symbolic", Gtk.IconSize.BUTTON) {
             margin_end = 6
-        }, 0, 6);
-        detail_grid.attach (new Gtk.Label ("<b>Play Time:</b> %s".printf (library_item.game.last_played == null ? _("None") : Granite.DateTime.get_relative_datetime (library_item.game.last_played))) {
+        }, 0, 8);
+        time_played_label = new Gtk.Label (null) {
             halign = Gtk.Align.START,
             use_markup = true
-        }, 1, 6);
+        };
+        detail_grid.attach (time_played_label, 1, 8);
+
+        // TODO: Show a way to get to game save file (if one exists)
 
         //  var game_summary = new Gtk.Label ("Bowser has once again taken over the Mushroom Kingdom, and it's up to Mario to put an end to his sinister reign. Battle Bowser's vile henchmen through 32 different levels - all taken directly from the 1985 classic! Then move on to collect special Red Coins and Yoshi Eggs in the Challenge Mode. Or face off against a friend and race through 8 competition courses in the all-new VS Mode! This time there's a lot more to do than just save a Princess, so get ready for a brick-smashin', pipe-warpin', turtle-stompin' good time!") {
         var synopsis_grid = new Gtk.Grid () {
@@ -399,10 +423,16 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
             item_marked_unplayed (library_item);
         });
 
+        // Update information when attributes of the game model change
         library_item.game.notify["is-favorite"].connect (update_favorite);
         update_favorite ();
         library_item.game.notify["last-played"].connect (update_last_played);
         update_last_played ();
+        library_item.game.notify["time-played"].connect (update_time_played);
+        update_time_played ();
+
+        // "Good enough" approach to update the Last Played time periodically while using the app
+        this.map.connect (update_last_played);
     }
 
     //  private string build_genre_year_publisher_text () {
@@ -437,6 +467,22 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
 
     private void update_last_played () {
         last_played_label.set_markup ("<b>Last Played:</b> %s".printf (library_item.game.last_played == null ? _("Never") : Granite.DateTime.get_relative_datetime (library_item.game.last_played)));
+    }
+
+    private void update_time_played () {
+        time_played_label.set_markup ("<b>Play Time:</b> %s".printf (library_item.game.time_played == 0 ? _("None") : format_time_played (library_item.game.time_played)));
+    }
+
+    private string format_time_played (int time_played_seconds) {
+        int hours = time_played_seconds / (60 * 60);
+        if (hours > 0) {
+            return _("%i hours").printf (hours);
+        }
+        int minutes = time_played_seconds / 60;
+        if (minutes > 0) {
+            return _("%i minutes").printf (minutes);
+        }
+        return _("%i seconds").printf (time_played_seconds);
     }
 
     private Gtk.Image get_image () {

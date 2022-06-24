@@ -36,8 +36,8 @@ public class Replay.Widgets.MediaGrid : Gtk.Grid {
     }
 
     private void on_image_selected (Gtk.FlowBoxChild child) {
-        var media_item = child as Replay.Widgets.MediaItem;
-        new Replay.Widgets.Dialogs.MediaDialog.for_image_file (Replay.Application.get_instance (), Replay.Application.get_instance ().library_window, media_item.image_file);
+        var image_file = ((Replay.Widgets.MediaItem) child).image_file;
+        new Replay.Widgets.Dialogs.MediaDialog.for_image_file (Replay.Application.get_instance (), Replay.Application.get_instance ().library_window, image_file);
     }
 
 }

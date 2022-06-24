@@ -8,4 +8,5 @@ namespace Constants {
     public const string LIBRETRODB_DIR = "@LIBRETRODB_DIR@";
     public const string SYSTEM_LIBRETRO_CORE_DIR = "@SYSTEM_LIBRETRO_CORE_DIR@";
     public const string SYSTEM_LIBRETRO_INFO_DIR = "@SYSTEM_LIBRETRO_INFO_DIR@";
+    public const string THE_GAMES_DB_API_PUBLIC_KEY = "@THE_GAMES_DB_API_PUBLIC_KEY@";
 }

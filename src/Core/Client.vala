@@ -17,8 +17,8 @@ public class Replay.Core.Client : GLib.Object {
     public Replay.Services.EmulatorManager emulator_manager;
     public Replay.Services.SQLClient sql_client;
 
-    private Gee.List<Replay.Core.LibretroCoreSource> core_sources = new Gee.ArrayList<Replay.Core.LibretroCoreSource> ();
-    private Gee.List<Replay.Core.LibrarySource> library_sources = new Gee.ArrayList<Replay.Core.LibrarySource> ();
+    //  private Gee.List<Replay.Core.LibretroCoreSource> core_sources = new Gee.ArrayList<Replay.Core.LibretroCoreSource> ();
+    //  private Gee.List<Replay.Core.LibrarySource> library_sources = new Gee.ArrayList<Replay.Core.LibrarySource> ();
 
     construct {
         core_repository = Replay.Services.LibretroCoreRepository.get_default ();
@@ -29,9 +29,9 @@ public class Replay.Core.Client : GLib.Object {
         sql_client = Replay.Services.SQLClient.get_default ();
 
         // Add the default sources for bundled cores and ROMs
-        core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.BUNDLED_LIBRETRO_CORE_DIR));
-        core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.SYSTEM_LIBRETRO_CORE_DIR));
-        library_sources.add (new Replay.Core.FileSystemLibrarySource (Constants.BUNDLED_ROM_DIR));
+        core_repository.core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.BUNDLED_LIBRETRO_CORE_DIR));
+        core_repository.core_sources.add (new Replay.Core.FileSystemLibretroCoreSource (Constants.SYSTEM_LIBRETRO_CORE_DIR));
+        game_library.library_sources.add (new Replay.Core.FileSystemLibrarySource (Constants.BUNDLED_ROM_DIR));
 
         // Lookup preference for user-specified ROM directory. If none specified (e.g. first launch), default to ~/Games/Replay/.
         // TODO: Seems like creating ~/Games/Replay won't be possible due to Flatpak sandbox?
@@ -49,7 +49,7 @@ public class Replay.Core.Client : GLib.Object {
             //      }
             //  }
         }
-        library_sources.add (new Replay.Core.FileSystemLibrarySource (Replay.Application.settings.user_rom_directory));
+        game_library.library_sources.add (new Replay.Core.FileSystemLibrarySource (Replay.Application.settings.user_rom_directory));
     }
 
     //  public async void scan_all_sources () {
@@ -57,89 +57,32 @@ public class Replay.Core.Client : GLib.Object {
     //      yield scan_library_sources ();
     //  }
 
-    public async Gee.Collection<Replay.Models.LibretroCore> scan_core_sources () {
-        GLib.SourceFunc callback = scan_core_sources.callback;
-        var result = new Gee.HashMap<string, Replay.Models.LibretroCore> ();
+    public async Gee.Collection<Replay.Models.LibretroCore> scan_core_sources_async () {
+        GLib.SourceFunc callback = scan_core_sources_async.callback;
+        Gee.Collection<Replay.Models.LibretroCore> result = new Gee.ArrayList<Replay.Models.LibretroCore> ();
 
         new GLib.Thread<bool> ("scan-core-sources", () => {
-            var cores = new Gee.HashMap<string, Replay.Models.LibretroCore> ();
-            foreach (var core_source in core_sources) {
-                foreach (var core in core_source.scan ()) {
-                    if (!cores.has_key (core.info.core_name)) {
-                        cores.set (core.info.core_name, core);
-                    }
-                }
-            }
-            result = cores;
+            result = core_repository.reload_cores ();
             Idle.add ((owned) callback);
             return true;
         });
         yield;
 
-        foreach (var core in result.values) {
-            debug ("Found core %s for %s", core.info.core_name, core.info.system_name);
-        }
-        // TODO: Store stuff in database if necessary
-        core_repository.set_cores (result.values);
-        return result.values;
-        //  core_sources_scanned (cores);
+        return result;
     }
 
-    public async Gee.List<Replay.Models.Game> scan_library_sources () {
-        GLib.SourceFunc callback = scan_library_sources.callback;
-        var result = new Gee.ArrayList<Replay.Models.Game> ();
+    public async Gee.Collection<Replay.Models.Game> scan_library_sources_async () {
+        GLib.SourceFunc callback = scan_library_sources_async.callback;
+        Gee.Collection<Replay.Models.Game> result = new Gee.ArrayList<Replay.Models.Game> ();
 
         new GLib.Thread<bool> ("scan-library-sources", () => {
-            var games = new Gee.ArrayList<Replay.Models.Game> ();
-            foreach (var library_source in library_sources) {
-                games.add_all (library_source.scan ());
-            }
-            // Lookup the game in the Libretro database
-            foreach (var game in games) {
-                var game_details = game_repository.lookup_for_md5 (game.rom_md5);
-                if (game_details.size == 0) {
-                    debug ("No LibretroDB entry found for %s (MD5: %s)", game.display_name, game.rom_md5);
-                    continue;
-                }
-                if (game_details.size > 1) {
-                    debug ("Multiple LibretroDB entries found for %s, using first entry", game.display_name);
-                }
-                game.libretro_details = game_details.get (0);
-                if (game.libretro_details.display_name != null) {
-                    game.display_name = game.libretro_details.display_name;
-                }
-            }
-            // Lookup the game in the Replay database
-            foreach (var game in games) {
-                // If the game is already known in the database, fetch the metadata. If not, add it.
-                Replay.Models.Game.MetadataDAO? metadata = sql_client.get_game (game.rom_md5);
-                if (metadata != null) {
-                    game.is_favorite = metadata.is_favorite;
-                    game.is_played = metadata.is_played;
-                    game.last_played = metadata.last_played == null ? null : new GLib.DateTime.from_unix_local (metadata.last_played);
-                } else {
-                    sql_client.insert_game (game);
-                }
-            }
-            // TODO: Maybe do this somewhere else since it could take an even longer time?
-            foreach (var game in games) {
-                game_art_repository.download_box_art (game);
-                game_art_repository.download_screenshot_art (game);
-                game_art_repository.download_titlescreen_art (game);
-            }
-            result = games;
+            result = game_library.reload_games ();
             Idle.add ((owned) callback);
             return true;
         });
         yield;
 
-        foreach (var game in result) {
-            debug ("Found game %s (MD5: %s)", game.display_name, game.rom_md5);
-        }
-        // TODO: Store stuff in database if necessary
-        game_library.set_games (result);
         return result;
-        //  library_sources_scanned (games);
     }
 
     public signal void core_sources_scanned (Gee.List<Replay.Models.LibretroCore> cores);

@@ -8,6 +8,7 @@ conf_data.set('BUNDLED_ROM_DIR', join_paths(get_option('prefix'), get_option('li
 conf_data.set('LIBRETRODB_DIR', join_paths(get_option('prefix'), get_option('libdir'), 'database'))
 conf_data.set('SYSTEM_LIBRETRO_CORE_DIR', '/var/run/host/usr/lib/x86_64-linux-gnu/libretro')
 conf_data.set('SYSTEM_LIBRETRO_INFO_DIR', '/var/run/host/usr/share/libretro/info')
+conf_data.set('THE_GAMES_DB_API_PUBLIC_KEY', '8e8fdcbb244820e0cdc61e17daf8d28f21bc578e9aba8c3191af2f9829867f23')
 
 config_header = configure_file(
     input: 'config.vala.in',
@@ -32,7 +33,8 @@ application_files = files(
     join_paths('Models', 'LibretroCore.vala'),
     join_paths('Models', 'LibretroCoreInfo.vala'),
     join_paths('Models', 'LibretroGameDetails.vala'),
-    join_paths('Models', 'ROMExtensionMapping.vala'),
+    join_paths('Models', 'LibretroSystemMapping.vala'),
+    # join_paths('Models', 'ROMExtensionMapping.vala'),
     join_paths('Models', 'VideoFilterMapping.vala'),
     # join_paths('Models', 'System.vala'),
     join_paths('Services', 'Emulator.vala'),
@@ -44,9 +46,11 @@ application_files = files(
     join_paths('Services', 'LibretroGameRepository.vala'),
     join_paths('Services', 'Settings.vala'),
     join_paths('Services', 'SQLClient.vala'),
+    join_paths('Services', 'TheGamesDBClient.vala'),
     join_paths('Utils', 'DigestUtils.vala'),
     join_paths('Utils', 'FileUtils.vala'),
     join_paths('Utils', 'HttpUtils.vala'),
+    join_paths('Utils', 'TimeUtils.vala'),
     join_paths('Views', 'Settings', 'AbstractSettingsView.vala'),
     join_paths('Views', 'Settings', 'BehaviorSettingsView.vala'),
     join_paths('Views', 'Settings', 'InterfaceSettingsView.vala'),
@@ -94,6 +98,7 @@ executable(
         dependency('retro-gtk-1', version: '>= 1.0.2'),
         dependency('manette-0.2', version: '>= 0.2.6'),
         dependency('sqlite3', version: '>= 3.31.1'),
+        dependency('json-glib-1.0'),
         dependency('libsoup-2.4'),
 
         valac.find_library ('linux'),

@@ -33,15 +33,9 @@ public class Replay.Widgets.Dialogs.MediaDialog : Hdy.Window {
         add (grid);
 
         // Close the window by clicking anywhere, changing focus, or pressing the Escape key
-        focus_out_event.connect (() => {
-            close ();
-        });
-        button_press_event.connect (() => {
-            close ();
-        });
-        key_press_event.connect ((event) => {
-            close ();
-        });
+        focus_out_event.connect (on_focus_out_event);
+        button_press_event.connect (on_button_press_event);
+        key_press_event.connect (on_key_press_event);
 
         // Center the window on the parent, since the window_position property doesn't seem to be working
         int parent_x, parent_y, parent_width, parent_height;
@@ -50,6 +44,23 @@ public class Replay.Widgets.Dialogs.MediaDialog : Hdy.Window {
         move (parent_x + (parent_width / 2) - (IMAGE_SIZE / 2), parent_y + (parent_height / 2) - (IMAGE_SIZE / 2));
 
         show_all ();
+    }
+
+    private bool on_focus_out_event (Gdk.EventFocus event_focus) {
+        close ();
+        return false;
+    }
+
+    private bool on_button_press_event (Gtk.Widget widget, Gdk.EventButton event_button) {
+        // Fix issue where clicking around the edge near a media item below will trigger multiple events
+        button_press_event.disconnect (on_button_press_event);
+        close ();
+        return false;
+    }
+
+    private bool on_key_press_event (Gdk.EventKey event_key) {
+        close ();
+        return false;
     }
 
 }
