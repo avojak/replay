@@ -45,6 +45,9 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
     private void restore_window_position () {
         move (Replay.Application.settings.emu_pos_x, Replay.Application.settings.emu_pos_y);
         resize (Replay.Application.settings.emu_window_width, Replay.Application.settings.emu_window_height);
+        if (Replay.Application.settings.emu_window_fullscreen) {
+            maximize ();
+        }
     }
 
     public bool before_destroy () {
@@ -54,15 +57,19 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
     }
 
     private void update_position_settings () {
-        int width, height, x, y;
+        // Only save the position and size state when the window is not maximized,
+        // otherwise it can mess up the preference values
+        if (!is_maximized) {
+            int width, height, x, y;
 
-        get_size (out width, out height);
-        get_position (out x, out y);
+            get_size (out width, out height);
+            get_position (out x, out y);
 
-        Replay.Application.settings.emu_pos_x = x;
-        Replay.Application.settings.emu_pos_y = y;
-        Replay.Application.settings.emu_window_width = width;
-        Replay.Application.settings.emu_window_height = height;
+            Replay.Application.settings.emu_pos_x = x;
+            Replay.Application.settings.emu_pos_y = y;
+            Replay.Application.settings.emu_window_width = width;
+            Replay.Application.settings.emu_window_height = height;
+        }
     }
 
     private void show_emulator () {

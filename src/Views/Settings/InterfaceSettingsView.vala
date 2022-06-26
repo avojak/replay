@@ -49,19 +49,6 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
             Replay.Application.settings.set_string ("emu-default-filter", short_name);
         });
 
-        var screen_size_label = new Gtk.Label (_("Default size:")) {
-            halign = Gtk.Align.END
-        };
-
-        var screen_size_grid = new Gtk.Grid ();
-        var workarea = Gdk.Display.get_default ().get_primary_monitor ().workarea;
-        screen_size_width_entry = create_spin_button (workarea.width, 500);
-        screen_size_height_entry = create_spin_button (workarea.height, 500);
-        screen_size_grid.attach (create_spin_button_label (_("W")), 0, 0);
-        screen_size_grid.attach (screen_size_width_entry, 1, 0);
-        screen_size_grid.attach (create_spin_button_label (_("H")), 2, 0);
-        screen_size_grid.attach (screen_size_height_entry, 3, 0);
-
         var fullscreen_label = new Gtk.Label (_("Open in fullscreen:")) {
             halign = Gtk.Align.END
         };
@@ -75,10 +62,8 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
         attach (emulator_windows_header_label, 0, 0, 2);
         attach (video_filter_label, 0, 1);
         attach (video_filter_combo, 1, 1);
-        attach (screen_size_label, 0, 2);
-        attach (screen_size_grid, 1, 2);
-        attach (fullscreen_label, 0, 3);
-        attach (fullscreen_switch, 1, 3);
+        attach (fullscreen_label, 0, 2);
+        attach (fullscreen_switch, 1, 2);
 
         load_settings ();
     }

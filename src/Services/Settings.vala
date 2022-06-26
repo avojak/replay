@@ -50,6 +50,11 @@ public class Replay.Services.Settings : GLib.Settings {
         set { set_int ("emu-window-height", value); }
     }
 
+    public bool emu_window_fullscreen {
+        get { return get_boolean ("emu-window-fullscreen"); }
+        set { set_boolean ("emu-window-fullscreen", value); }
+    }
+
     public bool emu_boot_bios {
         get { return get_boolean ("emu-boot-bios"); }
         set { set_boolean ("emu-boot-bios", value); }
