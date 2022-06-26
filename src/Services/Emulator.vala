@@ -56,6 +56,9 @@ public class Replay.Services.Emulator : GLib.Object {
                 manually_paused = false;
                 resume ();
             });
+            window.speed_changed.connect ((speed) => {
+                core.set_speed_rate (speed);
+            });
             window.focus_out_event.connect (() => {
                 // Don't do anything if the emulator is already manually paused
                 if (manually_paused) {
@@ -139,6 +142,9 @@ public class Replay.Services.Emulator : GLib.Object {
         core.crashed.connect ((message) => {
             crashed (message);
         });
+
+        //  core.set_speed_rate (Replay.Application.settings.get_double ("emu-default-speed"));
+        core.set_speed_rate (Replay.Application.settings.emu_default_speed);
 
         // Run the game
         core.run ();

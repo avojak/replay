@@ -29,6 +29,9 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
         header_bar.video_filter_changed.connect ((filter) => {
             view.set_filter (filter);
         });
+        header_bar.speed_changed.connect ((speed) => {
+            speed_changed (speed);
+        });
 
         view = new Retro.CoreView () {
             expand = true
@@ -62,5 +65,6 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
 
     public signal void pause_button_clicked ();
     public signal void resume_button_clicked ();
+    public signal void speed_changed (double speed);
 
 }

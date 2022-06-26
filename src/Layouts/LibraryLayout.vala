@@ -64,16 +64,11 @@ public class Replay.Layouts.LibraryLayout : Gtk.Grid {
         stack.add_named (scrolled_window, "game-grid");
         stack.add_named (new Replay.Views.LibraryLoadingView (), Replay.Views.LibraryLoadingView.NAME);
 
-        var stack_grid = new Gtk.Grid () {
-            expand = true
-        };
-        stack_grid.attach (stack, 0, 0);
-
         grid = new Gtk.Grid () {
             expand = true
         };
         grid.attach (header_bar, 0, 0);
-        grid.attach (stack_grid, 0, 1);
+        grid.attach (stack, 0, 1);
 
         var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
             position = 240

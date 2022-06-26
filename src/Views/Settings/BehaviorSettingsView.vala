@@ -75,7 +75,8 @@ public class Replay.Views.Settings.BehaviorSettingsView : Replay.Views.Settings.
         var speed_label = new Gtk.Label (_("Emulation speed:")) {
             halign = Gtk.Align.END
         };
-        var speed_spin_button = create_spin_button (0.1, 3.0, 1.0);
+        var speed_spin_button = create_spin_button (1.0, 3.0, 1.0);
+        Replay.Application.settings.bind ("emu-default-speed", speed_spin_button, "value", GLib.SettingsBindFlags.DEFAULT);
 
         attach (general_header_label, 0, 0, 2);
         attach (download_boxart_label, 0, 1);

@@ -61,6 +61,11 @@
       <summary>The default emulator video filter.</summary>
       <description>The default emulator video filter.</description>
     </key>
+    <key name="emu-default-speed" type="d">
+      <default>1.0</default>
+      <summary>The default emulator speed rate.</summary>
+      <description>The default emulator speed rate.</description>
+    </key>
     <!-- <key name="user-core-directory" type="s">
       <default>""</default>
       <summary>The directory where user-installed libretro cores are stored.</summary>

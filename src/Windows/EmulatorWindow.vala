@@ -28,6 +28,9 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         layout.resume_button_clicked.connect (() => {
             resume_button_clicked ();
         });
+        layout.speed_changed.connect ((speed) => {
+            speed_changed (speed);
+        });
         add (layout);
 
         // TODO: Somewhere should show which core is being used? Could toggle a little info bar at the bottom to show framerate, core name, etc.
@@ -81,5 +84,6 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
 
     public signal void pause_button_clicked ();
     public signal void resume_button_clicked ();
+    public signal void speed_changed (double speed);
 
 }

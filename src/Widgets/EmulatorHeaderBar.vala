@@ -62,6 +62,42 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
             video_filter_button.append_text (Replay.Models.VideoFilterMapping.get_display_strings ().get (entry.value));
         }
 
+        //  var decrease_speed_button = new Gtk.Button.from_icon_name ("zoom-out-symbolic", Gtk.IconSize.MENU);
+        //  //  decrease_speed_button.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_ZOOM_OUT;
+        //  decrease_speed_button.tooltip_markup = _("Increase Speed");
+
+        //  var default_speed_button = new Gtk.Button.with_label ("100%");
+        //  //  default_speed_button.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_ZOOM_DEFAULT;
+        //  default_speed_button.tooltip_markup = _("Default Speed");
+
+        //  var increase_speed_button = new Gtk.Button.from_icon_name ("zoom-in-symbolic", Gtk.IconSize.MENU);
+        //  //  increase_speed_button.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_ZOOM_IN;
+        //  increase_speed_button.tooltip_markup = _("Decrease Speed");
+
+        //  var speed_grid = new Gtk.Grid ();
+        //  speed_grid.column_homogeneous = true;
+        //  speed_grid.hexpand = true;
+        //  speed_grid.margin = 12;
+        //  speed_grid.get_style_context ().add_class (Gtk.STYLE_CLASS_LINKED);
+        //  speed_grid.add (decrease_speed_button);
+        //  speed_grid.add (default_speed_button);
+        //  speed_grid.add (increase_speed_button);
+
+        var speed_label = new Gtk.Label (_("Emulation speed:")) {
+            halign = Gtk.Align.END
+        };
+        var speed_spin_button = create_spin_button (1.0, 3.0, Replay.Application.settings.emu_default_speed);
+        var speed_grid = new Gtk.Grid () {
+            column_homogeneous = true,
+            hexpand = true,
+            margin_start = 12,
+            margin_end = 12,
+            margin_bottom = 12,
+            column_spacing = 6
+        };
+        speed_grid.attach (speed_label, 0, 0);
+        speed_grid.attach (speed_spin_button, 1, 0);
+
         // TODO: Add item for core speed
         // TODO: Add item for snapshot savestate?
         // TODO: Add item for screenshot?
@@ -74,6 +110,7 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
             width_request = 200
         };
         menu_popover_grid.attach (video_filter_button, 0, 0, 3, 1);
+        menu_popover_grid.attach (speed_grid, 0, 1, 3, 1);
 
         menu_popover_grid.show_all ();
 
@@ -101,6 +138,17 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
             set_pause_button_visible (true);
             set_resume_button_visible (false);
         });
+        speed_spin_button.value_changed.connect (() => {
+            speed_changed (speed_spin_button.value);
+        });
+    }
+
+    private Gtk.SpinButton create_spin_button (double min_value, double max_value, double default_value) {
+        var button = new Gtk.SpinButton.with_range (min_value, max_value, 0.1) {
+            halign = Gtk.Align.START
+        };
+        button.set_value (default_value);
+        return button;
     }
 
     public void set_pause_button_visible (bool visible) {
@@ -127,5 +175,6 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
     public signal void pause_button_clicked ();
     public signal void resume_button_clicked ();
     public signal void video_filter_changed (Retro.VideoFilter filter);
+    public signal void speed_changed (double speed);
 
 }

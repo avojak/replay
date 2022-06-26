@@ -60,6 +60,11 @@ public class Replay.Services.Settings : GLib.Settings {
         set { set_string ("emu-default-filter", value); }
     }
 
+    public double emu_default_speed {
+        get { return get_double ("emu-default-speed"); }
+        set { set_double ("emu-default-speed", value); }
+    }
+
     public string user_rom_directory {
         owned get { return get_string ("user-rom-directory"); }
         set { set_string ("user-rom-directory", value); }
