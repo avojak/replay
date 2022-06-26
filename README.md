@@ -17,6 +17,7 @@ Replay is a native Linux multi-system emulator built in Vala and GTK for [elemen
 
 | ![Screenshot](data/assets/screenshots/replay-screenshot-01.png) | ![Screenshot](data/assets/screenshots/replay-screenshot-02.png) |
 |------------------------------------------------------------------|------------------------------------------------------------------|
+| ![Screenshot](data/assets/screenshots/replay-screenshot-03.png) | ![Screenshot](data/assets/screenshots/replay-screenshot-04.png) |
 
 ### Included Cores
 
