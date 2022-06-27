@@ -5,6 +5,11 @@
 
 public class Replay.Windows.EmulatorWindow : Hdy.Window {
 
+    public weak Replay.Application app { get; construct; }
+
+    private Replay.Services.EmulatorWindowActionManager action_manager;
+    private Gtk.AccelGroup accel_group;
+
     public string game_display_name { get; construct; }
 
     private Replay.Layouts.EmulatorLayout layout;
@@ -14,6 +19,7 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
             title: title,
             game_display_name: title,
             application: application,
+            app: application,
             border_width: 0,
             resizable: true,
             window_position: Gtk.WindowPosition.CENTER
@@ -21,6 +27,10 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
     }
 
     construct {
+        accel_group = new Gtk.AccelGroup ();
+        add_accel_group (accel_group);
+        action_manager = new Replay.Services.EmulatorWindowActionManager (app, this);
+
         layout = new Replay.Layouts.EmulatorLayout (this, game_display_name);
         layout.pause_button_clicked.connect (() => {
             pause_button_clicked ();

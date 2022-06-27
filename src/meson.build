@@ -39,6 +39,7 @@ application_files = files(
     # join_paths('Models', 'System.vala'),
     join_paths('Services', 'Emulator.vala'),
     join_paths('Services', 'EmulatorManager.vala'),
+    join_paths('Services', 'EmulatorWindowActionManager.vala'),
     join_paths('Services', 'GameLibrary.vala'),
     join_paths('Services', 'LibraryWindowActionManager.vala'),
     join_paths('Services', 'LibretroCoreRepository.vala'),

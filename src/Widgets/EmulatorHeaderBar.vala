@@ -104,6 +104,16 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         // TODO: Add item for opening the library
         // TODO: Add item for showing emulator mapped controls?
 
+        var quit_accellabel = new Granite.AccelLabel.from_action_name (
+            _("Quit Game"),
+            Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_QUIT
+        );
+
+        var quit_menu_item = new Gtk.ModelButton ();
+        quit_menu_item.action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_QUIT;
+        quit_menu_item.get_child ().destroy ();
+        quit_menu_item.add (quit_accellabel);
+
         var menu_popover_grid = new Gtk.Grid () {
             margin_bottom = 3,
             orientation = Gtk.Orientation.VERTICAL,
@@ -111,6 +121,8 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         };
         menu_popover_grid.attach (video_filter_button, 0, 0, 3, 1);
         menu_popover_grid.attach (speed_grid, 0, 1, 3, 1);
+        menu_popover_grid.attach (create_menu_separator (), 0, 2);
+        menu_popover_grid.attach (quit_menu_item, 0, 3);
 
         menu_popover_grid.show_all ();
 
@@ -141,6 +153,12 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         speed_spin_button.value_changed.connect (() => {
             speed_changed (speed_spin_button.value);
         });
+    }
+
+    private Gtk.Separator create_menu_separator (int margin_top = 0) {
+        var menu_separator = new Gtk.Separator (Gtk.Orientation.HORIZONTAL);
+        menu_separator.margin_top = margin_top;
+        return menu_separator;
     }
 
     private Gtk.SpinButton create_spin_button (double min_value, double max_value, double default_value) {
