@@ -151,7 +151,7 @@ public class Replay.Services.Emulator : GLib.Object {
 
         // Update properties on the game
         game.is_played = true;
-        game.last_played = new GLib.DateTime.now_utc ();
+        game.last_played = new GLib.DateTime.now_local ();
 
         // Start the timer
         timer = new GLib.Timer ();
