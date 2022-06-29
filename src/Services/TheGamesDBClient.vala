@@ -11,7 +11,7 @@ public class Replay.Services.TheGamesDBClient : GLib.Object {
 
     }
 
-    public void search_games (string name) {
+    public Replay.Models.TheGamesDBDetails? search_games (string name) {
         string api_key = Constants.THE_GAMES_DB_API_PUBLIC_KEY;
         string search_string = Soup.URI.encode (name, null);
         string fields = Soup.URI.encode (string.join (",", "overview", "rating"), null);
@@ -32,7 +32,7 @@ public class Replay.Services.TheGamesDBClient : GLib.Object {
                     var count = data_object.get_int_member ("count");
                     if (count == 0) {
                         warning ("No search results for \"%s\"", name);
-                        return;
+                        return null;
                     }
                     if (count > 1) {
                         warning ("Multiple search results for \"%s\", using first", name);
@@ -42,6 +42,12 @@ public class Replay.Services.TheGamesDBClient : GLib.Object {
                     var game_title = game_object.get_string_member ("game_title");
                     string? overview = game_object.has_member ("overview") ? game_object.get_string_member ("overview") : null;
                     string? rating = game_object.has_member ("rating") ? game_object.get_string_member ("rating") : null;
+                    return new Replay.Models.TheGamesDBDetails () {
+                        id = id,
+                        game_title = game_title,
+                        overview = overview,
+                        rating = rating
+                    };
                 } catch (GLib.Error e) {
                     warning ("Error parsing JSON response: %s", e.message);
                 }
@@ -55,6 +61,7 @@ public class Replay.Services.TheGamesDBClient : GLib.Object {
                 warning ("Unexpected status code");
                 break;
         }
+        return null;
     }
 
 }

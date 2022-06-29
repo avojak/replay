@@ -13,6 +13,7 @@ public class Replay.Core.Client : GLib.Object {
     public Replay.Services.LibretroCoreRepository core_repository;
     public Replay.Services.LibretroGameRepository game_repository;
     public Replay.Services.LibretroGameArtRepository game_art_repository;
+    public Replay.Services.TheGamesDBRepository the_games_db_repository;
     public Replay.Services.GameLibrary game_library;
     public Replay.Services.EmulatorManager emulator_manager;
     public Replay.Services.SQLClient sql_client;
@@ -21,6 +22,7 @@ public class Replay.Core.Client : GLib.Object {
         core_repository = Replay.Services.LibretroCoreRepository.get_default ();
         game_repository = Replay.Services.LibretroGameRepository.get_default ();
         game_art_repository = Replay.Services.LibretroGameArtRepository.get_default ();
+        the_games_db_repository = Replay.Services.TheGamesDBRepository.get_default ();
         game_library = Replay.Services.GameLibrary.get_default ();
         emulator_manager = new Replay.Services.EmulatorManager (Replay.Application.get_instance ());
         sql_client = Replay.Services.SQLClient.get_default ();

@@ -7,9 +7,11 @@ public class Replay.Services.EmulatorWindowActionManager : GLib.Object {
 
     public const string ACTION_PREFIX = "win.";
     public const string ACTION_QUIT = "action_quit";
+    public const string ACTION_TOGGLE_STATSBAR = "action_toggle_statsbar";
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
-        { ACTION_QUIT, action_quit }
+        { ACTION_QUIT, action_quit },
+        { ACTION_TOGGLE_STATSBAR, action_toggle_statsbar }
     };
 
     private static Gee.MultiMap<string, string> accelerators;
@@ -29,6 +31,7 @@ public class Replay.Services.EmulatorWindowActionManager : GLib.Object {
     static construct {
         accelerators = new Gee.HashMultiMap<string, string> ();
         accelerators.set (ACTION_QUIT, "<Control>q");
+        accelerators.set (ACTION_TOGGLE_STATSBAR, "<Control>backslash");
     }
 
     construct {
@@ -49,6 +52,10 @@ public class Replay.Services.EmulatorWindowActionManager : GLib.Object {
 
     private void action_quit () {
         window.before_destroy ();
+    }
+
+    private void action_toggle_statsbar () {
+        window.toggle_statsbar ();
     }
 
 }

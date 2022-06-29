@@ -11,6 +11,7 @@ public class Replay.Services.Emulator : GLib.Object {
     public unowned Replay.Application application { get; construct; }
 
     private Replay.Windows.EmulatorWindow? window = null;
+    private Replay.Models.LibretroCore? libretro_core = null;
     private Retro.Core? core = null;
     private Replay.Models.Game? game = null;
     private GLib.File? rom = null;
@@ -55,6 +56,11 @@ public class Replay.Services.Emulator : GLib.Object {
             window.resume_button_clicked.connect (() => {
                 manually_paused = false;
                 resume ();
+            });
+            window.restart_button_clicked.connect (() => {
+                save_memory ();
+                stop ();
+                start (libretro_core);
             });
             window.speed_changed.connect ((speed) => {
                 core.set_speed_rate (speed);
@@ -107,6 +113,7 @@ public class Replay.Services.Emulator : GLib.Object {
         if (core != null) {
             return;
         }
+        this.libretro_core = libretro_core;
         Replay.Models.LibretroCore? core_model = libretro_core != null ? libretro_core : Replay.Core.Client.get_default ().core_repository.get_preferred_core_for_rom (rom);
         if (core_model == null) {
             // TODO: Display error to user
@@ -115,6 +122,7 @@ public class Replay.Services.Emulator : GLib.Object {
             close ();
             return;
         }
+        window.set_core_name (core_model.info.core_name);
 
         // Initialize the core and load memory and/or state
         core = new Retro.Core (core_model.path);
@@ -141,6 +149,9 @@ public class Replay.Services.Emulator : GLib.Object {
         // Connect to core signals (should this be done prior to booting the core?)
         core.crashed.connect ((message) => {
             crashed (message);
+        });
+        core.notify["frames-per-second"].connect (() => {
+            window.update_fps (core.frames_per_second);
         });
 
         //  core.set_speed_rate (Replay.Application.settings.get_double ("emu-default-speed"));

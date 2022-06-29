@@ -1,0 +1,1 @@
+`cpu-symbolic.svg` is sourced from Monitor: https://github.com/stsdc/monitor/blob/dev/data/icons/cpu-symbolic.svg

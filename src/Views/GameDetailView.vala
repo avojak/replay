@@ -274,7 +274,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         scrolled_window = new Gtk.ScrolledWindow (null, null) {
             expand = true
         };
-        scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+        scrolled_window.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
         scrolled_window.add (scroll_area);
 
         attach (header_grid, 0, 0, 2, 1);

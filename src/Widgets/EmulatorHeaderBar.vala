@@ -5,6 +5,10 @@
 
 public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
 
+    public unowned Replay.Windows.EmulatorWindow window { get; construct; }
+
+    private Replay.Widgets.Dialogs.RestartConfirmationDialog? restart_confirmation_dialog = null;
+
     private Gtk.Button pause_button;
     private Gtk.Button resume_button;
 
@@ -12,8 +16,9 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
 
     private Gee.Map<int, Retro.VideoFilter> video_filter_button_map;
 
-    public EmulatorHeaderBar (string title) {
+    public EmulatorHeaderBar (Replay.Windows.EmulatorWindow window, string title) {
         Object (
+            window: window,
             title: title,
             show_close_button: true,
             has_subtitle: false
@@ -33,6 +38,13 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         resume_button = new Gtk.Button () {
             image = new Gtk.Image.from_icon_name ("media-playback-start", Gtk.IconSize.SMALL_TOOLBAR),
             tooltip_text = _("Resume"),
+            relief = Gtk.ReliefStyle.NONE,
+            valign = Gtk.Align.CENTER
+        };
+
+        var restart_button = new Gtk.Button () {
+            image = new Gtk.Image.from_icon_name ("view-refresh", Gtk.IconSize.SMALL_TOOLBAR),
+            tooltip_text = _("Restart"),
             relief = Gtk.ReliefStyle.NONE,
             valign = Gtk.Align.CENTER
         };
@@ -104,13 +116,23 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         // TODO: Add item for opening the library
         // TODO: Add item for showing emulator mapped controls?
 
+        var toggle_statsbar_accellabel = new Granite.AccelLabel.from_action_name (
+            _("Toggle Statsbar"),
+            Replay.Services.EmulatorWindowActionManager.ACTION_PREFIX + Replay.Services.EmulatorWindowActionManager.ACTION_TOGGLE_STATSBAR
+        );
+
+        var toggle_statsbar_menu_item = new Gtk.ModelButton ();
+        toggle_statsbar_menu_item.action_name = Replay.Services.EmulatorWindowActionManager.ACTION_PREFIX + Replay.Services.EmulatorWindowActionManager.ACTION_TOGGLE_STATSBAR;
+        toggle_statsbar_menu_item.get_child ().destroy ();
+        toggle_statsbar_menu_item.add (toggle_statsbar_accellabel);
+
         var quit_accellabel = new Granite.AccelLabel.from_action_name (
             _("Quit Game"),
-            Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_QUIT
+            Replay.Services.EmulatorWindowActionManager.ACTION_PREFIX + Replay.Services.EmulatorWindowActionManager.ACTION_QUIT
         );
 
         var quit_menu_item = new Gtk.ModelButton ();
-        quit_menu_item.action_name = Replay.Services.LibraryWindowActionManager.ACTION_PREFIX + Replay.Services.LibraryWindowActionManager.ACTION_QUIT;
+        quit_menu_item.action_name = Replay.Services.EmulatorWindowActionManager.ACTION_PREFIX + Replay.Services.EmulatorWindowActionManager.ACTION_QUIT;
         quit_menu_item.get_child ().destroy ();
         quit_menu_item.add (quit_accellabel);
 
@@ -122,7 +144,9 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         menu_popover_grid.attach (video_filter_button, 0, 0, 3, 1);
         menu_popover_grid.attach (speed_grid, 0, 1, 3, 1);
         menu_popover_grid.attach (create_menu_separator (), 0, 2);
-        menu_popover_grid.attach (quit_menu_item, 0, 3);
+        menu_popover_grid.attach (toggle_statsbar_menu_item, 0, 3);
+        menu_popover_grid.attach (create_menu_separator (), 0, 4);
+        menu_popover_grid.attach (quit_menu_item, 0, 5);
 
         menu_popover_grid.show_all ();
 
@@ -132,6 +156,7 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
 
         pack_start (pause_button);
         pack_start (resume_button);
+        //  pack_start (restart_button);
         pack_end (menu_button);
         //  pack_end (new Gtk.VolumeButton () {
         //      use_symbolic = true
@@ -149,6 +174,22 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
             resume_button_clicked ();
             set_pause_button_visible (true);
             set_resume_button_visible (false);
+        });
+        restart_button.clicked.connect (() => {
+            if (restart_confirmation_dialog == null) {
+                restart_confirmation_dialog = new Replay.Widgets.Dialogs.RestartConfirmationDialog (window);
+                restart_confirmation_dialog.show_all ();
+                restart_confirmation_dialog.response.connect ((response_id) => {
+                    if (response_id == Gtk.ResponseType.OK) {
+                        restart_button_clicked ();
+                    }
+                    restart_confirmation_dialog.close ();
+                });
+                restart_confirmation_dialog.destroy.connect (() => {
+                    restart_confirmation_dialog = null;
+                });
+            }
+            restart_confirmation_dialog.present ();
         });
         speed_spin_button.value_changed.connect (() => {
             speed_changed (speed_spin_button.value);
@@ -192,6 +233,7 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
 
     public signal void pause_button_clicked ();
     public signal void resume_button_clicked ();
+    public signal void restart_button_clicked ();
     public signal void video_filter_changed (Retro.VideoFilter filter);
     public signal void speed_changed (double speed);
 

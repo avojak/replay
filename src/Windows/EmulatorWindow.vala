@@ -38,6 +38,9 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         layout.resume_button_clicked.connect (() => {
             resume_button_clicked ();
         });
+        layout.restart_button_clicked.connect (() => {
+            restart_button_clicked ();
+        });
         layout.speed_changed.connect ((speed) => {
             speed_changed (speed);
         });
@@ -50,6 +53,8 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         this.delete_event.connect (before_destroy);
 
         show_emulator ();
+
+        toggle_statsbar ();
     }
 
     private void restore_window_position () {
@@ -99,8 +104,21 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         layout.show_resume_button ();
     }
 
+    public void set_core_name (string core_name) {
+        layout.set_core_name (core_name);
+    }
+
+    public void update_fps (double fps) {
+        layout.update_fps (fps);
+    }
+
+    public void toggle_statsbar () {
+        layout.toggle_statsbar ();
+    }
+
     public signal void pause_button_clicked ();
     public signal void resume_button_clicked ();
+    public signal void restart_button_clicked ();
     public signal void speed_changed (double speed);
 
 }
