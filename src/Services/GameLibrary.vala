@@ -76,9 +76,15 @@ public class Replay.Services.GameLibrary : GLib.Object {
 
         // TODO: Maybe do this somewhere else since it could take an even longer time?
         foreach (var game in known_games.values) {
-            Replay.Core.Client.get_default ().game_art_repository.download_box_art (game);
-            Replay.Core.Client.get_default ().game_art_repository.download_screenshot_art (game);
-            Replay.Core.Client.get_default ().game_art_repository.download_titlescreen_art (game);
+            Replay.Core.Client.get_default ().game_art_repository.download_box_art_async.begin (game, (obj, res) => {
+                Replay.Core.Client.get_default ().game_art_repository.download_box_art_async.end (res);
+            });
+            Replay.Core.Client.get_default ().game_art_repository.download_screenshot_art_async.begin (game, (obj, res) => {
+                Replay.Core.Client.get_default ().game_art_repository.download_screenshot_art_async.end (res);
+            });
+            Replay.Core.Client.get_default ().game_art_repository.download_titlescreen_art_async.begin (game, (obj, res) => {
+                Replay.Core.Client.get_default ().game_art_repository.download_titlescreen_art_async.end (res);
+            });
         }
 
         return known_games.values;

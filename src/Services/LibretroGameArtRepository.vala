@@ -52,23 +52,50 @@
         return image_file.query_exists () ? image_file.get_path () : null;
     }
 
-    public Gtk.Image? download_box_art (Replay.Models.Game game) {
-        return download_art (game, Replay.Models.LibretroArtType.BOX);
+    public async void download_box_art_async (Replay.Models.Game game) {
+        GLib.SourceFunc callback = download_box_art_async.callback;
+        Gtk.Image? image = null;
+        new GLib.Thread<void> ("download-box-art", () => {
+            image = download_art (game, Replay.Models.LibretroArtType.BOX);
+            Idle.add ((owned) callback);
+        });
+        yield;
+        if (image != null) {
+            box_art_downloaded (game);
+        }
     }
 
-    public Gtk.Image? download_screenshot_art (Replay.Models.Game game) {
-        return download_art (game, Replay.Models.LibretroArtType.SCREENSHOT);
+    public async void download_screenshot_art_async (Replay.Models.Game game) {
+        GLib.SourceFunc callback = download_screenshot_art_async.callback;
+        Gtk.Image? image = null;
+        new GLib.Thread<void> ("download-screenshot-art", () => {
+            image = download_art (game, Replay.Models.LibretroArtType.SCREENSHOT);
+            Idle.add ((owned) callback);
+        });
+        yield;
+        if (image != null) {
+            screenshot_art_downloaded (game);
+        }
     }
 
-    public Gtk.Image? download_titlescreen_art (Replay.Models.Game game) {
-        return download_art (game, Replay.Models.LibretroArtType.TITLESCREEN);
+    public async void download_titlescreen_art_async (Replay.Models.Game game) {
+        GLib.SourceFunc callback = download_titlescreen_art_async.callback;
+        Gtk.Image? image = null;
+        new GLib.Thread<void> ("download-titlescreen-art", () => {
+            image = download_art (game, Replay.Models.LibretroArtType.TITLESCREEN);
+            Idle.add ((owned) callback);
+        });
+        yield;
+        if (image != null) {
+            titlescreen_art_downloaded (game);
+        }
     }
 
     private Gtk.Image? download_art (Replay.Models.Game game, Replay.Models.LibretroArtType art_type) {
         var image_file = get_file (game, art_type);
         //  debug (image_file.get_path ());
         if (image_file.query_exists ()) {
-            return new Gtk.Image.from_file (image_file.get_path ());
+            return null;
         }
         // Downloading artwork from Libretro requires metadata from the Libretro database
         if (game.libretro_details == null) {
@@ -109,8 +136,8 @@
         return GLib.File.new_for_path ("%s/%s/%s.png".printf (cache_dir_path, art_type.to_string (), game.rom_md5));
     }
 
-    public signal void box_art_downloaded (Replay.Models.Game game, string image_file_path);
-    public signal void screenshot_art_downloaded (Replay.Models.Game game, string image_file_path);
-    public signal void titlescreen_art_downloaded (Replay.Models.Game game, string image_file_path);
+    public signal void box_art_downloaded (Replay.Models.Game game);
+    public signal void screenshot_art_downloaded (Replay.Models.Game game);
+    public signal void titlescreen_art_downloaded (Replay.Models.Game game);
 
 }

@@ -10,6 +10,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
 
     private Gtk.Revealer unplayed_badge;
     private Gtk.Revealer play_button;
+    private Gtk.Image box_art_image;
 
     public LibraryItem.for_game (Replay.Models.Game game) {
         Object (
@@ -65,9 +66,10 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             halign = Gtk.Align.CENTER
         };
         //  overlay.add_overlay (badge); // TODO: Could use an icon here probably
-        overlay.add (load_image ());
+        box_art_image = load_image ();
+        overlay.add (box_art_image);
         overlay.add_overlay (unplayed_badge);
-        overlay.add_overlay (play_button);
+        //  overlay.add_overlay (play_button);
         // TODO: Add favorites icon badge? Or would that be too busy?
         //  overlay.set_tooltip_text ("Game could not be found");
 
@@ -97,6 +99,16 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
         update_played_badge ();
         game.notify["is-played"].connect (update_played_badge);
 
+        Replay.Core.Client.get_default ().game_art_repository.box_art_downloaded.connect ((game) => {
+            if (game == this.game) {
+                debug ("box art updated");
+                overlay.remove (box_art_image);
+                box_art_image = load_image ();
+                overlay.add (box_art_image);
+                overlay.show_all ();
+            }
+        });
+
         show_all ();
     }
 
@@ -106,12 +118,7 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             if (box_art_file_path == null) {
                 return create_default_image ();
             } else {
-                return new Gtk.Image.from_pixbuf (new Gdk.Pixbuf.from_file_at_size (box_art_file_path, 100, 100)) {
-                    margin_top = 16,
-                    margin_start = 16,
-                    margin_end = 16,
-                    margin_bottom = 20
-                };
+                return create_box_art_image (box_art_file_path);
             }
         } catch (GLib.Error e) {
             warning (e.message);
@@ -124,6 +131,15 @@ public class Replay.Widgets.LibraryItem : Gtk.FlowBoxChild {
             gicon = new ThemedIcon ("application-default-icon"),
             pixel_size = 128,
             margin_bottom = 8
+        };
+    }
+
+    private Gtk.Image create_box_art_image (string box_art_file_path) throws GLib.Error {
+        return new Gtk.Image.from_pixbuf (new Gdk.Pixbuf.from_file_at_size (box_art_file_path, 100, 100)) {
+            margin_top = 16,
+            margin_start = 16,
+            margin_end = 16,
+            margin_bottom = 20
         };
     }
 
