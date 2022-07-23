@@ -37,6 +37,7 @@ public class Replay.Widgets.Dialogs.PreferencesDialog : Granite.Dialog {
 
         stack.add_titled (new Replay.Views.Settings.BehaviorSettingsView (), "behavior", _("Behavior"));
         stack.add_titled (new Replay.Views.Settings.InterfaceSettingsView (), "interface", _("Interface"));
+        stack.add_titled (new Replay.Views.Settings.ControllerSettingsView (), "controllers", _("Controllers"));
         stack.add_titled (new Replay.Views.Settings.SystemsSettingsView (), "systems", _("Systems"));
         stack_grid.attach (stack, 0, 1, 1, 1);
 

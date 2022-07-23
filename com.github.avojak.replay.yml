@@ -7,7 +7,7 @@ sdk: io.elementary.Sdk
 command: com.github.avojak.replay
 
 finish-args:
-  - '--allow=bluetooth' # For Bluetooth gamepads
+  - '--allow=bluetooth' # For Bluetooth gamepads (--device=all below may be sufficient since we're using libmanette)
   - '--device=dri' # For RetroGTK
   - '--share=ipc'
   - '--share=network' # Used for retrieving game artwork
@@ -17,7 +17,7 @@ finish-args:
   - '--filesystem=host' # For loading additional libretro cores
   #- '--filesystem=home' # For loading additional ROMs and save data (Don't need this because 'host' provides sufficient home directory access)
   # TODO: Will probably need Bluetooth and USB device access here for controllers
-  # - '--device=all' Maybe?
+  - '--device=all' # For controllers
 
 modules:
   # Dependencies
@@ -29,10 +29,22 @@ modules:
         tag: '1.0.2'
   - name: libmanette
     buildsystem: meson
+    config-opts:
+      - -Dgudev=disabled
     sources:
       - type: git
         url: https://gitlab.gnome.org/GNOME/libmanette.git
         tag: '0.2.6'
+  # - name: libevdev
+  #   buildsystem: meson
+  #   config-opts:
+  #     - -Ddocumentation=disabled
+  #     - -Dtests=disabled
+  #   sources:
+  #     - type: git
+  #       url: https://gitlab.freedesktop.org/libevdev/libevdev.git
+  #       tag: 'libevdev-1.12.1'
+
   # - name: librest
   #   buildsystem: meson
   #   sources:

@@ -47,6 +47,8 @@ application_files = files(
     join_paths('Services', 'LibretroCoreRepository.vala'),
     join_paths('Services', 'LibretroGameArtRepository.vala'),
     join_paths('Services', 'LibretroGameRepository.vala'),
+    join_paths('Services', 'RetroGamepad.vala'),
+    join_paths('Services', 'RetroInputManager.vala'),
     join_paths('Services', 'Settings.vala'),
     join_paths('Services', 'SQLClient.vala'),
     join_paths('Services', 'TheGamesDBClient.vala'),
@@ -57,6 +59,8 @@ application_files = files(
     join_paths('Utils', 'TimeUtils.vala'),
     join_paths('Views', 'Settings', 'AbstractSettingsView.vala'),
     join_paths('Views', 'Settings', 'BehaviorSettingsView.vala'),
+    join_paths('Views', 'Settings', 'ControllerSettingsPage.vala'),
+    join_paths('Views', 'Settings', 'ControllerSettingsView.vala'),
     join_paths('Views', 'Settings', 'InterfaceSettingsView.vala'),
     join_paths('Views', 'Settings', 'SystemSettingsPage.vala'),
     join_paths('Views', 'Settings', 'SystemsSettingsView.vala'),
@@ -83,8 +87,10 @@ application_files = files(
 )
 
 # This won't be necessary in future versions of retro-gtk
+srcdir = meson.source_root () / 'src'
 c_args = [
-    '-DRETRO_GTK_USE_UNSTABLE_API'
+    '-DRETRO_GTK_USE_UNSTABLE_API',
+    '-I' + srcdir
 ]
 
 # Create a new executable, list the files we want to compile, list the dependencies we need, and install
@@ -102,6 +108,7 @@ executable(
         dependency('libhandy-1', version: '>= 1.2.0'),
         dependency('retro-gtk-1', version: '>= 1.0.2'),
         dependency('manette-0.2', version: '>= 0.2.6'),
+        dependency('libevdev'),
         dependency('sqlite3', version: '>= 3.31.1'),
         dependency('json-glib-1.0'),
         dependency('libsoup-2.4'),

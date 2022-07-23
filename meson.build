@@ -6,7 +6,11 @@ gnome = import('gnome')
 
 valac = meson.get_compiler ('vala')
 
-vala_args = ['--pkg', 'posix']
+vala_args = [
+    '--pkg', 'posix',
+    '--pkg', 'linux',
+    '--vapidir', join_paths(meson.current_source_dir(), 'vapi')
+]
 
 application_id = meson.project_name()
 application_name = 'Replay'

@@ -78,21 +78,29 @@ public class Replay.Views.Settings.BehaviorSettingsView : Replay.Views.Settings.
         var speed_spin_button = create_spin_button (1.0, 3.0, 1.0);
         Replay.Application.settings.bind ("emu-default-speed", speed_spin_button, "value", GLib.SettingsBindFlags.DEFAULT);
 
-        attach (general_header_label, 0, 0, 2);
-        attach (download_boxart_label, 0, 1);
-        attach (download_boxart_switch, 1, 1);
-        attach (game_data_header_label, 0, 2, 2);
-        attach (user_rom_dir_label, 0, 3);
-        attach (user_rom_dir_entry, 1, 3);
-        attach (save_data_dir_label, 0, 4);
-        attach (save_data_dir_entry, 1, 4);
-        attach (playback_header_label, 0, 5, 2);
-        attach (bios_label, 0, 6);
-        attach (bios_switch, 1, 6);
-        attach (focus_lost_label, 0, 7);
-        attach (focus_lost_switch, 1, 7);
-        attach (speed_label, 0, 8);
-        attach (speed_spin_button, 1, 8);
+        var content_grid = new Gtk.Grid () {
+            halign = Gtk.Align.CENTER,
+            expand = true,
+            row_spacing = 6,
+            column_spacing = 12
+        };
+        content_grid.attach (general_header_label, 0, 0, 2);
+        content_grid.attach (download_boxart_label, 0, 1);
+        content_grid.attach (download_boxart_switch, 1, 1);
+        content_grid.attach (game_data_header_label, 0, 2, 2);
+        content_grid.attach (user_rom_dir_label, 0, 3);
+        content_grid.attach (user_rom_dir_entry, 1, 3);
+        content_grid.attach (save_data_dir_label, 0, 4);
+        content_grid.attach (save_data_dir_entry, 1, 4);
+        content_grid.attach (playback_header_label, 0, 5, 2);
+        content_grid.attach (bios_label, 0, 6);
+        content_grid.attach (bios_switch, 1, 6);
+        content_grid.attach (focus_lost_label, 0, 7);
+        content_grid.attach (focus_lost_switch, 1, 7);
+        content_grid.attach (speed_label, 0, 8);
+        content_grid.attach (speed_spin_button, 1, 8);
+
+        add (content_grid);
     }
 
     private Gtk.SpinButton create_spin_button (double min_value, double max_value, double default_value) {

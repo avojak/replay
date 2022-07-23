@@ -59,11 +59,19 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
         };
         Replay.Application.settings.bind ("emu-window-fullscreen", fullscreen_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
-        attach (emulator_windows_header_label, 0, 0, 2);
-        attach (video_filter_label, 0, 1);
-        attach (video_filter_combo, 1, 1);
-        attach (fullscreen_label, 0, 2);
-        attach (fullscreen_switch, 1, 2);
+        var content_grid = new Gtk.Grid () {
+            halign = Gtk.Align.CENTER,
+            expand = true,
+            row_spacing = 6,
+            column_spacing = 12
+        };
+        content_grid.attach (emulator_windows_header_label, 0, 0, 2);
+        content_grid.attach (video_filter_label, 0, 1);
+        content_grid.attach (video_filter_combo, 1, 1);
+        content_grid.attach (fullscreen_label, 0, 2);
+        content_grid.attach (fullscreen_switch, 1, 2);
+        
+        add (content_grid);
 
         load_settings ();
     }
