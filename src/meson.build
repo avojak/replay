@@ -73,6 +73,7 @@ application_files = files(
     join_paths('Widgets', 'Dialogs', 'LibraryItemPropertiesDialog.vala'),
     join_paths('Widgets', 'Dialogs', 'MediaDialog.vala'),
     join_paths('Widgets', 'Dialogs', 'RestartConfirmationDialog.vala'),
+    join_paths('Widgets', 'ControllerSettingsRow.vala'),
     join_paths('Widgets', 'EmulatorHeaderBar.vala'),
     join_paths('Widgets', 'GameGrid.vala'),
     join_paths('Widgets', 'LibraryItem.vala'),
@@ -86,11 +87,9 @@ application_files = files(
     join_paths('Application.vala')
 )
 
-# This won't be necessary in future versions of retro-gtk
-srcdir = meson.source_root () / 'src'
 c_args = [
-    '-DRETRO_GTK_USE_UNSTABLE_API',
-    '-I' + srcdir
+    # XXX: This won't be necessary in future versions of retro-gtk
+    '-DRETRO_GTK_USE_UNSTABLE_API'
 ]
 
 # Create a new executable, list the files we want to compile, list the dependencies we need, and install

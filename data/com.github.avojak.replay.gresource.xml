@@ -3,6 +3,7 @@
   <gresource prefix="/com/github/avojak/replay">
     <file alias="AlertView.css" compressed="true">styles/AlertView.css</file>
     <file alias="SettingsHeaderbar.css" compressed="true">styles/SettingsHeaderbar.css</file>
+    <file alias="ControllerConfigInfoBar.css" compressed="true">styles/ControllerConfigInfoBar.css</file>
     <file alias="WelcomeView.css" compressed="true">styles/WelcomeView.css</file>
   </gresource>
 </gresources>

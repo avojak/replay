@@ -143,8 +143,10 @@ public class Replay.Services.Emulator : GLib.Object {
         // Set the view
         unowned Retro.CoreView view = window.get_core_view ();
         view.set_core (core);
-        view.set_as_default_controller (core);
         core.set_keyboard (view);
+
+        // Setup the device input
+        var input_manager = new Replay.Services.RetroInputManager (core, view);
 
         // Connect to core signals (should this be done prior to booting the core?)
         core.crashed.connect ((message) => {
@@ -154,7 +156,6 @@ public class Replay.Services.Emulator : GLib.Object {
             window.update_fps (core.frames_per_second);
         });
 
-        //  core.set_speed_rate (Replay.Application.settings.get_double ("emu-default-speed"));
         core.set_speed_rate (Replay.Application.settings.emu_default_speed);
 
         // Run the game

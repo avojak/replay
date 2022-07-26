@@ -70,7 +70,7 @@ public class Replay.Views.Settings.InterfaceSettingsView : Replay.Views.Settings
         content_grid.attach (video_filter_combo, 1, 1);
         content_grid.attach (fullscreen_label, 0, 2);
         content_grid.attach (fullscreen_switch, 1, 2);
-        
+
         add (content_grid);
 
         load_settings ();
