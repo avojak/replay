@@ -4,7 +4,7 @@
  */
 
 // https://gitlab.gnome.org/Archive/gnome-games/-/blob/master/src/retro/retro-gamepad.vala
-public class Replay.Services.RetroGamepad : GLib.Object, Retro.Controller {
+public class Replay.Services.RetroGamepad : Retro.Controller, GLib.Object {
 
     private const uint16 RUMBLE_DURATION_MS = int16.MAX;
 

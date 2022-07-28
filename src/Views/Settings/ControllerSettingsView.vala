@@ -46,7 +46,7 @@ public class Replay.Views.Settings.ControllerSettingsView : Replay.Views.Setting
         var keyboard_row = new Replay.Widgets.ControllerSettingsRow.for_keyboard ();
         keyboard_row.set_status (Replay.Widgets.ControllerSettingsRow.Status.NOT_CONFIGURED);
         list_box.add (keyboard_row);
-        var keyboard_page = new Replay.Views.Settings.ControllerSettingsPage.for_keyboard (_("Keyboard"));
+        var keyboard_page = new Replay.Views.Settings.KeyboardSettingsPage ();
         stack.add_named (keyboard_page, _("Keyboard"));
 
         keyboard_page.device_configured.connect (() => {
@@ -68,10 +68,14 @@ public class Replay.Views.Settings.ControllerSettingsView : Replay.Views.Setting
 
     private void on_device_connected (Manette.Device device) {
         var device_row = new Replay.Widgets.ControllerSettingsRow.for_device (device);
-        device_row.set_status (Replay.Widgets.ControllerSettingsRow.Status.NOT_CONFIGURED);
+        if (device.has_user_mapping ()) {
+            device_row.set_status (Replay.Widgets.ControllerSettingsRow.Status.CONFIGURED);
+        } else {
+            device_row.set_status (Replay.Widgets.ControllerSettingsRow.Status.NOT_CONFIGURED);
+        }
         list_box.add (device_row);
 
-        var device_page = new Replay.Views.Settings.ControllerSettingsPage.for_gamepad (device.get_name ());
+        var device_page = new Replay.Views.Settings.GamepadSettingsPage (device);
         stack.add_named (device_page, device.get_name ());
 
         device_page.device_configured.connect (() => {
@@ -119,10 +123,8 @@ public class Replay.Views.Settings.ControllerSettingsView : Replay.Views.Setting
 
     private void on_row_selected (Gtk.ListBoxRow? row) {
         if (row == null) {
-            debug ("Row selected: null");
             list_box.select_row (list_box.get_row_at_index (0));
         } else {
-            debug ("Row selected: %s", ((Replay.Widgets.ControllerSettingsRow) row).title);
             var device_row = (Replay.Widgets.ControllerSettingsRow) row;
             stack.set_visible_child_name (device_row.title);
         }

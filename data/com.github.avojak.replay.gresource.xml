@@ -5,5 +5,7 @@
     <file alias="SettingsHeaderbar.css" compressed="true">styles/SettingsHeaderbar.css</file>
     <file alias="ControllerConfigInfoBar.css" compressed="true">styles/ControllerConfigInfoBar.css</file>
     <file alias="WelcomeView.css" compressed="true">styles/WelcomeView.css</file>
+
+    <file>assets/standard-gamepad.svg</file>
   </gresource>
 </gresources>
