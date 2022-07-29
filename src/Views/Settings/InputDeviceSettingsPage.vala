@@ -134,7 +134,7 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
 
         show_not_configured_info_bar ();
         show_configure_button ();
-        
+
         start_tester ();
     }
 
@@ -144,7 +144,7 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
 
         show_config_info_bar ();
         show_cancel_button ();
-        
+
         start_mapper ();
     }
 
@@ -253,9 +253,9 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
             enter_not_configured_mode ();
 
             remove_user_mapping ();
-    
+
             configuration_reset ();
-        }   
+        }
     }
 
     private void on_skip_button_clicked () {
