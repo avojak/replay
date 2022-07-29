@@ -5,42 +5,18 @@
 
 public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite.SettingsPage {
 
-    protected const Replay.Services.Gamepad.GamepadInput[] STANDARD_GAMEPAD_INPUTS = {
-        { EventCode.EV_KEY, EventCode.BTN_EAST },
-        { EventCode.EV_KEY, EventCode.BTN_SOUTH },
-        { EventCode.EV_KEY, EventCode.BTN_WEST },
-        { EventCode.EV_KEY, EventCode.BTN_NORTH },
-        { EventCode.EV_KEY, EventCode.BTN_START },
-        { EventCode.EV_KEY, EventCode.BTN_MODE },
-        { EventCode.EV_KEY, EventCode.BTN_SELECT },
-        { EventCode.EV_KEY, EventCode.BTN_THUMBL },
-        { EventCode.EV_KEY, EventCode.BTN_THUMBR },
-        { EventCode.EV_KEY, EventCode.BTN_TL },
-        { EventCode.EV_KEY, EventCode.BTN_TR },
-        { EventCode.EV_KEY, EventCode.BTN_DPAD_UP },
-        { EventCode.EV_KEY, EventCode.BTN_DPAD_LEFT },
-        { EventCode.EV_KEY, EventCode.BTN_DPAD_DOWN },
-        { EventCode.EV_KEY, EventCode.BTN_DPAD_RIGHT },
-        { EventCode.EV_ABS, EventCode.ABS_X },
-        { EventCode.EV_ABS, EventCode.ABS_Y },
-        { EventCode.EV_ABS, EventCode.ABS_RX },
-        { EventCode.EV_ABS, EventCode.ABS_RY },
-        { EventCode.EV_KEY, EventCode.BTN_TL2 },
-        { EventCode.EV_KEY, EventCode.BTN_TR2 }
-    };
-
     private static Gtk.CssProvider provider;
 
     private Gtk.Stack button_stack;
-    private Gtk.Stack config_stack;
     protected Replay.Views.GamepadView gamepad_view;
     private Granite.Widgets.AlertView not_configured_alert;
-    //  private Gtk.InfoBar not_configured_info_bar;
+    private Gtk.InfoBar not_configured_info_bar;
     private Gtk.Label config_info_prompt;
     private Gtk.InfoBar config_info_bar;
     private Gtk.InfoBar testing_info_bar;
     private Gtk.Spinner spinner;
-    private Gtk.Button reconfigure_button;
+    private Gtk.Button configure_button;
+    private Gtk.Button reset_button;
     private Gtk.Button cancel_button;
 
     private Replay.Services.DeviceMapper<T> device_mapper;
@@ -53,6 +29,13 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
     }
 
     construct {
+        not_configured_info_bar = new Gtk.InfoBar () {
+            show_close_button = false,
+            message_type = Gtk.MessageType.WARNING,
+            revealed = false
+        };
+        not_configured_info_bar.get_content_area ().add (new Gtk.Label (_("Device not configured! Buttons may not behave as expected until configured.\nPress buttons on the device to test the configuration.")));
+
         config_info_bar = new Gtk.InfoBar () {
             show_close_button = false,
             message_type = Gtk.MessageType.QUESTION,
@@ -73,31 +56,34 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
         testing_info_bar.get_content_area ().add (new Gtk.Label (_("Device configured! Press buttons on the gamepad to test the configuration.")));
         //  testing_info_bar.add_button ("Reconfigure", Gtk.ResponseType.REJECT).get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
 
-        not_configured_alert = new Granite.Widgets.AlertView ("Not Configured", "This device has not yet been configured. Buttons may not behave as expected until the device is configured.", "dialog-warning");
-        not_configured_alert.show_action (_("Configure"));
-        not_configured_alert.action_activated.connect (on_configure_button_clicked);
+        //  not_configured_alert = new Granite.Widgets.AlertView ("Not Configured", "This device has not yet been configured. Buttons may not behave as expected until the device is configured.", "dialog-warning");
+        //  not_configured_alert.show_action (_("Configure"));
+        //  not_configured_alert.action_activated.connect (on_configure_button_clicked);
 
         gamepad_view = new Replay.Views.GamepadView ();
 
-        config_stack = new Gtk.Stack ();
-        config_stack.add (not_configured_alert);
-        config_stack.add (gamepad_view);
+        //  config_stack = new Gtk.Stack ();
+        //  config_stack.add (not_configured_alert);
+        //  config_stack.add (gamepad_view);
 
         var content_area = new Gtk.Grid () {
             expand = true,
             margin = 10
         };
-        content_area.attach (config_stack, 0, 0);
+        content_area.attach (gamepad_view, 0, 0);
 
         // Configure the action buttons
 
-        reconfigure_button = new Gtk.Button.with_label (_("Reconfigure"));
-        reconfigure_button.get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
+        configure_button = new Gtk.Button.with_label (_("Configure"));
+        configure_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
+        reset_button = new Gtk.Button.with_label (_("Reset"));
+        reset_button.get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
         cancel_button = new Gtk.Button.with_label (_("Cancel"));
         cancel_button.get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
 
         button_stack = new Gtk.Stack ();
-        button_stack.add (reconfigure_button);
+        button_stack.add (configure_button);
+        button_stack.add (reset_button);
         button_stack.add (cancel_button);
 
         var action_area = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) {
@@ -107,15 +93,17 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
         action_area.pack_start (button_stack);
 
         var base_grid = new Gtk.Grid ();
-        base_grid.attach (testing_info_bar, 0, 0);
-        base_grid.attach (config_info_bar, 0, 1);
-        base_grid.attach (content_area, 0, 2);
-        base_grid.attach (action_area, 0, 3);
+        base_grid.attach (not_configured_info_bar, 0, 0);
+        base_grid.attach (testing_info_bar, 0, 1);
+        base_grid.attach (config_info_bar, 0, 2);
+        base_grid.attach (content_area, 0, 3);
+        base_grid.attach (action_area, 0, 4);
 
         child = base_grid;
 
+        configure_button.clicked.connect (on_configure_button_clicked);
         cancel_button.clicked.connect (on_cancel_button_clicked);
-        reconfigure_button.clicked.connect (on_reconfigure_button_clicked);
+        reset_button.clicked.connect (on_reset_button_clicked);
         config_info_bar.response.connect ((response_id) => {
             if (response_id == Gtk.ResponseType.REJECT) {
                 on_skip_button_clicked ();
@@ -143,27 +131,29 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
     private void enter_not_configured_mode () {
         hide_config_info_bar ();
         hide_testing_info_bar ();
-        hide_button_stack ();
 
-        config_stack.set_visible_child (not_configured_alert);
+        show_not_configured_info_bar ();
+        show_configure_button ();
+        
+        start_tester ();
     }
 
     private void enter_configuring_mode () {
         hide_testing_info_bar ();
+        hide_not_configured_info_bar ();
+
         show_config_info_bar ();
         show_cancel_button ();
-
-        config_stack.set_visible_child (gamepad_view);
-
+        
         start_mapper ();
     }
 
     private void enter_testing_mode () {
         hide_config_info_bar ();
-        show_testing_info_bar ();
-        show_reconfigure_button ();
+        hide_not_configured_info_bar ();
 
-        config_stack.set_visible_child (gamepad_view);
+        show_testing_info_bar ();
+        show_reset_button ();
 
         start_tester ();
     }
@@ -222,26 +212,24 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
         testing_info_bar.set_revealed (false);
     }
 
-    private void show_button_stack () {
-        button_stack.visible = true;
-        button_stack.no_show_all = false;
+    private void show_not_configured_info_bar () {
+        not_configured_info_bar.set_revealed (true);
     }
 
-    private void hide_button_stack () {
-        button_stack.visible = false;
-        button_stack.no_show_all = true;
+    private void hide_not_configured_info_bar () {
+        not_configured_info_bar.set_revealed (false);
     }
 
     private void show_cancel_button () {
         button_stack.set_visible_child (cancel_button);
-
-        show_button_stack ();
     }
 
-    private void show_reconfigure_button () {
-        button_stack.set_visible_child (reconfigure_button);
+    private void show_reset_button () {
+        button_stack.set_visible_child (reset_button);
+    }
 
-        show_button_stack ();
+    private void show_configure_button () {
+        button_stack.set_visible_child (configure_button);
     }
 
     private void on_configure_button_clicked () {
@@ -257,19 +245,17 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
     }
 
     private void on_reset_button_clicked () {
-        enter_not_configured_mode ();
+        var warning_dialog = new Replay.Widgets.Dialogs.InputDeviceResetWarningDialog (get_toplevel () as Gtk.Window);
+        int response = warning_dialog.run ();
+        warning_dialog.destroy ();
 
-        remove_user_mapping ();
+        if (response == Gtk.ResponseType.OK) {
+            enter_not_configured_mode ();
 
-        configuration_reset ();
-    }
-
-    private void on_reconfigure_button_clicked () {
-        remove_user_mapping ();
-
-        enter_configuring_mode ();
-
-        configuration_reset ();
+            remove_user_mapping ();
+    
+            configuration_reset ();
+        }   
     }
 
     private void on_skip_button_clicked () {

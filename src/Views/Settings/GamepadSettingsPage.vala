@@ -5,10 +5,36 @@
 
 public class Replay.Views.Settings.GamepadSettingsPage : Replay.Views.Settings.InputDeviceSettingsPage<string> {
 
+    private const Replay.Services.Gamepad.GamepadInput[] STANDARD_GAMEPAD_INPUTS = {
+        { EventCode.EV_KEY, EventCode.BTN_EAST },
+        { EventCode.EV_KEY, EventCode.BTN_SOUTH },
+        { EventCode.EV_KEY, EventCode.BTN_WEST },
+        { EventCode.EV_KEY, EventCode.BTN_NORTH },
+        { EventCode.EV_KEY, EventCode.BTN_START },
+        { EventCode.EV_KEY, EventCode.BTN_MODE },
+        { EventCode.EV_KEY, EventCode.BTN_SELECT },
+        { EventCode.EV_KEY, EventCode.BTN_THUMBL },
+        { EventCode.EV_KEY, EventCode.BTN_THUMBR },
+        { EventCode.EV_KEY, EventCode.BTN_TL },
+        { EventCode.EV_KEY, EventCode.BTN_TR },
+        { EventCode.EV_KEY, EventCode.BTN_DPAD_UP },
+        { EventCode.EV_KEY, EventCode.BTN_DPAD_LEFT },
+        { EventCode.EV_KEY, EventCode.BTN_DPAD_DOWN },
+        { EventCode.EV_KEY, EventCode.BTN_DPAD_RIGHT },
+        { EventCode.EV_ABS, EventCode.ABS_X },
+        { EventCode.EV_ABS, EventCode.ABS_Y },
+        { EventCode.EV_ABS, EventCode.ABS_RX },
+        { EventCode.EV_ABS, EventCode.ABS_RY },
+        { EventCode.EV_KEY, EventCode.BTN_TL2 },
+        { EventCode.EV_KEY, EventCode.BTN_TR2 }
+    };
+
     public Manette.Device device { get; construct; }
 
     public GamepadSettingsPage (Manette.Device device) {
-        Object (device: device);
+        Object (
+            device: device
+        );
     }
 
     public override Replay.Services.DeviceMapper<string> create_device_mapper () {

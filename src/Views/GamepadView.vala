@@ -61,6 +61,12 @@ public class Replay.Views.GamepadView : Gtk.DrawingArea {
         }
     }
 
+    public GamepadView () {
+        Object (
+            expand: true
+        );
+    }
+
     construct {
         handle = new Rsvg.Handle ();
         configuration = { "", new Replay.Services.Gamepad.GamepadButtonPath[0] };

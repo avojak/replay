@@ -43,10 +43,15 @@ public class Replay.Views.Settings.ControllerSettingsView : Replay.Views.Setting
     }
 
     private void list_devices () {
+        var keyboard_mapping_manager = new Replay.Services.Keyboard.KeyboardMappingManager ();
         var keyboard_row = new Replay.Widgets.ControllerSettingsRow.for_keyboard ();
-        keyboard_row.set_status (Replay.Widgets.ControllerSettingsRow.Status.NOT_CONFIGURED);
+        if (keyboard_mapping_manager.is_default ()) {
+            keyboard_row.set_status (Replay.Widgets.ControllerSettingsRow.Status.NOT_CONFIGURED);
+        } else {
+            keyboard_row.set_status (Replay.Widgets.ControllerSettingsRow.Status.CONFIGURED);
+        }
         list_box.add (keyboard_row);
-        var keyboard_page = new Replay.Views.Settings.KeyboardSettingsPage ();
+        var keyboard_page = new Replay.Views.Settings.KeyboardSettingsPage (keyboard_mapping_manager);
         stack.add_named (keyboard_page, _("Keyboard"));
 
         keyboard_page.device_configured.connect (() => {

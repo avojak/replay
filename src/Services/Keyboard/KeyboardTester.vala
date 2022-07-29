@@ -12,13 +12,11 @@ public class Replay.Services.Keyboard.KeyboardTester : Replay.Services.DeviceTes
     private ulong gamepad_button_release_event_handler_id = 0;
     private ulong gamepad_axis_event_handler_id = 0;
 
-    private Replay.Services.Gamepad.GamepadViewConfiguration configuration;
     private unowned Replay.Views.GamepadView gamepad_view;
 
     public KeyboardTester (Replay.Services.Gamepad.GamepadViewConfiguration configuration,
            Replay.Views.GamepadView gamepad_view) {
         this.gamepad_view = gamepad_view;
-        this.configuration = configuration;
         gamepad_view.configuration = configuration;
     }
 

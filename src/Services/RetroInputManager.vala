@@ -8,7 +8,7 @@ public class Replay.Services.RetroInputManager : GLib.Object {
 
     private unowned Retro.Core core;
     private unowned Retro.CoreView view;
-
+    private Replay.Services.Keyboard.KeyboardMappingManager keyboard_mapping_manager;
     private Manette.Monitor device_monitor;
     private Gee.Map<uint, Manette.Device> devices;
     private Gee.Map<uint, Retro.Controller> controllers;
@@ -17,10 +17,12 @@ public class Replay.Services.RetroInputManager : GLib.Object {
         this.core = core;
         this.view = view;
 
+        keyboard_mapping_manager = new Replay.Services.Keyboard.KeyboardMappingManager ();
         device_monitor = new Manette.Monitor ();
         devices = new Gee.HashMap<uint, Manette.Device> ();
         controllers = new Gee.HashMap<uint, Retro.Controller> ();
 
+        view.set_key_joypad_mapping (keyboard_mapping_manager.mapping);
         view.set_as_default_controller (core);
 
         // Unset default joypad controller to avoid duplicating input on all ports
@@ -40,6 +42,7 @@ public class Replay.Services.RetroInputManager : GLib.Object {
         }
 
         device_monitor.device_connected.connect (on_device_connected);
+        keyboard_mapping_manager.changed.connect (on_keyboard_mapping_changed);
     }
 
     private void on_device_connected (Manette.Device device) {
@@ -57,6 +60,10 @@ public class Replay.Services.RetroInputManager : GLib.Object {
 
     private void disconnect_port (uint port) {
         // TODO
+    }
+
+    private void on_keyboard_mapping_changed () {
+        view.set_key_joypad_mapping (keyboard_mapping_manager.mapping);
     }
 
 }

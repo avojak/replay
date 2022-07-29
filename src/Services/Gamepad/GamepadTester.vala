@@ -7,14 +7,12 @@
 public class Replay.Services.Gamepad.GamepadTester : Replay.Services.DeviceTester, GLib.Object {
 
     private unowned Manette.Device device;
-    private Replay.Services.Gamepad.GamepadViewConfiguration configuration;
     private unowned Replay.Views.GamepadView gamepad_view;
 
     public GamepadTester (Manette.Device device, Replay.Services.Gamepad.GamepadViewConfiguration configuration,
            Replay.Views.GamepadView gamepad_view) {
         this.device = device;
         this.gamepad_view = gamepad_view;
-        this.configuration = configuration;
         gamepad_view.configuration = configuration;
     }
 

@@ -9,7 +9,6 @@ public class Replay.Services.Gamepad.GamepadMapper : Replay.Services.DeviceMappe
     private const double ANALOG_ANIMATION_SPEED = 166660.0;
 
     private unowned Manette.Device device;
-    private Replay.Services.Gamepad.GamepadViewConfiguration configuration;
     private unowned Replay.Views.GamepadView gamepad_view;
 
     private Replay.Services.Gamepad.GamepadInput[] mapping_inputs;
@@ -24,9 +23,7 @@ public class Replay.Services.Gamepad.GamepadMapper : Replay.Services.DeviceMappe
         Replay.Views.GamepadView gamepad_view, Replay.Services.Gamepad.GamepadInput[] mapping_inputs) {
         this.device = device;
         this.gamepad_view = gamepad_view;
-        this.configuration = configuration;
         this.mapping_inputs = mapping_inputs;
-
         gamepad_view.configuration = configuration;
     }
 

@@ -6,7 +6,6 @@
 // https://gitlab.gnome.org/Archive/gnome-games/-/blob/master/src/keyboard/keyboard-mapper.vala
 public class Replay.Services.Keyboard.KeyboardMapper : Replay.Services.DeviceMapper<Retro.KeyJoypadMapping>, GLib.Object {
 
-    private Replay.Services.Gamepad.GamepadViewConfiguration configuration;
     private unowned Replay.Views.GamepadView gamepad_view;
 
     private Replay.Services.Gamepad.GamepadInput[] mapping_inputs;
@@ -17,13 +16,8 @@ public class Replay.Services.Keyboard.KeyboardMapper : Replay.Services.DeviceMap
     public KeyboardMapper (Replay.Services.Gamepad.GamepadViewConfiguration configuration,
         Replay.Views.GamepadView gamepad_view, Replay.Services.Gamepad.GamepadInput[] mapping_inputs) {
         this.gamepad_view = gamepad_view;
-        this.configuration = configuration;
         this.mapping_inputs = mapping_inputs;
         gamepad_view.configuration = configuration;
-    }
-
-    construct {
-
     }
 
     public void start () {
