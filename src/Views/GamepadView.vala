@@ -4,7 +4,7 @@
  */
 
 // https://gitlab.gnome.org/Archive/gnome-games/-/blob/master/src/ui/gamepad-view.vala
-public class Replay.Views.GamepadView : Gtk.DrawingArea {
+public class Replay.Views.GamepadView : Gtk.Bin {
 
     private struct InputState {
         bool highlight;

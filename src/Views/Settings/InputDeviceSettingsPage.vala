@@ -15,6 +15,7 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
     private Gtk.InfoBar config_info_bar;
     private Gtk.InfoBar testing_info_bar;
     private Gtk.Spinner spinner;
+    protected Gtk.Box action_area;
     private Gtk.Button configure_button;
     private Gtk.Button reset_button;
     private Gtk.Button cancel_button;
@@ -54,25 +55,14 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
             revealed = false
         };
         testing_info_bar.get_content_area ().add (new Gtk.Label (_("Device configured! Press buttons on the gamepad to test the configuration.")));
-        //  testing_info_bar.add_button ("Reconfigure", Gtk.ResponseType.REJECT).get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
-
-        //  not_configured_alert = new Granite.Widgets.AlertView ("Not Configured", "This device has not yet been configured. Buttons may not behave as expected until the device is configured.", "dialog-warning");
-        //  not_configured_alert.show_action (_("Configure"));
-        //  not_configured_alert.action_activated.connect (on_configure_button_clicked);
 
         gamepad_view = new Replay.Views.GamepadView ();
-
-        //  config_stack = new Gtk.Stack ();
-        //  config_stack.add (not_configured_alert);
-        //  config_stack.add (gamepad_view);
 
         var content_area = new Gtk.Grid () {
             expand = true,
             margin = 10
         };
         content_area.attach (gamepad_view, 0, 0);
-
-        // Configure the action buttons
 
         configure_button = new Gtk.Button.with_label (_("Configure"));
         configure_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
@@ -86,7 +76,7 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
         button_stack.add (reset_button);
         button_stack.add (cancel_button);
 
-        var action_area = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) {
+        action_area = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) {
             margin = 10,
             halign = Gtk.Align.START
         };
@@ -120,6 +110,16 @@ public abstract class Replay.Views.Settings.InputDeviceSettingsPage<T> : Granite
         } else {
             enter_not_configured_mode ();
         }
+
+        // For the case of the keyboard views in particular, this will help users set the focus
+        // on the view so that the keystrokes will be recognized.
+        realize.connect (() => {
+            grab_focus ();
+        });
+        events = Gdk.EventMask.BUTTON_PRESS_MASK;
+        button_press_event.connect (() => {
+            grab_focus ();
+        });
     }
 
     public abstract Replay.Services.DeviceMapper<T> create_device_mapper ();

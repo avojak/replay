@@ -43,6 +43,9 @@ public class Replay.Services.RetroInputManager : GLib.Object {
 
         device_monitor.device_connected.connect (on_device_connected);
         keyboard_mapping_manager.changed.connect (on_keyboard_mapping_changed);
+
+        // TODO: Only do this when keyboard is the input mode
+        core.set_keyboard (view);
     }
 
     private void on_device_connected (Manette.Device device) {

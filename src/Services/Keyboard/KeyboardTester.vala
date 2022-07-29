@@ -8,14 +8,10 @@ public class Replay.Services.Keyboard.KeyboardTester : Replay.Services.DeviceTes
 
     public Retro.KeyJoypadMapping mapping { get; set; }
 
-    private ulong gamepad_button_press_event_handler_id = 0;
-    private ulong gamepad_button_release_event_handler_id = 0;
-    private ulong gamepad_axis_event_handler_id = 0;
-
     private unowned Replay.Views.GamepadView gamepad_view;
 
     public KeyboardTester (Replay.Services.Gamepad.GamepadViewConfiguration configuration,
-           Replay.Views.GamepadView gamepad_view) {
+            Replay.Views.GamepadView gamepad_view) {
         this.gamepad_view = gamepad_view;
         gamepad_view.configuration = configuration;
     }
@@ -30,6 +26,7 @@ public class Replay.Services.Keyboard.KeyboardTester : Replay.Services.DeviceTes
     }
 
     private void connect_to_device () {
+        debug ("Connected to keyboard");
         var window = gamepad_view.get_toplevel ();
         window.key_press_event.connect (on_key_press_event);
         window.key_release_event.connect (on_key_release_event);

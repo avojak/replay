@@ -16,7 +16,8 @@ public class Replay.Views.Settings.ControllerSettingsView : Replay.Views.Setting
 
         list_box = new Gtk.ListBox () {
             selection_mode = Gtk.SelectionMode.SINGLE,
-            activate_on_single_click = true
+            activate_on_single_click = true,
+            width_request = 175
         };
         list_box.set_header_func (list_box_header_func);
         list_box.row_selected.connect (on_row_selected);
@@ -24,7 +25,7 @@ public class Replay.Views.Settings.ControllerSettingsView : Replay.Views.Setting
         stack = new Gtk.Stack ();
 
         var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
-            position = 150
+            position = 175
         };
         paned.pack1 (list_box, false, false);
         paned.pack2 (stack, true, false);
@@ -132,6 +133,7 @@ public class Replay.Views.Settings.ControllerSettingsView : Replay.Views.Setting
         } else {
             var device_row = (Replay.Widgets.ControllerSettingsRow) row;
             stack.set_visible_child_name (device_row.title);
+            stack.get_child_by_name (device_row.title).grab_focus ();
         }
     }
 

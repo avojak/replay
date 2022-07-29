@@ -32,6 +32,10 @@ public class Replay.Views.Settings.KeyboardSettingsPage : Replay.Views.Settings.
         );
     }
 
+    construct {
+        //  action_area.pack_end (new Gtk.Button.from_icon_name ("input-keyboard"));
+    }
+
     public override Replay.Services.DeviceMapper<Retro.KeyJoypadMapping> create_device_mapper () {
         return new Replay.Services.Keyboard.KeyboardMapper (
             Replay.Services.Gamepad.GamepadViewConfiguration.get_default (),

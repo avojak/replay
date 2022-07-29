@@ -143,7 +143,6 @@ public class Replay.Services.Emulator : GLib.Object {
         // Set the view
         unowned Retro.CoreView view = window.get_core_view ();
         view.set_core (core);
-        core.set_keyboard (view);
 
         // Setup the device input
         var input_manager = new Replay.Services.RetroInputManager (core, view);
