@@ -26,7 +26,6 @@ public class Replay.Services.Keyboard.KeyboardTester : Replay.Services.DeviceTes
     }
 
     private void connect_to_device () {
-        debug ("Connected to keyboard");
         var window = gamepad_view.get_toplevel ();
         window.key_press_event.connect (on_key_press_event);
         window.key_release_event.connect (on_key_release_event);

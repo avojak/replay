@@ -13,6 +13,7 @@ public class Replay.Services.Emulator : GLib.Object {
     private Replay.Windows.EmulatorWindow? window = null;
     private Replay.Models.LibretroCore? libretro_core = null;
     private Retro.Core? core = null;
+    private Replay.Services.RetroInputManager? input_manager = null;
     private Replay.Models.Game? game = null;
     private GLib.File? rom = null;
     private GLib.Timer? timer = null;
@@ -145,7 +146,11 @@ public class Replay.Services.Emulator : GLib.Object {
         view.set_core (core);
 
         // Setup the device input
-        var input_manager = new Replay.Services.RetroInputManager (core, view);
+        input_manager = new Replay.Services.RetroInputManager (core, view);
+        var active_device = input_manager.get_active_device ();
+        window.update_input_device (active_device != null ? active_device.get_name () : "Keyboard");
+        input_manager.device_connected.connect (on_device_connected);
+        input_manager.device_disconnected.connect (on_device_disconnected);
 
         // Connect to core signals (should this be done prior to booting the core?)
         core.crashed.connect ((message) => {
@@ -272,6 +277,18 @@ public class Replay.Services.Emulator : GLib.Object {
                 debug ("No memory file found");
             }
         }
+    }
+
+    private void on_device_connected (Manette.Device device) {
+        window.update_input_device (device.get_name ());
+        window.notify_device_connected (device.get_name ());
+    }
+
+    private void on_device_disconnected (Manette.Device device) {
+        // XXX: Currently only one input device is supported, so if a device was disconnected,
+        // by default the new device must be the keyboard
+        window.update_input_device ("Keyboard");
+        window.notify_device_disconnected (device.get_name ());
     }
 
     // TODO: Need to handle the save files better for bundled games which will originate

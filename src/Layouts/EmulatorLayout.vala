@@ -10,8 +10,10 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
     public string title { get; construct; }
 
     private Replay.Widgets.EmulatorHeaderBar header_bar;
+    private Granite.Widgets.Toast device_toast;
     private Gtk.ActionBar action_bar;
     private Gtk.Label core_name_label;
+    private Gtk.Label input_device_label;
     private Gtk.Label fps_label;
 
     public EmulatorLayout (Replay.Windows.EmulatorWindow window, string title) {
@@ -52,18 +54,32 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
         });
         view.show ();
 
+        device_toast = new Granite.Widgets.Toast ("");
+
+        var overlay = new Gtk.Overlay ();
+        overlay.add (view);
+        overlay.add_overlay (device_toast);
+
         core_name_label = new Gtk.Label (null);
+        input_device_label = new Gtk.Label (null);
         fps_label = new Gtk.Label (null);
+
         action_bar = new Gtk.ActionBar ();
         action_bar.pack_start (new Gtk.Image () {
             gicon = new ThemedIcon ("cpu-symbolic"),
             pixel_size = 16
         });
         action_bar.pack_start (core_name_label);
+        action_bar.pack_start (new Gtk.Image () {
+            gicon = new ThemedIcon ("input-gaming-symbolic"),
+            pixel_size = 16,
+            margin_left = 16
+        });
+        action_bar.pack_start (input_device_label);
         action_bar.pack_end (fps_label);
 
         attach (header_bar, 0, 0);
-        attach (view, 0, 1);
+        attach (overlay, 0, 1);
         attach (action_bar, 0, 2);
 
         show_all ();
@@ -87,6 +103,20 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
 
     public void update_fps (double fps) {
         fps_label.set_text ("%.2f FPS".printf (fps));
+    }
+
+    public void update_input_device (string device_name) {
+        input_device_label.set_text (device_name);
+    }
+
+    public void notify_device_connected (string device_name) {
+        device_toast.title = _(@"$device_name connected");
+        device_toast.send_notification ();
+    }
+
+    public void notify_device_disconnected (string device_name) {
+        device_toast.title = _(@"$device_name disconnected");
+        device_toast.send_notification ();
     }
 
     public void toggle_statsbar () {

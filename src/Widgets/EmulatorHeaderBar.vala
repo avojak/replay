@@ -110,7 +110,27 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         speed_grid.attach (speed_label, 0, 0);
         speed_grid.attach (speed_spin_button, 1, 0);
 
-        // TODO: Add item for core speed
+        //  var controller_button = new Gtk.ModelButton () {
+        //      text = _("Controller"),
+        //      menu_name = "controller"
+        //  }; //new Gtk.MenuItem.with_label ("Controller");
+        //  var controller_menu = new Gtk.Grid () {
+        //      margin_top = 3,
+        //      margin_bottom = 3,
+        //      orientation = Gtk.Orientation.VERTICAL,
+        //      width_request = 200
+        //  };
+        //  //  foreach (var core in Replay.Core.Client.get_default ().core_repository.get_cores_for_rom (GLib.File.new_for_path (library_item.game.rom_path))) {
+        //      //  var core_name = core.info.core_name;
+        //  var keyboard_item = new Gtk.MenuItem.with_label ("Keyboard");
+        //  keyboard_item.activate.connect (() => {
+        //      //  on_item_run_selected (library_item, core_name);
+        //  });
+        //  controller_menu.attach (keyboard_item, 0, 0);
+        //  controller_menu.show_all ();
+        //  }
+        //  controller_button.set_submenu (controller_menu);
+
         // TODO: Add item for snapshot savestate?
         // TODO: Add item for screenshot?
         // TODO: Add item for opening the library
@@ -136,22 +156,22 @@ public class Replay.Widgets.EmulatorHeaderBar : Hdy.HeaderBar {
         quit_menu_item.get_child ().destroy ();
         quit_menu_item.add (quit_accellabel);
 
-        var menu_popover_grid = new Gtk.Grid () {
+        var main_menu = new Gtk.Grid () {
             margin_bottom = 3,
             orientation = Gtk.Orientation.VERTICAL,
             width_request = 200
         };
-        menu_popover_grid.attach (video_filter_button, 0, 0, 3, 1);
-        menu_popover_grid.attach (speed_grid, 0, 1, 3, 1);
-        menu_popover_grid.attach (create_menu_separator (), 0, 2);
-        menu_popover_grid.attach (toggle_statsbar_menu_item, 0, 3);
-        menu_popover_grid.attach (create_menu_separator (), 0, 4);
-        menu_popover_grid.attach (quit_menu_item, 0, 5);
+        main_menu.attach (video_filter_button, 0, 0, 3, 1);
+        main_menu.attach (speed_grid, 0, 1, 3, 1);
+        main_menu.attach (create_menu_separator (), 0, 2);
+        main_menu.attach (toggle_statsbar_menu_item, 0, 3);
+        main_menu.attach (create_menu_separator (), 0, 4);
+        main_menu.attach (quit_menu_item, 0, 5);
 
-        menu_popover_grid.show_all ();
+        main_menu.show_all ();
 
-        var settings_popover = new Gtk.Popover (null);
-        settings_popover.add (menu_popover_grid);
+        var settings_popover = new Gtk.PopoverMenu ();
+        settings_popover.add (main_menu);
         menu_button.popover = settings_popover;
 
         pack_start (pause_button);

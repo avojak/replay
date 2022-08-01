@@ -112,6 +112,18 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
         layout.update_fps (fps);
     }
 
+    public void update_input_device (string device_name) {
+        layout.update_input_device (device_name);
+    }
+
+    public void notify_device_connected (string device_name) {
+        layout.notify_device_connected (device_name);
+    }
+
+    public void notify_device_disconnected (string device_name) {
+        layout.notify_device_disconnected (device_name);
+    }
+
     public void toggle_statsbar () {
         layout.toggle_statsbar ();
     }

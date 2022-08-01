@@ -30,6 +30,7 @@ application_files = files(
     join_paths('Models', 'Functions', 'LibraryItemFilterFunction.vala'),
     join_paths('Models', 'Functions', 'LibraryItemSortFunction.vala'),
     join_paths('Models', 'Game.vala'),
+    join_paths('Models', 'InputMode.vala'),
     join_paths('Models', 'LibretroArtType.vala'),
     join_paths('Models', 'LibretroCore.vala'),
     join_paths('Models', 'LibretroCoreInfo.vala'),

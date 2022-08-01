@@ -8,6 +8,7 @@ public class Replay.Services.RetroInputManager : GLib.Object {
 
     private unowned Retro.Core core;
     private unowned Retro.CoreView view;
+    //  private Retro.Controller core_view_joypad;
     private Replay.Services.Keyboard.KeyboardMappingManager keyboard_mapping_manager;
     private Manette.Monitor device_monitor;
     private Gee.Map<uint, Manette.Device> devices;
@@ -26,30 +27,34 @@ public class Replay.Services.RetroInputManager : GLib.Object {
         view.set_as_default_controller (core);
 
         // Unset default joypad controller to avoid duplicating input on all ports
-        core.set_default_controller (Retro.ControllerType.JOYPAD, null);
+        //  core.set_default_controller (Retro.ControllerType.JOYPAD, null);
         //  core_view_joypad = view.as_controller (Retro.ControllerType.JOYPAD);
 
         Manette.Device device = null;
         var iterator = device_monitor.iterate ();
         while (iterator.next (out device)) {
-            var gamepad = new Replay.Services.RetroGamepad (device);
-            var port = controllers.size;
-            devices.set (port, device);
-            controllers.set (port, gamepad);
-            debug ("Setting device %s on port %d", device.get_name (), port);
-            core.set_controller (port, gamepad);
-            device.disconnected.connect (on_device_disconnected);
+            connect_device (device);
         }
 
         device_monitor.device_connected.connect (on_device_connected);
         keyboard_mapping_manager.changed.connect (on_keyboard_mapping_changed);
 
-        // TODO: Only do this when keyboard is the input mode
         core.set_keyboard (view);
     }
 
     private void on_device_connected (Manette.Device device) {
-        // TODO
+        connect_device (device);
+        device_connected (device);
+    }
+
+    private void connect_device (Manette.Device device) {
+        var gamepad = new Replay.Services.RetroGamepad (device);
+        var port = controllers.size;
+        devices.set (port, device);
+        controllers.set (port, gamepad);
+        debug ("Setting device %s on port %d", device.get_name (), port);
+        core.set_controller (port, gamepad);
+        device.disconnected.connect (on_device_disconnected);
     }
 
     private void on_device_disconnected (Manette.Device device) {
@@ -57,16 +62,30 @@ public class Replay.Services.RetroInputManager : GLib.Object {
             if (entry.value == device) {
                 debug ("Device %s disconnected from port %d", device.get_name (), (int) entry.key);
                 disconnect_port (entry.key);
+                device_disconnected (device);
+                return;
             }
         }
     }
 
     private void disconnect_port (uint port) {
-        // TODO
+        devices.unset (port);
+        controllers.unset (port);
+        core.set_controller (port, null);
     }
 
     private void on_keyboard_mapping_changed () {
         view.set_key_joypad_mapping (keyboard_mapping_manager.mapping);
     }
+
+    public Manette.Device? get_active_device () {
+        if (devices.size == 0) {
+            return null;
+        }
+        return devices.get (0);
+    }
+
+    public signal void device_connected (Manette.Device device);
+    public signal void device_disconnected (Manette.Device device);
 
 }

@@ -16,6 +16,7 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         Object (
             expand: true,
             margin: 30,
+            column_spacing: 16,
             library_item: library_item
         );
     }
@@ -278,8 +279,8 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         scrolled_window.add (scroll_area);
 
         attach (header_grid, 0, 0, 2, 1);
-        attach (scrolled_window, 0, 1);
-        attach (detail_grid, 1, 1);
+        attach (detail_grid, 0, 1);
+        attach (scrolled_window, 1, 1);
         show_all ();
 
         // Populate the franchise and genre game grids
