@@ -265,7 +265,8 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         //  body_grid.attach (detail_grid, 1, 0, 1, 3);
 
         var scroll_area = new Gtk.Grid () {
-            expand = true
+            expand = true,
+            margin_left = 12
         };
         scroll_area.attach (synopsis_grid, 0, 0);
         scroll_area.attach (media, 0, 1);
@@ -273,14 +274,15 @@ public class Replay.Views.GameDetailView : Gtk.Grid {
         scroll_area.attach (genre_games, 0, 3);
 
         scrolled_window = new Gtk.ScrolledWindow (null, null) {
-            expand = true
+            expand = true,
+            window_placement = Gtk.CornerType.TOP_RIGHT
         };
         scrolled_window.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
         scrolled_window.add (scroll_area);
 
         attach (header_grid, 0, 0, 2, 1);
-        attach (detail_grid, 0, 1);
-        attach (scrolled_window, 1, 1);
+        attach (scrolled_window, 0, 1);
+        attach (detail_grid, 1, 1);
         show_all ();
 
         // Populate the franchise and genre game grids
