@@ -52,7 +52,8 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
 
         this.delete_event.connect (before_destroy);
 
-        show_emulator ();
+        show_all ();
+        present ();
 
         toggle_statsbar ();
     }
@@ -85,11 +86,6 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
             Replay.Application.settings.emu_window_width = width;
             Replay.Application.settings.emu_window_height = height;
         }
-    }
-
-    private void show_emulator () {
-        show_all ();
-        present ();
     }
 
     public unowned Retro.CoreView get_core_view () {
@@ -126,6 +122,14 @@ public class Replay.Windows.EmulatorWindow : Hdy.Window {
 
     public void toggle_statsbar () {
         layout.toggle_statsbar ();
+    }
+
+    public void show_preview (GLib.File image_file) {
+        layout.show_preview (image_file);
+    }
+
+    public void show_emulator () {
+        layout.show_emulator ();
     }
 
     public signal void pause_button_clicked ();

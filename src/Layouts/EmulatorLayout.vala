@@ -5,12 +5,17 @@
 
 public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
 
+    private static Gtk.CssProvider provider;
+
     public unowned Replay.Windows.EmulatorWindow window { get; construct; }
     public Retro.CoreView view { get; construct; }
     public string title { get; construct; }
 
     private Replay.Widgets.EmulatorHeaderBar header_bar;
     private Granite.Widgets.Toast device_toast;
+    private Gtk.Stack stack;
+    private Gtk.Grid preview;
+    private Gtk.Image preview_image;
     private Gtk.ActionBar action_bar;
     private Gtk.Label core_name_label;
     private Gtk.Label input_device_label;
@@ -21,6 +26,11 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
             window: window,
             title: title
         );
+    }
+
+    static construct {
+        provider = new Gtk.CssProvider ();
+        provider.load_from_resource ("com/github/avojak/replay/SaveStatePreview.css");
     }
 
     construct {
@@ -54,10 +64,27 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
         });
         view.show ();
 
+        preview_image = new Gtk.Image () {
+            expand = true,
+            halign = Gtk.Align.CENTER,
+            valign = Gtk.Align.CENTER
+        };
+
+        preview = new Gtk.Grid () {
+            expand = true
+        };
+        preview.get_style_context ().add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        preview.get_style_context ().add_class ("preview");
+        preview.attach (preview_image, 0, 0);
+
+        stack = new Gtk.Stack ();
+        stack.add (preview);
+        stack.add (view);
+
         device_toast = new Granite.Widgets.Toast ("");
 
         var overlay = new Gtk.Overlay ();
-        overlay.add (view);
+        overlay.add (stack);
         overlay.add_overlay (device_toast);
 
         core_name_label = new Gtk.Label (null);
@@ -121,6 +148,26 @@ public class Replay.Layouts.EmulatorLayout : Gtk.Grid {
 
     public void toggle_statsbar () {
         action_bar.visible = !action_bar.visible;
+    }
+
+    public void show_preview (GLib.File image_file) {
+        // This is a bit of a hack because I couldn't get the RetroGTK set_pixbuf to work
+        var width = view.get_allocated_width ();
+        var height = view.get_allocated_height ();
+        try {
+            var pixbuf = new Gdk.Pixbuf.from_file_at_scale (image_file.get_path (), width, height, true);
+            preview_image.set_from_pixbuf (pixbuf);
+        } catch (GLib.Error e) {
+            warning (e.message);
+        }
+        stack.set_visible_child (preview);
+    }
+
+    public void show_emulator () {
+        stack.set_visible_child (view);
+        // Make sure that if the user is using the keyboard, it'll be recognized
+        // immediately as input without having to click the view
+        view.grab_focus ();
     }
 
     public signal void pause_button_clicked ();

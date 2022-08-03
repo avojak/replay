@@ -50,47 +50,17 @@ public class Replay.Services.Emulator : GLib.Object {
     public void open () {
         if (window == null) {
             window = new Replay.Windows.EmulatorWindow (application, game.display_name);
-            window.pause_button_clicked.connect (() => {
-                manually_paused = true;
-                pause ();
-            });
-            window.resume_button_clicked.connect (() => {
-                manually_paused = false;
-                resume ();
-            });
-            window.restart_button_clicked.connect (() => {
-                save_memory ();
-                stop ();
-                start (libretro_core);
-            });
+            window.pause_button_clicked.connect (on_pause_button_clicked);
+            window.resume_button_clicked.connect (on_resume_button_clicked);
+            window.restart_button_clicked.connect (on_restart_button_clicked);
+            window.focus_out_event.connect (on_window_focus_out);
+            window.focus_in_event.connect (on_window_focus_in);
             window.speed_changed.connect ((speed) => {
                 core.set_speed_rate (speed);
             });
-            window.focus_out_event.connect (() => {
-                // Don't do anything if the emulator is already manually paused
-                if (manually_paused) {
-                    return false;
-                }
-                if (Replay.Application.settings.handle_window_focus_change) {
-                    manually_paused = false;
-                    window.show_resume_button ();
-                    pause ();
-                }
-                return false;
-            });
-            window.focus_in_event.connect (() => {
-                // Don't do anything if the emulator was manually paused
-                if (manually_paused) {
-                    return false;
-                }
-                if (Replay.Application.settings.handle_window_focus_change && !manually_paused) {
-                    manually_paused = false;
-                    window.show_pause_button ();
-                    resume ();
-                }
-                return false;
-            });
             window.destroy.connect (() => {
+                save_state_screenshot ();
+                save_state ();
                 save_memory ();
                 stop ();
                 close ();
@@ -145,6 +115,11 @@ public class Replay.Services.Emulator : GLib.Object {
         unowned Retro.CoreView view = window.get_core_view ();
         view.set_core (core);
 
+        // If there's a save state file, prompt the user to restart or resume
+        if (should_resume ()) {
+            load_state ();
+        }        
+
         // Setup the device input
         input_manager = new Replay.Services.RetroInputManager (core, view);
         var active_device = input_manager.get_active_device ();
@@ -183,6 +158,60 @@ public class Replay.Services.Emulator : GLib.Object {
         started ();
     }
 
+    private bool should_resume () {
+        if (get_state_file_for_rom (rom).query_exists ()) {
+            load_state_screenshot ();
+            var restart_resume_dialog = new Replay.Widgets.Dialogs.RestartResumeDialog (window);
+            int response = restart_resume_dialog.run ();
+            restart_resume_dialog.close ();
+            window.show_emulator ();
+            return response == Gtk.ResponseType.OK;
+        }
+        return false;
+    }
+
+    private void on_pause_button_clicked () {
+        manually_paused = true;
+        pause ();
+    }
+
+    private void on_resume_button_clicked () {
+        manually_paused = false;
+        resume ();
+    }
+
+    private void on_restart_button_clicked () {
+        save_memory ();
+        stop ();
+        start (libretro_core);
+    }
+
+    private bool on_window_focus_out () {
+        // Don't do anything if the emulator is already manually paused
+        if (manually_paused) {
+            return false;
+        }
+        if (Replay.Application.settings.handle_window_focus_change) {
+            manually_paused = false;
+            window.show_resume_button ();
+            pause ();
+        }
+        return false;
+    }
+
+    private bool on_window_focus_in () {
+        // Don't do anything if the emulator was manually paused
+        if (manually_paused) {
+            return false;
+        }
+        if (Replay.Application.settings.handle_window_focus_change && !manually_paused) {
+            manually_paused = false;
+            window.show_pause_button ();
+            resume ();
+        }
+        return false;
+    }
+
     public void stop () {
         if (core != null) {
             timer.stop ();
@@ -197,7 +226,9 @@ public class Replay.Services.Emulator : GLib.Object {
     public void pause () {
         if (core != null) {
             debug ("Pausing…");
-            timer.stop ();
+            if (timer != null) {
+                timer.stop ();
+            }
             core.stop ();
             stopped ();
         }
@@ -206,11 +237,46 @@ public class Replay.Services.Emulator : GLib.Object {
     public void resume () {
         if (core != null) {
             debug ("Resuming…");
-            if (!timer.is_active ()) {
+            if (timer != null && !timer.is_active ()) {
                 timer.@continue ();
             }
             core.run ();
             resumed ();
+        }
+    }
+
+    private void save_state_screenshot () {
+        if (game == null) {
+            return;
+        }
+        GLib.File file = get_state_screenshot_file_for_rom (game.rom_md5);
+        if (file == null) {
+            return;
+        }
+        save_screenshot (file);
+    }
+
+    private void load_state_screenshot () {
+        GLib.File? screenshot_file = get_state_screenshot_file_for_rom (game.rom_md5);
+        if (screenshot_file != null && screenshot_file.query_exists ()) {
+            window.show_preview (screenshot_file);
+        }
+    }
+
+    public void save_screenshot (GLib.File file) {
+        if (core != null && window != null) {
+            unowned Retro.CoreView view = window.get_core_view ();
+            var pixbuf = view.get_pixbuf ();
+            try {
+                // It's an error to call create_readwrite with an existing file even if passing the REPLACE_DESTINATION flag
+                if (file.query_exists ()) {
+                    file.delete ();
+                }
+                var extension = Replay.Utils.FileUtils.get_extension (file, true);
+                pixbuf.save_to_stream (file.create_readwrite (GLib.FileCreateFlags.NONE).get_output_stream (), extension);
+            } catch (GLib.Error e) {
+                warning (e.message);
+            }
         }
     }
 
@@ -312,6 +378,20 @@ public class Replay.Services.Emulator : GLib.Object {
         var rom_directory = rom_file.get_parent ().get_path ();
         var state_filename = rom_filename.substring (0, rom_filename.last_index_of (rom_extension, 0)) + SAVE_STATE_FILE_EXTENSION;
         return GLib.File.new_for_path ("%s/%s".printf (rom_directory, state_filename));
+    }
+
+    private GLib.File? get_state_screenshot_file_for_rom (string rom_md5) {
+        var config_dir = GLib.Environment.get_user_config_dir ();
+        var screenshot_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, config_dir, "state-screenshots"));
+        if (!screenshot_dir.query_exists ()) {
+            try {
+                screenshot_dir.make_directory ();
+            } catch (GLib.Error e) {
+                warning (e.message);
+                return null;
+            }
+        }
+        return GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, screenshot_dir.get_path (), @"$rom_md5.png"));
     }
 
     public signal void opened ();

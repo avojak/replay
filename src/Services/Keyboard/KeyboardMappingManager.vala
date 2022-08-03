@@ -21,7 +21,7 @@ public class Replay.Services.Keyboard.KeyboardMappingManager : GLib.Object {
 
     private void load_mapping () {
         if (!mapping_file.query_exists ()) {
-            debug ("User keyboard mapping doesn't exist");
+            warning ("User keyboard mapping doesn't exist!");
             mapping = new Retro.KeyJoypadMapping.default ();
             changed ();
             return;
