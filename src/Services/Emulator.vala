@@ -118,7 +118,7 @@ public class Replay.Services.Emulator : GLib.Object {
         // If there's a save state file, prompt the user to restart or resume
         if (should_resume ()) {
             load_state ();
-        }        
+        }
 
         // Setup the device input
         input_manager = new Replay.Services.RetroInputManager (core, view);
@@ -282,6 +282,10 @@ public class Replay.Services.Emulator : GLib.Object {
 
     public void save_state () {
         if (core != null) {
+            if (!core.get_can_access_state ()) {
+                warning ("Cannot access state of core");
+                return;
+            }
             var state_file = get_state_file_for_rom (rom);
             debug ("Saving state to file: %s", state_file.get_path ());
             try {
